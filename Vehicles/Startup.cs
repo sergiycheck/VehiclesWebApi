@@ -3,13 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+
+using Vehicles.Models;
+using Vehicles.Data;
+using Vehicles.Interfaces.RepositoryInterfaces;
+using Vehicles.Interfaces.ServiceInterfaces;
+using Vehicles.Repositories;
+using Vehicles.Services;
 
 namespace Vehicles
 {
@@ -26,6 +36,17 @@ namespace Vehicles
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddDbContext<VehicleDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("VehiclesDbConnection")));
+            
+            services.AddTransient<ICarOwnersRepository,CarOwnersRepository>();
+            services.AddTransient<ICarsRepository,CarsRepository>();
+
+            services.AddTransient<ICarOwnerService,CarOwnerService>();
+            services.AddTransient<ICarService,CarService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
