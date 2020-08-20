@@ -26,7 +26,7 @@ namespace Vehicles.Controllers
 
         // GET api/<VehiclesController>/QC-3805-OM
         [HttpGet("{uniqueNumber}")]
-        public async Task<IEnumerable<CarOwner>> GetOwnersByCarUniqueNumber(string uniqueNumber)
+        public async Task<ActionResult<IEnumerable<CarOwner>>> GetOwnersByCarUniqueNumber(string uniqueNumber)
         {
             var res = await _carOwnerService.GetCarOwners(uniqueNumber);
             _logger.LogInformation($"Getting car owners by uniqueNumber {uniqueNumber}",res);
@@ -35,19 +35,19 @@ namespace Vehicles.Controllers
 
         // GET api/<VehiclesController>/
         [HttpGet]
-        public string DefaultGet() 
+        public ActionResult<string> DefaultGet() 
         {
             return "An API about vehicles and owners";
         }
         // GET api/<VehiclesController>/cars
         [HttpGet("Cars")]
-        public async Task<IEnumerable<Car>> GetCars()
+        public async Task<ActionResult<IEnumerable<Car>>> GetCars()
         {
             return await _carService.GetAllCars();
         }
         // GET api/<VehiclesController>/owners
         [HttpGet("Owners")]
-        public async Task<IEnumerable<CarOwner>> GetOwners()
+        public async Task<ActionResult<IEnumerable<CarOwner>>> GetOwners()
         {
             return await _carOwnerService.GetAllCarOwners();
         }
@@ -55,7 +55,7 @@ namespace Vehicles.Controllers
         //use postman post method or visual studio code extensions to send post method with existing carOwner json data that can be retrieved from get method for CarOwners
         // POST api/<VehiclesController>
         [HttpPost]
-        public async Task<IEnumerable<Car>> GetCarsByCarOwner([FromBody] CarOwner value)
+        public async Task<ActionResult<IEnumerable<Car>>> GetCarsByCarOwner([FromBody] CarOwner value)
         {
             var res = await _carService.GetCars(value);
             _logger.LogInformation($"Getting cars by carOwner {value.Name}", res);
@@ -75,3 +75,5 @@ namespace Vehicles.Controllers
         }
     }
 }
+//command to generate controller
+//dotnet aspnet-codegenerator controller -name TodoItemsController -async -api -m TodoItem -dc TodoContext -outDir Controllers

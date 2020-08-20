@@ -13,6 +13,7 @@ using Vehicles.Controllers;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Vehicles.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace VehiclesXUnitTests
 {
@@ -137,7 +138,8 @@ namespace VehiclesXUnitTests
                     var res = await controller.GetOwnersByCarUniqueNumber(car.UniqueNumber);
 
                     Assert.NotNull(res);
-                    Assert.IsAssignableFrom<IEnumerable<CarOwner>>(res);
+                    Assert.IsAssignableFrom<ActionResult<IEnumerable<CarOwner>>>(res);
+                    Assert.IsAssignableFrom<IEnumerable<CarOwner>>(res.Value);
 
                 }
             }
@@ -171,7 +173,8 @@ namespace VehiclesXUnitTests
                     var res = await controller.GetCarsByCarOwner(deserializedOwner);
 
                     Assert.NotNull(res);
-                    Assert.IsAssignableFrom<IEnumerable<Car>>(res);
+                    Assert.IsAssignableFrom<ActionResult<IEnumerable<Car>>>(res);
+                    Assert.IsAssignableFrom<IEnumerable<Car>>(res.Value);
 
                 }
             }
