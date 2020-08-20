@@ -9,5 +9,11 @@ namespace Vehicles.Interfaces.ServiceInterfaces
     {
         Task<List<Car>> GetCars(CarOwner carOwner);
         Task<List<Car>> GetAllCars();
+        Task<Car> GetById(int? id);
+        Task Create(Car entity);
+        Task Update(Car entity);
+        Task Delete(int? id);
+        bool EntityExists(int id);
+
     }
 }

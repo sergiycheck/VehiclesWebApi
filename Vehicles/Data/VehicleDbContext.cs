@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Vehicles.Models;
+using Vehicles.Data;
 
 namespace Vehicles.Data
 {
@@ -14,6 +16,7 @@ namespace Vehicles.Data
         public VehicleDbContext(DbContextOptions<VehicleDbContext> options)
             : base(options)
         {
+            //Database.EnsureCreated();//for initializing initial data//for testing
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -34,6 +37,16 @@ namespace Vehicles.Data
             builder.Entity<Car>()
                 .Property(p => p.Price)
                 .HasColumnType("decimal(18,4)");
+
+            //alternative way for data seeding that is better for testing
+            //remove other ways of db initializing
+            //InitializeDb(builder);
+        }
+        private void InitializeDb(ModelBuilder builder) 
+        {
+            builder.Entity<Car>().HasData(SeedData.Cars);
+            builder.Entity<CarOwner>().HasData(SeedData.CarOwners);
+            builder.Entity<ManyToManyCarOwner>().HasData(SeedData.ManyToManyCarOwners);
         }
     }
 }

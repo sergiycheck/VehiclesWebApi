@@ -18,6 +18,8 @@ namespace Vehicles
         {
             var host = CreateHostBuilder(args).Build();
 
+            //comment this section to make httpTest work with enshureCreated Db
+            #region
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -27,7 +29,7 @@ namespace Vehicles
                     var context = new VehicleDbContext(
                                 services.GetRequiredService<DbContextOptions<VehicleDbContext>>());
 
-                    SeedData.Initialize(context).Wait();
+                    SeedData.Initialize(context).Wait();//good way for initializing id set automatically on savechanges
                 }
                 catch (Exception ex)
                 {
@@ -35,6 +37,8 @@ namespace Vehicles
                     logger.LogError(ex, "An error occurred seeding the DB.");
                 }
             }
+            #endregion
+            //end of section
 
             host.Run();
         }

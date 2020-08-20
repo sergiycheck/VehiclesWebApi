@@ -40,7 +40,12 @@ namespace Vehicles
             services.AddDbContext<VehicleDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("VehiclesDbConnection")));
-            
+
+            //services.AddDbContext<VehicleDbContext>(opt =>
+            //   opt.UseInMemoryDatabase("VehiclesDbConnection"));//for testing
+
+
+
             services.AddTransient<ICarOwnersRepository,CarOwnersRepository>();
             services.AddTransient<ICarsRepository,CarsRepository>();
 

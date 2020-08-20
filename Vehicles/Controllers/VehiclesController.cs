@@ -13,48 +13,39 @@ namespace Vehicles.Controllers
     [ApiController]
     public class VehiclesController : ControllerBase
     {
-        private readonly ICarOwnerService _carOwnerService;
         private readonly ICarService _carService;
         private readonly ILogger<VehiclesController> _logger;
 
-        public VehiclesController(ICarOwnerService carOwnerService,ICarService carService,ILogger<VehiclesController> logger)
+        public VehiclesController(ICarService carService,ILogger<VehiclesController> logger)
         {
-            _carOwnerService = carOwnerService;
             _carService = carService;
             _logger = logger;
         }
 
-        // GET api/<VehiclesController>/QC-3805-OM
-        [HttpGet("{uniqueNumber}")]
-        public async Task<ActionResult<IEnumerable<CarOwner>>> GetOwnersByCarUniqueNumber(string uniqueNumber)
-        {
-            var res = await _carOwnerService.GetCarOwners(uniqueNumber);
-            _logger.LogInformation($"Getting car owners by uniqueNumber {uniqueNumber}",res);
-            return res;
-        }
 
         // GET api/<VehiclesController>/
         [HttpGet]
         public ActionResult<string> DefaultGet() 
         {
-            return "An API about vehicles and owners";
+            return Content("An API about vehicles and owners");
         }
         // GET api/<VehiclesController>/cars
-        [HttpGet("Cars")]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<Car>>> GetCars()
         {
-            return await _carService.GetAllCars();
+            var result = await _carService.GetAllCars();
+            return Ok(result);
         }
-        // GET api/<VehiclesController>/owners
-        [HttpGet("Owners")]
-        public async Task<ActionResult<IEnumerable<CarOwner>>> GetOwners()
+        //Get api/vehicles/car/{id}
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Car>> GetCarById(int? id)
         {
-            return await _carOwnerService.GetAllCarOwners();
+            return Ok(await _carService.GetById(id));
         }
 
         //use postman post method or visual studio code extensions to send post method with existing carOwner json data that can be retrieved from get method for CarOwners
-        // POST api/<VehiclesController>
-        [HttpPost]
+        // POST api/<VehiclesController>/get_cars_by_owner
+        [HttpPost("get_cars_by_owner")]
         public async Task<ActionResult<IEnumerable<Car>>> GetCarsByCarOwner([FromBody] CarOwner value)
         {
             var res = await _carService.GetCars(value);
@@ -62,16 +53,38 @@ namespace Vehicles.Controllers
             return res;
         }
 
-        // PUT api/<VehiclesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("add")]
+        public async Task<ActionResult<Car>> PostCarItem([FromBody] Car car)
         {
+            await _carService.Create(car);//changes entity state to added and execute save changes that produces insert command
+            return CreatedAtAction(nameof(PostCarItem), new { brand = car.Brand }, car);
         }
 
-        // DELETE api/<VehiclesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+
+        // PUT api/<VehiclesController>/update/5
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> Put(int? id, [FromBody] Car car)
         {
+            if (id != car.Id)
+                return BadRequest();
+            await _carService.Update(car);
+            return Content($"Car with id {car.Id} and unique number {car.UniqueNumber} successfully updated");
+        }
+
+        // DELETE api/<VehiclesController>/delete/5
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id != null) 
+            {
+                if (_carService.EntityExists((int)id))
+                {
+                    await _carService.Delete(id);
+                    return Content($"Car with id {id} was successfully deleted");
+                }
+            }
+            return BadRequest();
+            
         }
     }
 }

@@ -129,7 +129,7 @@ namespace VehiclesXUnitTests
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
 
-                    var controller = new VehiclesController(carOwnerService, carService, logger);
+                    var controller = new CarOwnersController(carOwnerService, logger);
 
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Cars.AsNoTracking().ToHashSet().Count);
@@ -162,7 +162,7 @@ namespace VehiclesXUnitTests
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
 
-                    var controller = new VehiclesController(carOwnerService, carService, logger);
+                    var controller = new VehiclesController( carService, logger);
 
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.CarOwners.AsNoTracking().ToHashSet().Count);
@@ -253,6 +253,48 @@ namespace VehiclesXUnitTests
                 }
             }
         }
+        [Fact]
+        public async Task TestVehicleController_PostVehicle()
+        {
+            using (var transaction = Fixture.Connection.BeginTransaction())
+            {
+                using (var context = Fixture.CreateContext(transaction))
+                {
+                    await SeedData.Initialize(context);
+                    var carsRepo = new CarsRepository(context);
+
+                    var carService = new CarService(carsRepo);
+
+                    var mockLogger = new Mock<ILogger<VehiclesController>>();
+                    ILogger<VehiclesController> logger = mockLogger.Object;
+
+                    var controller = new VehiclesController(carService, logger);
+
+                    var testCar = new Car
+                    {
+                        Brand = "Test",
+                        Price = 23.4m,
+                        Date = DateTime.Now,
+                        CarEngine = 3,
+                        Color = "Grey",
+                        Description = "test",
+                        Drive = "Mixed",
+                        Transmision = "Auto",
+                        UniqueNumber = SeedData.GenerateRandomRegistrationPlateNumber()
+                    };
+
+                    var res = await controller.PostCarItem(testCar);
+
+                    Assert.NotNull(res);
+                    var car = await context.Cars.AsNoTracking().SingleOrDefaultAsync(c=>c.UniqueNumber==testCar.UniqueNumber);
+
+                    Assert.NotNull(car);
+                }
+            }
+        }
+
+
+
 
     }
 }
