@@ -56,7 +56,8 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    await seed.Initialize(context);
 
                     Assert.NotNull(context.CarOwners);
                     Assert.NotNull(context.Cars);
@@ -72,7 +73,8 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    await seed.Initialize(context);
                     var carOwnerRepo = new CarOwnersRepository(context);
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Cars.AsNoTracking().ToHashSet().Count);
@@ -96,7 +98,8 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    await seed.Initialize(context);
                     var carsRepo = new CarsRepository(context);
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.CarOwners.AsNoTracking().ToHashSet().Count);
@@ -119,7 +122,8 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    await seed.Initialize(context);
                     var carsRepo = new CarsRepository(context);
                     var carOwnerRepo = new CarOwnersRepository(context);
 
@@ -152,7 +156,8 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    await seed.Initialize(context);
                     var carsRepo = new CarsRepository(context);
                     var carOwnerRepo = new CarOwnersRepository(context);
 
@@ -188,7 +193,8 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    await seed.Initialize(context);
 
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.CarOwners.AsNoTracking().ToHashSet().Count);
@@ -224,7 +230,8 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    await seed.Initialize(context);
                     var carOwnerRepo = new CarOwnersRepository(context);
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Cars.AsNoTracking().ToHashSet().Count);
@@ -260,7 +267,8 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    await seed.Initialize(context);
                     var carsRepo = new CarsRepository(context);
 
                     var carService = new CarService(carsRepo);

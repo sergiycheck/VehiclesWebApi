@@ -14,7 +14,7 @@ using Vehicles.Helpers;
 namespace Vehicles.Data
 {
 
-    public static class SeedData
+    public  class SeedData
     {
         private static StringBuilder GetChars(Random rnd)
         {
@@ -28,7 +28,7 @@ namespace Vehicles.Data
 
             return builder;
         }
-        public static string GenerateRandomRegistrationPlateNumber()
+        public static  string GenerateRandomRegistrationPlateNumber()
         {
             Random rnd = new Random();
             string middle = "";
@@ -46,10 +46,10 @@ namespace Vehicles.Data
             return string.Format($"{part1}-{middle}-{part2}");
         }
 
-        public static Car[] Cars { get; set; } = {
+        public  Car[] Cars { get; set; } = {
                new Car()
                {
-                    Id = 1,
+
                     Brand = "Kia Mohave OFFICIAL FULL AWD",
                     CarEngine = 3,
                     Color = "Grey",
@@ -62,7 +62,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 2,
+                    
                     Brand = "Toyota Camry MAX 2004",
                     CarEngine = 3,
                     Color = "Black",
@@ -75,7 +75,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 3,
+                    
                     Brand = "Lincoln Continental 2016",
                     CarEngine = 3.7F,
                     Color = "Black",
@@ -88,7 +88,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 4,
+                    
                     Brand = "Renault Talisman 2017",
                     CarEngine = 1.5F,
                     Color = "Grey",
@@ -101,7 +101,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 5,
+                    
                     Brand = "Kia Ceed 1.6 crdi 2007",
                     CarEngine = 1.6F,
                     Color = "Black",
@@ -114,7 +114,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 6,
+                   
                     Brand = "Mazda CX-9 Signature 2018",
                     CarEngine = 2.5F,
                     Color = "Grey metalic",
@@ -127,12 +127,12 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 7,
+                    
                     Brand = "Porsche Panamera 2010",
                     CarEngine = 4.8F,
                     Color = "Grey",
                     Date = DateTime.Parse("04.05.2020"),
-                    Description = "Condition Garage storage • Service book • First owner • Not bit • Not painted • Individual equipment Security Central locking • Airbag • ABS • Immobilizer • Alarm • ABD • Air suspension • ESP • Halogen headlights • Servo steering",
+                    Description = "Condition Garage storage ï¿½ Service book ï¿½ First owner ï¿½ Not bit ï¿½ Not painted ï¿½ Individual equipment Security Central locking ï¿½ Airbag ï¿½ ABS ï¿½ Immobilizer ï¿½ Alarm ï¿½ ABD ï¿½ Air suspension ï¿½ ESP ï¿½ Halogen headlights ï¿½ Servo steering",
                     Drive = "Full",
                     Price = 27600,
                     Transmision = "Auto",
@@ -140,7 +140,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 8,
+                    
                     Brand = "Mercedes-Benz C 200 2010",
                     CarEngine = 2.2F,
                     Color = "Grey",
@@ -153,7 +153,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 9,
+                   
                     Brand = "Toyota Camry MAX 2004",
                     CarEngine = 3,
                     Color = "Black",
@@ -166,7 +166,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 10,
+                    
                     Brand = "Volkswagen Passat B6 IDEAL",
                     CarEngine = 2,
                     Color = "Black",
@@ -179,7 +179,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 11,
+                    
                     Brand = "Opel Zafira COMFORT LINE IDEAL 2009",
                     CarEngine = 1.7F,
                     Color = "Black",
@@ -192,7 +192,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 12,
+                    
                     Brand = "Volkswagen Passat B7 Highline 2014",
                     CarEngine = 2,
                     Color = "Beige",
@@ -205,7 +205,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 13,
+                    
                     Brand = "Lexus RC 350 AWD 2015",
                     CarEngine = 3.5F,
                     Color = "Grey",
@@ -218,7 +218,7 @@ namespace Vehicles.Data
                },
                new Car()
                {
-                    Id = 14,
+                    
                     Brand = "Mercedes-Benz G 63 AMG 2020",
                     CarEngine = 4F,
                     Color = "Black",
@@ -230,10 +230,10 @@ namespace Vehicles.Data
                     UniqueNumber = GenerateRandomRegistrationPlateNumber()
                }
         };
-        public static CarOwner[] CarOwners { get; set; } = {
+        public  CarOwner[] CarOwners { get; set; } = {
                 new CarOwner()
                 {
-                     Id = 1,
+                     
                      BirthDate = DateTime.Parse("1988-02-06"),
                      CarOwnerPhone = "1-770-736-8031",
                      Location = "Wisokyburgh",
@@ -243,7 +243,7 @@ namespace Vehicles.Data
                 },
                 new CarOwner()
                 {
-                     Id = 2,
+                     
                      BirthDate = DateTime.Parse("1978-07-26"),
                      CarOwnerPhone = "010-692-6593",
                      Location = "Victor Plains",
@@ -254,7 +254,7 @@ namespace Vehicles.Data
 
                 new CarOwner()
                 {
-                     Id = 3,
+                     
                      BirthDate = DateTime.Parse("1991-06-14"),
                      CarOwnerPhone = "010-692-6593",
                      Location = "Wisokyburgh",
@@ -265,7 +265,7 @@ namespace Vehicles.Data
 
                 new CarOwner()
                 {
-                     Id = 4,
+                    
                      BirthDate = DateTime.Parse("1988-02-15"),
                      CarOwnerPhone = "1-463-123-4447",
                      Location = "Hoeger Mall",
@@ -276,7 +276,7 @@ namespace Vehicles.Data
 
                 new CarOwner()
                 {
-                     Id = 5,
+                     
                      BirthDate = DateTime.Parse("1976-02-04"),
                      CarOwnerPhone = "493-170-9623",
                      Location = "Douglas",
@@ -287,7 +287,7 @@ namespace Vehicles.Data
 
                 new CarOwner()
                 {
-                     Id = 6,
+                     
                      BirthDate = DateTime.Parse("1989-02-01"),
                      CarOwnerPhone = "254-954-1289",
                      Location = "Formerhoekweg",
@@ -298,7 +298,7 @@ namespace Vehicles.Data
 
                 new CarOwner()
                 {
-                     Id = 7,
+                     
                      BirthDate = DateTime.Parse("1988-02-19"),
                      CarOwnerPhone = "477-935-8478",
                      Location = "Wisokyburgh",
@@ -309,7 +309,7 @@ namespace Vehicles.Data
 
                 new CarOwner()
                 {
-                     Id = 8,
+                     
                      BirthDate = DateTime.Parse("1988-02-04"),
                      CarOwnerPhone = "757-146-1278",
                      Location = "Formerhoekweg",
@@ -320,7 +320,7 @@ namespace Vehicles.Data
 
                 new CarOwner()
                 {
-                     Id = 9,
+                     
                      BirthDate = DateTime.Parse("1988-02-25"),
                      CarOwnerPhone = "210-067-6132",
                      Location = "Pune",
@@ -331,7 +331,7 @@ namespace Vehicles.Data
 
                 new CarOwner()
                 {
-                     Id = 10,
+                     
                      BirthDate = DateTime.Parse("1988-02-14"),
                      CarOwnerPhone = "525-062-428",
                      Location = "Santiago",
@@ -342,7 +342,7 @@ namespace Vehicles.Data
 
                 new CarOwner()
                 {
-                     Id = 11,
+                     
                      BirthDate = DateTime.Parse("1988-02-17"),
                      CarOwnerPhone = "550-067-132",
                      Location = "Cairo",
@@ -351,7 +351,7 @@ namespace Vehicles.Data
                      Patronymic = "Pablo"
                 }
         };
-        public static List<ManyToManyCarOwner> ManyToManyCarOwners
+        public  List<ManyToManyCarOwner> ManyToManyCarOwners
         {
             get 
             {
@@ -380,7 +380,7 @@ namespace Vehicles.Data
                 return manyToManyCarOwner;
             }
         }
-        public static async Task Initialize(VehicleDbContext context)
+        public async Task Initialize(VehicleDbContext context)
         {
             if (!context.Cars.Any()) 
             {

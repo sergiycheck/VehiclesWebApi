@@ -44,9 +44,10 @@ namespace Vehicles.Data
         }
         private void InitializeDb(ModelBuilder builder) 
         {
-            builder.Entity<Car>().HasData(SeedData.Cars);
-            builder.Entity<CarOwner>().HasData(SeedData.CarOwners);
-            builder.Entity<ManyToManyCarOwner>().HasData(SeedData.ManyToManyCarOwners);
+            var seed = new SeedData();
+            builder.Entity<Car>().HasData(seed.Cars);
+            builder.Entity<CarOwner>().HasData(seed.CarOwners);
+            builder.Entity<ManyToManyCarOwner>().HasData(seed.ManyToManyCarOwners);
         }
     }
 }

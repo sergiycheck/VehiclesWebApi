@@ -29,7 +29,8 @@ namespace Vehicles
                     var context = new VehicleDbContext(
                                 services.GetRequiredService<DbContextOptions<VehicleDbContext>>());
 
-                    SeedData.Initialize(context).Wait();//good way for initializing id set automatically on savechanges
+                    var seed = new SeedData();
+                    seed.Initialize(context).Wait();//good way for initializing id set automatically on savechanges
                 }
                 catch (Exception ex)
                 {
