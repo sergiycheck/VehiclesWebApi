@@ -21,6 +21,11 @@ namespace Vehicles.Services
             return await _repository.GetAll().ToListAsync();
         }
 
+        public async Task<CarOwner> GetById(int? id)
+        {
+            return await _repository.GetById(id);
+        }
+
         public async Task<List<CarOwner>> GetCarOwners(string UniqueNumber)
         {
             return await _repository.GetCarOwners(UniqueNumber);

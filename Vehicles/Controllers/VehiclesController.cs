@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Vehicles.Interfaces.ServiceInterfaces;
 using Vehicles.Models;
+using Microsoft.AspNetCore.Cors;
 
 namespace Vehicles.Controllers
 {
+    [EnableCors(Startup.MyAllowSpecificOrigins)]
     [Route("api/[controller]")]
     [ApiController]
     public class VehiclesController : ControllerBase

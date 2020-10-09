@@ -9,5 +9,6 @@ namespace Vehicles.Interfaces.ServiceInterfaces
     {
         Task<List<CarOwner>> GetCarOwners(string UniqueNumber);
         Task<List<CarOwner>> GetAllCarOwners();
+        Task<CarOwner> GetById(int? id);
     }
 }

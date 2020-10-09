@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Vehicles.Interfaces.ServiceInterfaces;
 using Vehicles.Models;
+using Microsoft.AspNetCore.Cors;
 
 namespace Vehicles.Controllers
 {
+    [EnableCors(Startup.MyAllowSpecificOrigins)]
     [Route("api/[controller]")]
     [ApiController]
     public class CarOwnersController : ControllerBase
@@ -37,15 +39,20 @@ namespace Vehicles.Controllers
             return "An API about vehicles and owners";
         }
 
-        [HttpGet("Owners")]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<CarOwner>>> GetOwners()
         {
             return await _carOwnerService.GetAllCarOwners();
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<CarOwner>> GetOwnerById(int? id)
+        {
+            return Ok(await _carOwnerService.GetById(id));
+        }
         //use postman post method or visual studio code extensions to send post method with existing carOwner json data that can be retrieved from get method for CarOwners
-       
-       
+
+
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
