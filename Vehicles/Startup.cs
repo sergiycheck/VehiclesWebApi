@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vehicles.Installers.Implementations;
+using AutoMapper;
+using System;
 
 namespace Vehicles
 {
@@ -21,6 +23,7 @@ namespace Vehicles
         public void ConfigureServices(IServiceCollection services)
         {
             services.InstallServicesInAssembly(Configuration);
+            //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());//typeof(StartUp)
 
         }
 

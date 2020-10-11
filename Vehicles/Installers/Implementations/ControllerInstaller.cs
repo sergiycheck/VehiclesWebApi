@@ -5,6 +5,8 @@ using Vehicles.Interfaces.RepositoryInterfaces;
 using Vehicles.Interfaces.ServiceInterfaces;
 using Vehicles.Repositories;
 using Vehicles.Services;
+using Microsoft.AspNetCore.Http;
+using Vehicles.MyCustomMapper;
 
 namespace Vehicles.Installers.Implementations
 {
@@ -12,6 +14,7 @@ namespace Vehicles.Installers.Implementations
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
+            services.AddHttpContextAccessor();
             services.AddCors(options =>
             {
                 options.AddPolicy(name: Startup.MyAllowSpecificOrigins,
@@ -39,6 +42,14 @@ namespace Vehicles.Installers.Implementations
 
             services.AddTransient<ICarOwnerService, CarOwnerService>();
             services.AddTransient<ICarService, CarService>();
+            services.AddTransient<ICustomMapper,CustomMapper>();
+
+            services.AddSingleton<IUriService>(provider=>{
+                var accessor = provider.GetRequiredService<IHttpContextAccessor>();
+                var request = accessor.HttpContext.Request;//http or https
+                var absoluteUri = $"{request.Scheme}://{request.Host.ToUriComponent()}/";
+                return new UriService(absoluteUri);
+            });
         }
     }
 }

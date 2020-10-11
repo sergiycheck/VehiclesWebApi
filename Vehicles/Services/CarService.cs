@@ -48,17 +48,18 @@ namespace Vehicles.Services
             return await _repository.GetCars(carOwner);
         }
 
-        public async Task Update(Car entity)
+        public async Task<int> Update(Car entity)
         {
             _repository.Update(entity);
             try
             {
-                await _repository.SaveChangesAsync();
+                return await _repository.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
 
             }
+            return 0;
             
         }
     }

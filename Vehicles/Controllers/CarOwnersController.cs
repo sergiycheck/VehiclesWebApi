@@ -7,59 +7,85 @@ using Microsoft.Extensions.Logging;
 using Vehicles.Interfaces.ServiceInterfaces;
 using Vehicles.Models;
 using Microsoft.AspNetCore.Cors;
+using Vehicles.Contracts.V1;
+using Vehicles.Services;
+using Vehicles.Contracts.V1.Responses;
+using Vehicles.MyCustomMapper;
+using Vehicles.Contracts.Responces;
+using Vehicles.Contracts.Requests;
 
 namespace Vehicles.Controllers
 {
     [EnableCors(Startup.MyAllowSpecificOrigins)]
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
     [ApiController]
     public class CarOwnersController : ControllerBase
     {
         private readonly ICarOwnerService _carOwnerService;
         private readonly ILogger<VehiclesController> _logger;
-
-        public CarOwnersController(ICarOwnerService carOwnerService,ILogger<VehiclesController> logger)
+        private readonly IUriService _uriService;
+        private readonly ICustomMapper _customMapper;               
+        public CarOwnersController(
+            ICarOwnerService carOwnerService,
+            ILogger<VehiclesController> logger,
+            IUriService uriService,
+            ICustomMapper customMapper)
         {
             _carOwnerService = carOwnerService;
             _logger = logger;
+            _uriService = uriService;
+            _customMapper = customMapper;
         }
 
-        // GET api/CarOwners/QC-3805-OM
-        [HttpGet("{uniqueNumber}")]
-        public async Task<ActionResult<IEnumerable<CarOwner>>> GetOwnersByCarUniqueNumber(string uniqueNumber)
+        [HttpGet(ApiRoutes.Owners.GetOwnersByCarUniqueNumber)]
+        public async Task<ActionResult> GetOwnersByCarUniqueNumber(string uniqueNumber)
         {
             var res = await _carOwnerService.GetCarOwners(uniqueNumber);
             _logger.LogInformation($"Getting car owners by uniqueNumber {uniqueNumber}",res);
-            return res;
+            var ownersResponces = new List<OwnerResponce>();
+            res.ForEach(o=>ownersResponces.Add(_customMapper.OwnerToOwnerResponse(o)));
+            return Ok(new Response<OwnerResponce[]>(ownersResponces.ToArray()));
         }
 
-        [HttpGet]
+        [HttpGet(ApiRoutes.Owners.Default)]
         public ActionResult<string> DefaultGet() 
         {
-            return "An API about vehicles and owners";
+            return Ok(new Response<string>("An API about vehicles and owners"));
         }
 
-        [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<CarOwner>>> GetOwners()
+        [HttpGet(ApiRoutes.Owners.GetAll)]
+        public async Task<ActionResult<IEnumerable<OwnerResponce>>> GetOwners()
         {
-            return await _carOwnerService.GetAllCarOwners();
+            var owners = await _carOwnerService.GetAllCarOwners();
+            var ownersResponces = new List<OwnerResponce>();
+            owners.ForEach(o=>ownersResponces.Add(_customMapper.OwnerToOwnerResponse(o)));
+            return Ok(new Response<OwnerResponce[]>(ownersResponces.ToArray()));
+
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<CarOwner>> GetOwnerById(int? id)
+        [HttpGet(ApiRoutes.Owners.Get)]
+        public async Task<ActionResult<OwnerResponce>> GetOwnerById(int? id)
         {
-            return Ok(await _carOwnerService.GetById(id));
+            return Ok(
+                new Response<OwnerResponce>(
+                    _customMapper.OwnerToOwnerResponse(
+                        await _carOwnerService.GetById(id))));
         }
         //use postman post method or visual studio code extensions to send post method with existing carOwner json data that can be retrieved from get method for CarOwners
 
+        [HttpPost(ApiRoutes.Owners.Create)]
+        public IActionResult Create([FromBody] CarOwner owner)
+        {
+            return Ok();
+        }
 
-        [HttpPut("{id}")]
+        [HttpPut(ApiRoutes.Owners.Update)]
         public void Put(int id, [FromBody] string value)
         {
         }
 
        
-        [HttpDelete("{id}")]
+        [HttpDelete(ApiRoutes.Owners.Delete)]
         public void Delete(int id)
         {
         }
