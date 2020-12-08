@@ -4,15 +4,17 @@ using System.Linq;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Vehicles.Models;
-using Vehicles.Data;
+
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Vehicles.Data
 {
-    public class VehicleDbContext : DbContext
+    public class VehicleDbContext : IdentityDbContext<CustomUser>
     {
         public DbSet<Car> Cars{get;set;}
         public DbSet<CarOwner> CarOwners{get;set;}
         public DbSet<ManyToManyCarOwner> ManyToManyCarOwners{get;set;}
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public VehicleDbContext(DbContextOptions<VehicleDbContext> options)
             : base(options)
         {
@@ -20,7 +22,7 @@ namespace Vehicles.Data
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            //base.OnModelCreating(builder);
+            base.OnModelCreating(builder);
             builder.Entity<ManyToManyCarOwner>()
                 .HasKey(mtm=>new{mtm.CarOwnerId,mtm.CarId});
 

@@ -14,6 +14,10 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Vehicles.Services;
 using Microsoft.AspNetCore.Mvc;
+using Vehicles.MyCustomMapper;
+using Vehicles.Contracts.Requests;
+using Vehicles.Contracts.Responces;
+using Vehicles.Contracts.V1.Responses;
 
 namespace VehiclesXUnitTests
 {
@@ -133,7 +137,11 @@ namespace VehiclesXUnitTests
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
 
-                    var controller = new CarOwnersController(carOwnerService, logger);
+                    var controller = new CarOwnersController(
+                        carOwnerService, 
+                        logger,
+                        new UriService("https://localhost:5010"),
+                        new CustomMapper());
 
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Cars.AsNoTracking().ToHashSet().Count);
@@ -142,8 +150,7 @@ namespace VehiclesXUnitTests
                     var res = await controller.GetOwnersByCarUniqueNumber(car.UniqueNumber);
 
                     Assert.NotNull(res);
-                    Assert.IsAssignableFrom<ActionResult<IEnumerable<CarOwner>>>(res);
-                    Assert.IsAssignableFrom<IEnumerable<CarOwner>>(res.Value);
+                    Assert.IsAssignableFrom<OkObjectResult>(res);
 
                 }
             }
@@ -167,20 +174,22 @@ namespace VehiclesXUnitTests
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
 
-                    var controller = new VehiclesController( carService, logger);
+                    var controller = new VehiclesController( 
+                        carService, 
+                        logger,
+                        new UriService("https://localhost:5010"),
+                        new CustomMapper());
 
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.CarOwners.AsNoTracking().ToHashSet().Count);
                     var owner = context.CarOwners.AsNoTracking().ToList()[index];
                     var resJson = JsonConvert.SerializeObject(owner);
-                    var deserializedOwner = JsonConvert.DeserializeObject<CarOwner>(resJson);
+                    var deserializedOwner = JsonConvert.DeserializeObject<OwnerRequest>(resJson);
 
                     var res = await controller.GetCarsByCarOwner(deserializedOwner);
 
                     Assert.NotNull(res);
-                    Assert.IsAssignableFrom<ActionResult<IEnumerable<Car>>>(res);
-                    Assert.IsAssignableFrom<IEnumerable<Car>>(res.Value);
-
+                    Assert.IsAssignableFrom<OkObjectResult>(res);
                 }
             }
 
@@ -276,9 +285,13 @@ namespace VehiclesXUnitTests
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
 
-                    var controller = new VehiclesController(carService, logger);
+                    var controller = new VehiclesController(
+                        carService, 
+                        logger,
+                        new UriService("https://localhost:5010/"),
+                        new CustomMapper());
 
-                    var testCar = new Car
+                    var testCar = new CarRequest
                     {
                         Brand = "Test",
                         Price = 23.4m,

@@ -7,6 +7,13 @@ using Vehicles.Repositories;
 using Vehicles.Services;
 using Microsoft.AspNetCore.Http;
 using Vehicles.MyCustomMapper;
+using Vehicles.Options;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using  Vehicles.Interfaces;
+using Vehicles.AuthorizationsManagers;
 
 namespace Vehicles.Installers.Implementations
 {
@@ -36,6 +43,34 @@ namespace Vehicles.Installers.Implementations
                 options.JsonSerializerOptions.Converters.Add(new IntToStringConverter());
             });
 
+            var jwtSettings = new JwtSettings();
+            configuration.Bind(nameof(jwtSettings),jwtSettings);//appsettings.json/jswsettings
+            services.AddSingleton(jwtSettings);
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RequireExpirationTime = false,
+                ValidateLifetime = true
+            };
+            services.AddSingleton(tokenValidationParameters);
+
+            services.AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(x =>
+                {
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = tokenValidationParameters;
+                });
+
+
 
             services.AddTransient<ICarOwnersRepository, CarOwnersRepository>();
             services.AddTransient<ICarsRepository, CarsRepository>();
@@ -43,6 +78,10 @@ namespace Vehicles.Installers.Implementations
             services.AddTransient<ICarOwnerService, CarOwnerService>();
             services.AddTransient<ICarService, CarService>();
             services.AddTransient<ICustomMapper,CustomMapper>();
+            
+            services.AddScoped<ICustomUserManager,CustomUserManager>();
+            services.AddScoped<ICustomSignInManager,CustomSignInManager>();
+            services.AddScoped<IIdentityService,IdentityService>();
 
             services.AddSingleton<IUriService>(provider=>{
                 var accessor = provider.GetRequiredService<IHttpContextAccessor>();
@@ -50,6 +89,7 @@ namespace Vehicles.Installers.Implementations
                 var absoluteUri = $"{request.Scheme}://{request.Host.ToUriComponent()}/";
                 return new UriService(absoluteUri);
             });
+            
         }
     }
 }

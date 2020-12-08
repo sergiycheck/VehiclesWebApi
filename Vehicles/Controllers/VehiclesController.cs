@@ -16,6 +16,7 @@ using Vehicles.Contracts.Requests;
 
 namespace Vehicles.Controllers
 {
+    
     [EnableCors(Startup.MyAllowSpecificOrigins)]
     // [Route("api/[controller]")]
     [ApiController]

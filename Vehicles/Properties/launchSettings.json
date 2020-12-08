@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/Vehicles",
+      "launchUrl": "api/v1/vehicles/default",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -20,7 +20,7 @@
     "Vehicles": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/Vehicles",
+      "launchUrl": "api/v1/vehicles/default",
       "applicationUrl": "https://localhost:5010;http://localhost:5009",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

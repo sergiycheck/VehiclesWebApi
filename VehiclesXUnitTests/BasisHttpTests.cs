@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
-using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Vehicles;
-using Vehicles.Models;
 using Xunit;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using Newtonsoft.Json;
-
+using Vehicles.Contracts.V1;
+using Vehicles.Contracts.V1.Responses;
+using Vehicles.Contracts.Responces;
 /// <summary>
 /// modified program startup context seedData
 /// another way is to start the app and start tests to test all methods
@@ -33,88 +33,91 @@ namespace VehiclesXUnitTests
         [Fact]
         public async Task GetApiVehiclesDefaultEndpoint()
         {
-            var url = "api/vehicles";
+            var url = ApiRoutes.Vehicles.Default;
             //Arrange
             var client = _factory.CreateClient();
             //Act
             var result = await client.GetAsync(url);
 
-            Assert.Equal(System.Net.HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
 
         }
         
         [Fact]
         public async Task GetApiVehiclesAll()
         {
-            var url = "api/vehicles/all";
+            var url = ApiRoutes.Vehicles.GetAll;
             //Arrange
             var client = _factory.CreateClient();
             //Act
             var result = await client.GetAsync(url);
             var carsJson = await client.GetStringAsync(url);
-            var cars = JsonConvert.DeserializeObject<List<Car>>(carsJson);
+            var cars = JsonConvert.DeserializeObject<Response<List<CarResponse>>>(carsJson);
 
             //Assert
-            Assert.IsAssignableFrom<List<Car>>(cars);
+            Assert.IsAssignableFrom<List<CarResponse>>(cars.Data);
             //Assert
-            Assert.Equal(System.Net.HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
         }
         [Fact]
         public async Task GetApiCarOwnersAll()
         {
-            var url = "api/CarOwners/all";
+            var url = ApiRoutes.Vehicles.GetAll;
             //Arrange
             var client = _factory.CreateClient();
             //Act
             var result = await client.GetAsync(url);
             var Json = await client.GetStringAsync(url);
-            var owners = JsonConvert.DeserializeObject<List<CarOwner>>(Json);
+            var owners = JsonConvert.DeserializeObject<Response<List<OwnerResponce>>>(Json);
 
             //Assert
-            Assert.IsAssignableFrom<List<CarOwner>>(owners);
+            Assert.IsAssignableFrom<List<OwnerResponce>>(owners.Data);
             //Assert
-            Assert.Equal(System.Net.HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, result.StatusCode);
         }
         [Fact]
         public async Task PostGetCarsByOwner()
         {
-            var url = "api/CarOwners/1";
+            var url = ApiRoutes.Owners.Get.Replace("{id:int}","3");
             //Arrange
             var client = _factory.CreateClient();
             //Act
             var result = await client.GetAsync(url);
             var Json = await client.GetStringAsync(url);
 
-            url = "api/vehicles/get_cars_by_owner";
-            var strContent = new StringContent(Json, Encoding.UTF8, "application/json");
+            url = ApiRoutes.Vehicles.GetCarsByOwner;
+            var strContent = new StringContent(Json, 
+                        Encoding.UTF8, "application/json");
             var response = await client.PostAsync(url, strContent);
             
             var carsJson = await response.Content.ReadAsStringAsync();
-            var cars = JsonConvert.DeserializeObject<List<Car>>(carsJson);
+            var cars = JsonConvert.DeserializeObject<Response<List<CarResponse>>>(carsJson);
             //Assert
-            Assert.IsAssignableFrom<List<Car>>(cars);
+            Assert.IsAssignableFrom<List<CarResponse>>(cars.Data);
             //Assert
-            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
         [Fact]
         public async Task GetOwnersByCarUniqueNumber() 
         {
-            var url = "api/vehicles/2";
+            var url = ApiRoutes.Vehicles.Get.Replace("{id:int}","2");
             //Arrange
             var client = _factory.CreateClient();
             //Act
             var JsonCar = await client.GetStringAsync(url);
-            var car = JsonConvert.DeserializeObject<Car>(JsonCar);
-            url = $"api/CarOwners/{car.UniqueNumber}";
+            var car = JsonConvert.DeserializeObject<Response<CarResponse>>(JsonCar);
+            url = ApiRoutes.Owners
+                    .GetOwnersByCarUniqueNumber
+                    .Replace("{uniqueNumber}",car.Data.UniqueNumber);
 
             var response = await client.GetAsync(url);
             var ownersJson = await response.Content.ReadAsStringAsync();
 
-            var owners = JsonConvert.DeserializeObject<List<CarOwner>>(ownersJson);
+            var owners = JsonConvert.DeserializeObject<Response<List<OwnerResponce>>>(ownersJson);
             //Assert
-            Assert.IsAssignableFrom<List<CarOwner>>(owners);
+            Assert.IsAssignableFrom<List<OwnerResponce>>(owners.Data);
             //Assert
-            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }
 }
