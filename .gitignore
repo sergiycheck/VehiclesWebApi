@@ -343,3 +343,4 @@ tasks.json
 settings.json
 *.txt
 *.docx
+*.sql

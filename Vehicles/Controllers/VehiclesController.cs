@@ -13,6 +13,9 @@ using Vehicles.Contracts.V1.Responses;
 using Vehicles.MyCustomMapper;
 using Vehicles.Contracts.Responces;
 using Vehicles.Contracts.Requests;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
 
 namespace Vehicles.Controllers
 {
@@ -55,7 +58,7 @@ namespace Vehicles.Controllers
             result.ForEach(c=>carResponses.Add(_customMapper.CarToCarResponse(c)));
             return Ok(new Response<CarResponse[]>(carResponses.ToArray()));
         }
-        
+        [Authorize]
         [HttpGet(ApiRoutes.Vehicles.Get)]
         public async Task<ActionResult<Car>> GetCarById(int? id)
         {
@@ -67,7 +70,7 @@ namespace Vehicles.Controllers
         }
 
         //use postman post method or visual studio code extensions to send post method with existing carOwner json data that can be retrieved from get method for CarOwners
-        
+        [Authorize]
         [HttpPost(ApiRoutes.Vehicles.GetCarsByOwner)]
         public async Task<ActionResult> GetCarsByCarOwner([FromBody] OwnerRequest value)
         {
@@ -78,6 +81,7 @@ namespace Vehicles.Controllers
             return Ok(new Response<CarResponse[]>(carsResponces.ToArray()));
         }
 
+        [Authorize]
         [HttpPost(ApiRoutes.Vehicles.Create)]
         public async Task<ActionResult> PostCarItem([FromBody] CarRequest carRequest)
         {
@@ -88,7 +92,7 @@ namespace Vehicles.Controllers
         }
 
 
-        
+        [Authorize]
         [HttpPut(ApiRoutes.Vehicles.Update)]
         public async Task<IActionResult> Put(int? id, [FromBody] CarRequest carRequest)
         {
@@ -101,7 +105,7 @@ namespace Vehicles.Controllers
             return NoContent();
         }
 
-        
+        [Authorize]
         [HttpDelete(ApiRoutes.Vehicles.Delete)]
         public async Task<IActionResult> Delete(int? id)
         {

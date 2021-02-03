@@ -14,6 +14,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using  Vehicles.Interfaces;
 using Vehicles.AuthorizationsManagers;
+using Vehicles.AuthorizationsManagers.Attributes;
+
 
 namespace Vehicles.Installers.Implementations
 {
@@ -58,16 +60,16 @@ namespace Vehicles.Installers.Implementations
             };
             services.AddSingleton(tokenValidationParameters);
 
-            services.AddAuthentication(x =>
+            services.AddAuthentication(authOpt =>
                 {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    authOpt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    authOpt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    authOpt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddJwtBearer(x =>
+                .AddJwtBearer(configureOptions =>
                 {
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = tokenValidationParameters;
+                    configureOptions.SaveToken = true;
+                    configureOptions.TokenValidationParameters = tokenValidationParameters;
                 });
 
 
@@ -82,6 +84,7 @@ namespace Vehicles.Installers.Implementations
             services.AddScoped<ICustomUserManager,CustomUserManager>();
             services.AddScoped<ICustomSignInManager,CustomSignInManager>();
             services.AddScoped<IIdentityService,IdentityService>();
+            //services.AddSingleton<IAuthorizationMiddlewareResultHandler, MyAuthorizationMiddlewareResultHandler>(); comment to see if error exists
 
             services.AddSingleton<IUriService>(provider=>{
                 var accessor = provider.GetRequiredService<IHttpContextAccessor>();
@@ -89,7 +92,7 @@ namespace Vehicles.Installers.Implementations
                 var absoluteUri = $"{request.Scheme}://{request.Host.ToUriComponent()}/";
                 return new UriService(absoluteUri);
             });
-            
+
         }
     }
 }

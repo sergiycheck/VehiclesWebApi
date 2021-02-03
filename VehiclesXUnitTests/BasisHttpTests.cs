@@ -11,20 +11,23 @@ using Newtonsoft.Json;
 using Vehicles.Contracts.V1;
 using Vehicles.Contracts.V1.Responses;
 using Vehicles.Contracts.Responces;
-/// <summary>
-/// modified program startup context seedData
-/// another way is to start the app and start tests to test all methods
-/// </summary>
+using Xunit.Abstractions;
+using System.Linq;
+
 namespace VehiclesXUnitTests
 {
     public class BasicHttpTests: IClassFixture<WebApplicationFactory<Startup>>
     {
         private readonly WebApplicationFactory<Startup> _factory;
-        public BasicHttpTests(WebApplicationFactory<Startup> factory) 
+        private readonly ITestOutputHelper _output;
+        public BasicHttpTests(WebApplicationFactory<Startup> factory, 
+                                ITestOutputHelper output) 
         {
             _factory = factory;
+            _output = output;
         }
-        private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+        private static readonly JsonSerializerOptions _jsonSerializerOptions = 
+                                                        new JsonSerializerOptions
         {
             IgnoreNullValues = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -58,22 +61,27 @@ namespace VehiclesXUnitTests
             Assert.IsAssignableFrom<List<CarResponse>>(cars.Data);
             //Assert
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+
+            cars.Data.ForEach(c => _output.WriteLine($"{c.Id}, {c.Brand}, {c.Date}, {c.Price}"));
         }
         [Fact]
         public async Task GetApiCarOwnersAll()
         {
-            var url = ApiRoutes.Vehicles.GetAll;
             //Arrange
+            var url = ApiRoutes.Vehicles.GetAll;     
             var client = _factory.CreateClient();
             //Act
             var result = await client.GetAsync(url);
             var Json = await client.GetStringAsync(url);
             var owners = JsonConvert.DeserializeObject<Response<List<OwnerResponce>>>(Json);
-
-            //Assert
-            Assert.IsAssignableFrom<List<OwnerResponce>>(owners.Data);
+            
             //Assert
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+            //Assert
+            Assert.IsAssignableFrom<List<OwnerResponce>>(owners.Data);
+
+
+            
         }
         [Fact]
         public async Task PostGetCarsByOwner()

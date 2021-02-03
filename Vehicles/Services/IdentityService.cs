@@ -98,10 +98,35 @@ namespace Vehicles.Services
             
             return await GenerateAuthenticationResultForUserAsync(user);
         }
+        
+        
+        private async Task<(List<Claim>,CustomUser)> AddRolesAndRoleClaimsAsync(List<Claim> claims,CustomUser user)
+        {
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var userRole in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRole));
+
+                var role = await _roleManager.FindByNameAsync(userRole);
+                if(role == null) continue;
+
+                var roleClaims = await _roleManager.GetClaimsAsync(role);
+                foreach (var roleClaim in roleClaims)
+                {
+                    if(claims.Contains(roleClaim))
+                        continue;
+
+                    claims.Add(roleClaim);
+                }
+            }
+            return (claims,user);
+        }
+
+
         private async Task<AuthenticationResult> GenerateAuthenticationResultForUserAsync(CustomUser user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
+            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+            var jwtSecretBytesKey = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
 
             var claims = new List<Claim>
             {
@@ -114,49 +139,36 @@ namespace Vehicles.Services
             var userClaims = await _userManager.GetClaimsAsync(user);
             claims.AddRange(userClaims);
 
-            var userRoles = await _userManager.GetRolesAsync(user);
-            foreach (var userRole in userRoles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, userRole));
-                var role = await _roleManager.FindByNameAsync(userRole);
-                if(role == null) continue;
-                var roleClaims = await _roleManager.GetClaimsAsync(role);
+            (claims,user) = await AddRolesAndRoleClaimsAsync(claims,user);
 
-                foreach (var roleClaim in roleClaims)
-                {
-                    if(claims.Contains(roleClaim))
-                        continue;
-
-                    claims.Add(roleClaim);
-                }
-            }
-            
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),
+                Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),//differece here! now 30 seconds
                 SigningCredentials =
-                    new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    new SigningCredentials(
+                        new SymmetricSecurityKey(jwtSecretBytesKey), 
+                        SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenFromTokenDescriptor = jwtSecurityTokenHandler.CreateToken(tokenDescriptor);
 
-            var refreshToken = new RefreshToken
+            var refreshTokenForUser = new RefreshToken
             {
-                JwtId = token.Id,
+                JwtId = tokenFromTokenDescriptor.Id,
                 UserId = user.Id,
                 CreationDate = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddMonths(6)
+                ExpiryDate = DateTime.UtcNow.AddMonths(6)//6 months to expire
             };
 
-            await _context.RefreshTokens.AddAsync(refreshToken);
+            await _context.RefreshTokens.AddAsync(refreshTokenForUser);
             await _context.SaveChangesAsync();
             
             return new AuthenticationResult
             {
                 Success = true,
-                Token = tokenHandler.WriteToken(token),
-                RefreshToken = refreshToken.Token
+                Token = jwtSecurityTokenHandler.WriteToken(tokenFromTokenDescriptor),
+                RefreshToken = refreshTokenForUser.Token
             };
         }
 
@@ -217,6 +229,13 @@ namespace Vehicles.Services
             return await GenerateAuthenticationResultForUserAsync(user);
         }
 
+        public async Task<CustomUser> GetUserFromToken(string token)
+        {
+            var validatedToken = GetPrincipalFromToken(token);
+            var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
+            return user;
+        }
+
         // public async Task<AuthenticationResult> LoginWithFacebookAsync(string accessToken)
         // {
         //     var validatedTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(accessToken);
@@ -257,7 +276,7 @@ namespace Vehicles.Services
         //     return await GenerateAuthenticationResultForUserAsync(user);
         // }
 
-        private ClaimsPrincipal GetPrincipalFromToken(string token)
+        public ClaimsPrincipal GetPrincipalFromToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -277,6 +296,22 @@ namespace Vehicles.Services
             {
                 return null;
             }
+        }
+
+
+        public async Task<int> RevokeToken(string token)
+        {
+            var user = await GetUserFromToken(token);
+            if(user==null) return 0;
+            var refreshToken = await _context.RefreshTokens.FirstOrDefaultAsync(r=>r.UserId==user.Id);
+            if(refreshToken!=null)
+            {
+                _context.RefreshTokens.Remove(refreshToken);
+                var res = await _context.SaveChangesAsync();
+                return res;
+            }
+            return 0;
+
         }
 
         private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)

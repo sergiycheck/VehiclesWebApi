@@ -46,6 +46,9 @@ namespace Vehicles.Contracts.V1
             public const string Register = Base + "/identity/register";
             
             public const string Refresh = Base + "/identity/refresh";
+            public const string Delete = Base + "/identity/delete";
+            public const string GetUser = Base + "/identity/get-user";
+            public const string RevokeToken = Base + "/identity/revoke";
             
             public const string FacebookAuth = Base + "/identity/auth/fb";
         }

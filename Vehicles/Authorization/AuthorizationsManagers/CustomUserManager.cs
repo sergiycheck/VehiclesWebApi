@@ -93,5 +93,9 @@ namespace Vehicles.AuthorizationsManagers
         {
             return base.CheckPasswordAsync(user,password);
         }
+        public override Task<IdentityResult> DeleteAsync(CustomUser user)
+        {
+            return base.DeleteAsync(user);
+        }
     }
 }

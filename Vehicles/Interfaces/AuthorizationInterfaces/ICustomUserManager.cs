@@ -24,5 +24,6 @@ namespace Vehicles.Interfaces
         public Task<IList<Claim>> GetClaimsAsync(CustomUser user);
         public Task<IList<string>> GetRolesAsync(CustomUser user);
         public Task<bool> CheckPasswordAsync(CustomUser user, string password);
+        public Task<IdentityResult> DeleteAsync(CustomUser user);
     }
 }
