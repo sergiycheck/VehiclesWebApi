@@ -8,8 +8,8 @@ namespace Vehicles.Helpers
     public class CustomPair
     {
         public int First { get; private set; }
-        public int Second { get; private set; }
-        public CustomPair(int first, int second)
+        public string Second { get; private set; }
+        public CustomPair(int first, string second)
         {
             this.First = first;
             this.Second = second;

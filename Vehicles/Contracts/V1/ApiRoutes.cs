@@ -30,13 +30,13 @@ namespace Vehicles.Contracts.V1
             public const string GetAll = Base + "/owners";
             public const string Default = GetAll+"/default";
             
-            public const string GetOwnersByCarUniqueNumber = GetAll+"/{uniqueNumber}";
-            public const string Get = GetAll + "/{id:int}";
+            public const string GetOwnersByCarUniqueNumber = GetAll+"/vehicle-unique-number/{uniqueNumber}";
+            public const string Get = GetAll + "/{id}";
             
-            public const string Create = GetAll + "/create";
-            public const string Update = GetAll + "/update/{id:int}";
+            //public const string Create = GetAll + "/create";
+            //public const string Update = GetAll + "/update/{id:int}";
             
-            public const string Delete = GetAll + "/delete/{id:int}";
+            //public const string Delete = GetAll + "/delete/{id:int}";
         }
 
         public static class Identity

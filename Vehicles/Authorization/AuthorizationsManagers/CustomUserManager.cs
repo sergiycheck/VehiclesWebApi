@@ -34,7 +34,7 @@ namespace Vehicles.AuthorizationsManagers
         {
         }
         public new IdentityOptions Options{get=> base.Options;set=>base.Options=value;}//not sure here
-        
+        public override IQueryable<CustomUser> Users{get =>base.Users;}
         public override Task<IdentityResult> CreateAsync(CustomUser user, string password)
         {
             return base.CreateAsync(user, password);

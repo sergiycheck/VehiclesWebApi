@@ -13,6 +13,8 @@ using Vehicles.Contracts.V1.Responses;
 using Vehicles.Contracts.Responces;
 using Xunit.Abstractions;
 using System.Linq;
+using Vehicles.Contracts.V1.Requests;
+using System.Net.Http.Headers;
 
 namespace VehiclesXUnitTests
 {
@@ -83,28 +85,68 @@ namespace VehiclesXUnitTests
 
             
         }
+
+        public async Task<AuthSuccessResponse> GetLoginResponse() 
+        {
+            var userLoginRequest = new UserLoginRequest()
+            {
+                Email = "testname@domain.com",
+                Password = "test124!StrongPass"
+            };
+
+            var url = ApiRoutes.Identity.Login;
+
+
+            var client = _factory.CreateClient();
+
+            var jsonLoginRequest = JsonConvert.SerializeObject(userLoginRequest);
+            var strContent = new StringContent(
+                                jsonLoginRequest,
+                                Encoding.UTF8,
+                                "application/json");
+
+            var loginResponse = await client.PostAsync(url, strContent);
+            var jsonLoginResponce = await loginResponse.Content.ReadAsStringAsync();
+            var authSuccessLoginResponce
+                        = JsonConvert
+                            .DeserializeObject<AuthSuccessResponse>(jsonLoginResponce);
+
+            return authSuccessLoginResponce;
+        }
+
         [Fact]
         public async Task PostGetCarsByOwner()
         {
-            var url = ApiRoutes.Owners.Get.Replace("{id:int}","3");
+            //todo add logging...
+
+            var url = ApiRoutes.Owners.Get.Replace("{id}", "2d0aeabf-60fc-475d-ab67-f51f340ba8c3");
             //Arrange
             var client = _factory.CreateClient();
             //Act
             var result = await client.GetAsync(url);
             var Json = await client.GetStringAsync(url);
 
+            var authSuccessLoginResponce = await GetLoginResponse();
+
             url = ApiRoutes.Vehicles.GetCarsByOwner;
+
             var strContent = new StringContent(Json, 
                         Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(url, strContent);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authSuccessLoginResponce.Token);
+            var response = await client.PostAsync(url,strContent);
             
             var carsJson = await response.Content.ReadAsStringAsync();
             var cars = JsonConvert.DeserializeObject<Response<List<CarResponse>>>(carsJson);
             //Assert
             Assert.IsAssignableFrom<List<CarResponse>>(cars.Data);
-            //Assert
+
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            Assert.True(cars.Data.Count > 0);
         }
+
+
         [Fact]
         public async Task GetOwnersByCarUniqueNumber() 
         {
@@ -124,8 +166,10 @@ namespace VehiclesXUnitTests
             var owners = JsonConvert.DeserializeObject<Response<List<OwnerResponce>>>(ownersJson);
             //Assert
             Assert.IsAssignableFrom<List<OwnerResponce>>(owners.Data);
-            //Assert
+
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            Assert.True(owners.Data.Count > 0);
         }
     }
 }

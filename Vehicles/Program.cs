@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Vehicles.Data;
 using Microsoft.EntityFrameworkCore;
+using Vehicles.Interfaces;
 
 namespace Vehicles
 {
@@ -30,7 +31,8 @@ namespace Vehicles
                                 services.GetRequiredService<DbContextOptions<VehicleDbContext>>());
 
                     var seed = new SeedData();
-                    seed.Initialize(context).Wait();//good way for initializing id set automatically on savechanges
+                    using var userManager = services.GetService<ICustomUserManager>();
+                    seed.Initialize(userManager, context).Wait();//good way for initializing id set automatically on savechanges
                 }
                 catch (Exception ex)
                 {

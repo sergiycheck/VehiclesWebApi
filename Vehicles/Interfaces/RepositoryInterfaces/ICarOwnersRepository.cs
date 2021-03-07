@@ -7,8 +7,10 @@ using System.Collections.Generic;
 
 namespace Vehicles.Interfaces.RepositoryInterfaces
 {
-    public interface ICarOwnersRepository:IGenericRepository<CarOwner>
+    public interface ICarOwnersRepository
     {
-        Task<List<CarOwner>> GetCarOwners(string UniqueNumber);
+        Task<List<CustomUser>> GetAll();
+        Task<CustomUser> GetById(string id);
+        Task<List<CustomUser>> GetCarOwners(string UniqueNumber);
     }
 }

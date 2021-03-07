@@ -43,7 +43,7 @@ namespace Vehicles.Services
             return await _repository.GetById(id);
         }
 
-        public async Task<List<Car>> GetCars(CarOwner carOwner)
+        public async Task<List<Car>> GetCars(CustomUser carOwner)
         {
             return await _repository.GetCars(carOwner);
         }

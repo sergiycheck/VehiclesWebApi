@@ -9,28 +9,38 @@ using Vehicles.Data;
 
 namespace Vehicles.Repositories
 {
-    public class CarOwnersRepository : GenericRepository<CarOwner>, ICarOwnersRepository
+    public class CarOwnersRepository :  ICarOwnersRepository
     {
+        protected readonly VehicleDbContext _dbContext;
+        protected readonly DbSet<CustomUser> _dbSet;
         public CarOwnersRepository(VehicleDbContext context)
-            : base(context)
         {
-               
+            _dbContext = context;
+            _dbSet=_dbContext.Set<CustomUser>();
         }
-        public async Task<List<CarOwner>> GetCarOwners(string uniqueNumber)
+
+        public async Task<List<CustomUser>> GetAll()
+        {
+            return await _dbSet.AsNoTracking().ToListAsync();
+        }
+        public async Task<CustomUser> GetById(string id)
+        {
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(user=>user.Id==id);
+        }
+        public async Task<List<CustomUser>> GetCarOwners(string uniqueNumber)
         {
 
-            var res = from carOwner in _dbContext.CarOwners.AsNoTracking()
+            var res = from carOwner in _dbContext.Users.AsNoTracking()
                       join mtmCarOwner in _dbContext.ManyToManyCarOwners.AsNoTracking()
                       on carOwner.Id equals mtmCarOwner.CarOwnerId
                       where mtmCarOwner.Car.UniqueNumber == uniqueNumber
-                      select new CarOwner
+                      select new CustomUser
                       {
                           Id = carOwner.Id,
-                          Name = carOwner.Name,
-                          SurName = carOwner.SurName,
-                          Patronymic = carOwner.Patronymic,
-                          CarOwnerPhone = carOwner.CarOwnerPhone,
-                          Location = carOwner.Location,
+                          FirstName = carOwner.FirstName,
+                          LastName = carOwner.LastName,
+                          PhoneNumber = carOwner.PhoneNumber,
+                          Address = carOwner.Address,
                           BirthDate = carOwner.BirthDate
                       };
             return await res.ToListAsync();

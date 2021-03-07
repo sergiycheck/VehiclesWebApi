@@ -64,7 +64,7 @@ namespace Vehicles.Controllers
         }
 
         [HttpGet(ApiRoutes.Owners.Get)]
-        public async Task<ActionResult<OwnerResponce>> GetOwnerById(int? id)
+        public async Task<ActionResult<OwnerResponce>> GetOwnerById(string id)
         {
             return Ok(
                 new Response<OwnerResponce>(
@@ -73,22 +73,6 @@ namespace Vehicles.Controllers
         }
         //use postman post method or visual studio code extensions to send post method with existing carOwner json data that can be retrieved from get method for CarOwners
 
-        [HttpPost(ApiRoutes.Owners.Create)]
-        public IActionResult Create([FromBody] CarOwner owner)
-        {
-            return Ok();
-        }
-
-        [HttpPut(ApiRoutes.Owners.Update)]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-       
-        [HttpDelete(ApiRoutes.Owners.Delete)]
-        public void Delete(int id)
-        {
-        }
     }
 }
 //command to generate controller

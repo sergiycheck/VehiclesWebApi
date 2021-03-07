@@ -16,8 +16,6 @@ using System;
 using Xunit.Abstractions;
 using System.Net.Http.Headers;
 
-
-
 namespace VehiclesXUnitTests
 {
     public class IdentityTests: IClassFixture<WebApplicationFactory<Startup>>

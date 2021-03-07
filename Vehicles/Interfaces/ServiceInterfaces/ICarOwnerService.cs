@@ -7,8 +7,8 @@ namespace Vehicles.Interfaces.ServiceInterfaces
 {
     public interface ICarOwnerService
     {
-        Task<List<CarOwner>> GetCarOwners(string UniqueNumber);
-        Task<List<CarOwner>> GetAllCarOwners();
-        Task<CarOwner> GetById(int? id);
+        Task<List<CustomUser>> GetCarOwners(string UniqueNumber);
+        Task<List<CustomUser>> GetAllCarOwners();
+        Task<CustomUser> GetById(string id);
     }
 }

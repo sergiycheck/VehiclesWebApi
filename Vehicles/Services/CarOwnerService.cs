@@ -16,17 +16,17 @@ namespace Vehicles.Services
             _repository = repository;
         }
 
-        public async Task<List<CarOwner>> GetAllCarOwners()
+        public async Task<List<CustomUser>> GetAllCarOwners()
         {
-            return await _repository.GetAll().ToListAsync();
+            return await _repository.GetAll();
         }
 
-        public async Task<CarOwner> GetById(int? id)
+        public async Task<CustomUser> GetById(string id)
         {
             return await _repository.GetById(id);
         }
 
-        public async Task<List<CarOwner>> GetCarOwners(string UniqueNumber)
+        public async Task<List<CustomUser>> GetCarOwners(string UniqueNumber)
         {
             return await _repository.GetCarOwners(UniqueNumber);
         }

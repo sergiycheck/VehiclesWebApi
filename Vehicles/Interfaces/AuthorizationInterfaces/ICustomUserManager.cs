@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Vehicles.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Vehicles.Interfaces
 {
-    public interface ICustomUserManager
+    public interface ICustomUserManager:IDisposable
     {
         string GetUserId(ClaimsPrincipal principal);
         Task<IdentityResult> CreateAsync(CustomUser user, string password);
@@ -25,5 +26,6 @@ namespace Vehicles.Interfaces
         public Task<IList<string>> GetRolesAsync(CustomUser user);
         public Task<bool> CheckPasswordAsync(CustomUser user, string password);
         public Task<IdentityResult> DeleteAsync(CustomUser user);
+        public IQueryable<CustomUser> Users{get;}
     }
 }
