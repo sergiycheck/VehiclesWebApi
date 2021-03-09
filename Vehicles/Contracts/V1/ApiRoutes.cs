@@ -52,5 +52,9 @@ namespace Vehicles.Contracts.V1
             
             public const string FacebookAuth = Base + "/identity/auth/fb";
         }
+        public static class ChatRoutes
+        {
+            public const string Send = Base + "/chat/send";
+        }
     }
 }

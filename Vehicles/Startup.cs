@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Vehicles.Installers.Implementations;
 using AutoMapper;
 using System;
+using vehicles.Hubs;
 
 namespace Vehicles
 {
@@ -63,6 +64,7 @@ namespace Vehicles
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chathub");
             });
 
         }

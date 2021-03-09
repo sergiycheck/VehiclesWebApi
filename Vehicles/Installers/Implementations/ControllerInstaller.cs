@@ -29,12 +29,16 @@ namespace Vehicles.Installers.Implementations
                 options.AddPolicy(name: Startup.MyAllowSpecificOrigins,
                                   builder =>
                                   {
-                                      builder.WithOrigins("http://localhost:4500")
+                                      builder.WithOrigins("http://localhost:4500", 
+                                                          "http://localhost:3000")
                                                           .AllowAnyHeader()
-                                                          .AllowAnyMethod();
+                                                          .AllowAnyMethod()
+                                                          .AllowCredentials();
+
                                       //.WithHeaders(HeaderNames.Accept, "application/json")
                                       //.WithHeaders(HeaderNames.ContentType, "application/json")
                                       //.WithMethods("PUT", "POST", "DELETE", "GET", "PATCH");
+
                                   });
             });
             services.AddControllers().AddJsonOptions(options =>
@@ -92,6 +96,8 @@ namespace Vehicles.Installers.Implementations
                 var absoluteUri = $"{request.Scheme}://{request.Host.ToUriComponent()}/";
                 return new UriService(absoluteUri);
             });
+
+            services.AddSignalR();
 
         }
     }
