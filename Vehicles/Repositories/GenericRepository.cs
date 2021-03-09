@@ -37,9 +37,9 @@ namespace Vehicles.Repositories
         {
             _dbSet.Remove(await GetById(id));
         }
-        public async Task SaveChangesAsync()
+        public async Task<int> SaveChangesAsync()
         {
-            await _dbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync();
         }
         public bool EntityExists(int id)
         {

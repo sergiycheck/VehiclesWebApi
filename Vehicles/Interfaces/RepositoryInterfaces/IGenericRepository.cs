@@ -11,7 +11,7 @@ namespace Vehicles.Interfaces.RepositoryInterfaces
         Task Create(TEntity entity);
         void Update(TEntity entity);
         Task Delete(int? id);
-        Task SaveChangesAsync();
+        Task<int> SaveChangesAsync();
         bool EntityExists(int id);
     }
 }

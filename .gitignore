@@ -341,5 +341,6 @@ healthchecksdb
 launch.json
 tasks.json
 settings.json
-ToDo.txt
+*.txt
 *.docx
+*.sql

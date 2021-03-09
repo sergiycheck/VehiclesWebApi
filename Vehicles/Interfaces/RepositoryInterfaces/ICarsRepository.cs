@@ -7,6 +7,6 @@ namespace Vehicles.Interfaces.RepositoryInterfaces
 {
     public interface ICarsRepository:IGenericRepository<Car>
     {
-        Task<List<Car>> GetCars(CarOwner carOwner);
+        Task<List<Car>> GetCars(CustomUser carOwner);
     }
 }

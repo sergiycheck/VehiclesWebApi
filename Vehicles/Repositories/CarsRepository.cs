@@ -16,7 +16,7 @@ namespace Vehicles.Repositories
         {
                
         }
-        public async Task<List<Car>> GetCars(CarOwner carOwner)
+        public async Task<List<Car>> GetCars(CustomUser carOwner)
         {
             var res = from car in _dbContext.Cars.AsNoTracking()
                       join mtmCarOwner in _dbContext.ManyToManyCarOwners.AsNoTracking()

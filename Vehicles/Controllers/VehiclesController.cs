@@ -6,72 +6,121 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Vehicles.Interfaces.ServiceInterfaces;
 using Vehicles.Models;
+using Microsoft.AspNetCore.Cors;
+using Vehicles.Contracts.V1;
+using Vehicles.Services;
+using Vehicles.Contracts.V1.Responses;
+using Vehicles.MyCustomMapper;
+using Vehicles.Contracts.Responces;
+using Vehicles.Contracts.Requests;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
 
 namespace Vehicles.Controllers
 {
-    [Route("api/[controller]")]
+    
+    [EnableCors(Startup.MyAllowSpecificOrigins)]
+    // [Route("api/[controller]")]
     [ApiController]
     public class VehiclesController : ControllerBase
     {
-        private readonly ICarOwnerService _carOwnerService;
         private readonly ICarService _carService;
         private readonly ILogger<VehiclesController> _logger;
+        private readonly IUriService _uriService;
+        private readonly ICustomMapper _customMapper;
 
-        public VehiclesController(ICarOwnerService carOwnerService,ICarService carService,ILogger<VehiclesController> logger)
+        public VehiclesController(
+            ICarService carService,
+            ILogger<VehiclesController> logger,
+            IUriService uriService,
+            ICustomMapper customMapper
+            )
         {
-            _carOwnerService = carOwnerService;
             _carService = carService;
             _logger = logger;
+            _uriService = uriService;
+            _customMapper = customMapper;
+            
         }
 
-        // GET api/<VehiclesController>/QC-3805-OM
-        [HttpGet("{uniqueNumber}")]
-        public async Task<IEnumerable<CarOwner>> GetOwnersByCarUniqueNumber(string uniqueNumber)
+        [HttpGet(ApiRoutes.Vehicles.Default)]
+        public ActionResult<string> DefaultGet() 
         {
-            var res = await _carOwnerService.GetCarOwners(uniqueNumber);
-            _logger.LogInformation($"Getting car owners by uniqueNumber {uniqueNumber}",res);
-            return res;
+            return Content("An API about vehicles and owners");
         }
+        
+        [HttpGet(ApiRoutes.Vehicles.GetAll)]
+        public async Task<ActionResult> GetCars()
+        {
+            var result = await _carService.GetAllCars();
+            var carResponses = new List<CarResponse>();
+            result.ForEach(c=>carResponses.Add(_customMapper.CarToCarResponse(c)));
+            return Ok(new Response<CarResponse[]>(carResponses.ToArray()));
+        }
+        [Authorize]
+        [HttpGet(ApiRoutes.Vehicles.Get)]
+        public async Task<ActionResult<Car>> GetCarById(int? id)
+        {
+            var car = await _carService.GetById(id);
+            if(car==null)
+                return NotFound();
 
-        // GET api/<VehiclesController>/
-        [HttpGet]
-        public string DefaultGet() 
-        {
-            return "An API about vehicles and owners";
-        }
-        // GET api/<VehiclesController>/cars
-        [HttpGet("Cars")]
-        public async Task<IEnumerable<Car>> GetCars()
-        {
-            return await _carService.GetAllCars();
-        }
-        // GET api/<VehiclesController>/owners
-        [HttpGet("Owners")]
-        public async Task<IEnumerable<CarOwner>> GetOwners()
-        {
-            return await _carOwnerService.GetAllCarOwners();
+            return Ok(new Response<CarResponse>(_customMapper.CarToCarResponse(car)));
         }
 
         //use postman post method or visual studio code extensions to send post method with existing carOwner json data that can be retrieved from get method for CarOwners
-        // POST api/<VehiclesController>
-        [HttpPost]
-        public async Task<IEnumerable<Car>> GetCarsByCarOwner([FromBody] CarOwner value)
+        [Authorize]
+        [HttpPost(ApiRoutes.Vehicles.GetCarsByOwner)]
+        public async Task<ActionResult> GetCarsByCarOwner([FromBody] OwnerRequest value)
         {
-            var res = await _carService.GetCars(value);
+            var res = await _carService.GetCars(_customMapper.OwnerRequestToCarOwner(value));
             _logger.LogInformation($"Getting cars by carOwner {value.Name}", res);
-            return res;
+            var carsResponces = new List<CarResponse>();
+            res.ForEach(c=>carsResponces.Add(_customMapper.CarToCarResponse(c)));
+            return Ok(new Response<CarResponse[]>(carsResponces.ToArray()));
         }
 
-        // PUT api/<VehiclesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [Authorize]
+        [HttpPost(ApiRoutes.Vehicles.Create)]
+        public async Task<ActionResult> PostCarItem([FromBody] CarRequest carRequest)
         {
+            var car = _customMapper.CarRequestToCar(carRequest);
+            await _carService.Create(car);//changes entity state to added and execute save changes that produces insert command
+            var locationUri = _uriService.GetVehicleUri(car.Id.ToString());
+            return Created(locationUri, new Response<CarResponse>(_customMapper.CarToCarResponse(car)));
         }
 
-        // DELETE api/<VehiclesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+
+        [Authorize]
+        [HttpPut(ApiRoutes.Vehicles.Update)]
+        public async Task<IActionResult> Put(int? id, [FromBody] CarRequest carRequest)
         {
+            if (id != carRequest.Id)
+                return BadRequest();
+            var car = _customMapper.CarRequestToCar(carRequest);
+            var updatedNums = await _carService.Update(car);
+            if(updatedNums>0)
+                return Ok(new Response<string>($"Car with id {carRequest.Id} and unique number {carRequest.UniqueNumber} successfully updated"));
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpDelete(ApiRoutes.Vehicles.Delete)]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id != null) 
+            {
+                if (_carService.EntityExists((int)id))
+                {
+                    await _carService.Delete(id);
+                    return Ok(new Response<string>($"Car with id {id} was successfully deleted"));
+                }
+            }
+            return BadRequest();
+            
         }
     }
 }
+//command to generate controller
+//dotnet aspnet-codegenerator controller -name TodoItemsController -async -api -m TodoItem -dc TodoContext -outDir Controllers

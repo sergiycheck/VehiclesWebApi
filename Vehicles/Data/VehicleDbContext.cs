@@ -1,39 +1,59 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Vehicles.Models;
 
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 namespace Vehicles.Data
 {
-    public class VehicleDbContext : DbContext
+    public class VehicleDbContext : IdentityDbContext<CustomUser>
     {
         public DbSet<Car> Cars{get;set;}
-        public DbSet<CarOwner> CarOwners{get;set;}
-        public DbSet<ManyToManyCarOwner> ManyToManyCarOwners{get;set;}
+        
+        public DbSet<ManyToManyCustomUserToVehicle> ManyToManyCarOwners{get;set;}
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public VehicleDbContext(DbContextOptions<VehicleDbContext> options)
             : base(options)
         {
+            //Database.EnsureCreated();//for initializing initial data//for testing
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            //base.OnModelCreating(builder);
-            builder.Entity<ManyToManyCarOwner>()
+            base.OnModelCreating(builder);
+            builder.Entity<ManyToManyCustomUserToVehicle>()
                 .HasKey(mtm=>new{mtm.CarOwnerId,mtm.CarId});
 
-            // builder.Entity<ManyToManyCarOwner>()
-            //     .HasOne(co=>co.CarOwner)
-            //     .WithMany(mtm=>mtm.ManyToManyCarOwner)
-            //     .HasForeignKey(co=>co.CarOwnerId);
+            builder.Entity<ManyToManyCustomUserToVehicle>()
+                .HasOne(co=>co.CarOwner)
+                .WithMany(mtm=>mtm.ManyToManyCustomUserToVehicle)
+                .HasForeignKey(co=>co.CarOwnerId);
 
-            // builder.Entity<ManyToManyCarOwner>()
-            //     .HasOne(c=>c.Car)
-            //     .WithMany(mtm=>mtm.ManyToManyCarOwner)
-            //     .HasForeignKey(c=>c.CarId);
+            builder.Entity<ManyToManyCustomUserToVehicle>()
+                .HasOne(c=>c.Car)
+                .WithMany(mtm=>mtm.ManyToManyCustomUserToVehicle)
+                .HasForeignKey(c=>c.CarId);
                 
             builder.Entity<Car>()
                 .Property(p => p.Price)
                 .HasColumnType("decimal(18,4)");
+
+            //alternative way for data seeding that is better for testing
+            //remove other ways of db initializing
+            //InitializeDb(builder);
+        }
+        private void InitializeDb(ModelBuilder builder) 
+        {
+            // var seed = new SeedData();
+            // builder.Entity<Car>().HasData(seed.Cars);
+            // var customUsers =new List<CustomUser>();
+            // seed.UsersAndPasswords.ToList().ForEach(usrPass=>{
+            //     customUsers.Add(usrPass.CustomUser);
+            // });
+            // builder.Entity<CustomUser>().HasData(customUsers);
+            // builder.Entity<ManyToManyCustomUserToVehicle>().HasData(seed.GetManyToManyCustomUserToVehicle());
         }
     }
 }

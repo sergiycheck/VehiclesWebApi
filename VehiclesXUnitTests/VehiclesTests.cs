@@ -13,21 +13,37 @@ using Vehicles.Controllers;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Vehicles.Services;
+using Microsoft.AspNetCore.Mvc;
+using Vehicles.MyCustomMapper;
+using Vehicles.Contracts.Requests;
+using Vehicles.Contracts.Responces;
+using Vehicles.Contracts.V1.Responses;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Vehicles;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Vehicles.Interfaces;
 
 namespace VehiclesXUnitTests
 {
-    public class VehiclesTests : IClassFixture<SqlServerTests>
+    //https://docs.microsoft.com/ru-ru/aspnet/core/test/integration-tests?view=aspnetcore-5.0
+
+    public class VehiclesTests : IClassFixture<SqlServerTests>,IClassFixture<WebApplicationFactory<Startup>>
     {
-        public VehiclesTests(SqlServerTests fixture) => Fixture = fixture;
         public SqlServerTests Fixture { get; }
+        private IServiceProvider _serviceProvider {get;}
+        public VehiclesTests(SqlServerTests fixture,WebApplicationFactory<Startup> factory)
+        {
+            Fixture = fixture;
+            _serviceProvider = factory.Services;
 
-
+        }
         [Fact]
         public void TestPair()
         {
             var excludePair = new HashSet<CustomPair>();
             var car_id = 1;
-            var car_owner_id = 1;
+            string car_owner_id = "4985dd49-f06c-4bd8-8900-baeff6126b55";
             var pair = new CustomPair(car_id, car_owner_id);
             excludePair.Add(pair);
             var pair2 = new CustomPair(car_id, car_owner_id);
@@ -55,9 +71,13 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    
+                    var seed = new SeedData();
+                    using var serviceScope = _serviceProvider.CreateScope();
+                    var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
+                    await seed.Initialize(userManager, context);
 
-                    Assert.NotNull(context.CarOwners);
+                    Assert.NotNull(context.Users);
                     Assert.NotNull(context.Cars);
                     Assert.NotNull(context.ManyToManyCarOwners);
                 }
@@ -71,7 +91,12 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+
+                    using var serviceScope = _serviceProvider.CreateScope();
+                    var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
+
+                    await seed.Initialize(userManager, context);
                     var carOwnerRepo = new CarOwnersRepository(context);
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Cars.AsNoTracking().ToHashSet().Count);
@@ -79,7 +104,7 @@ namespace VehiclesXUnitTests
                     var res = await carOwnerRepo.GetCarOwners(car.UniqueNumber);
 
                     Assert.NotNull(res);
-                    Assert.IsAssignableFrom<List<CarOwner>>(res);
+                    Assert.IsAssignableFrom<List<CustomUser>>(res);
 
                     var resJson = JsonConvert.SerializeObject(res);
                     Assert.NotNull(resJson);
@@ -95,11 +120,14 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    using var serviceScope = _serviceProvider.CreateScope();
+                    var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
+                    await seed.Initialize(userManager, context);
                     var carsRepo = new CarsRepository(context);
                     Random rnd = new Random();
-                    var index = rnd.Next(0, context.CarOwners.AsNoTracking().ToHashSet().Count);
-                    var owner =  context.CarOwners.AsNoTracking().ToList()[index];
+                    var index = rnd.Next(0, context.Users.AsNoTracking().ToHashSet().Count);
+                    var owner =  context.Users.AsNoTracking().ToList()[index];
                     var res = await carsRepo.GetCars(owner);
 
                     Assert.NotNull(res);
@@ -118,7 +146,12 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+
+                    using var serviceScope = _serviceProvider.CreateScope();
+                    var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
+
+                    await seed.Initialize(userManager, context);
                     var carsRepo = new CarsRepository(context);
                     var carOwnerRepo = new CarOwnersRepository(context);
 
@@ -128,7 +161,11 @@ namespace VehiclesXUnitTests
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
 
-                    var controller = new VehiclesController(carOwnerService, carService, logger);
+                    var controller = new CarOwnersController(
+                        carOwnerService, 
+                        logger,
+                        new UriService("https://localhost:5010"),
+                        new CustomMapper());
 
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Cars.AsNoTracking().ToHashSet().Count);
@@ -137,7 +174,7 @@ namespace VehiclesXUnitTests
                     var res = await controller.GetOwnersByCarUniqueNumber(car.UniqueNumber);
 
                     Assert.NotNull(res);
-                    Assert.IsAssignableFrom<IEnumerable<CarOwner>>(res);
+                    Assert.IsAssignableFrom<OkObjectResult>(res);
 
                 }
             }
@@ -150,7 +187,10 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    using var serviceScope = _serviceProvider.CreateScope();
+                    var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
+                    await seed.Initialize(userManager, context);
                     var carsRepo = new CarsRepository(context);
                     var carOwnerRepo = new CarOwnersRepository(context);
 
@@ -160,19 +200,22 @@ namespace VehiclesXUnitTests
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
 
-                    var controller = new VehiclesController(carOwnerService, carService, logger);
+                    var controller = new VehiclesController( 
+                        carService, 
+                        logger,
+                        new UriService("https://localhost:5010"),
+                        new CustomMapper());
 
                     Random rnd = new Random();
-                    var index = rnd.Next(0, context.CarOwners.AsNoTracking().ToHashSet().Count);
-                    var owner = context.CarOwners.AsNoTracking().ToList()[index];
+                    var index = rnd.Next(0, context.Users.AsNoTracking().ToHashSet().Count);
+                    var owner = context.Users.AsNoTracking().ToList()[index];
                     var resJson = JsonConvert.SerializeObject(owner);
-                    var deserializedOwner = JsonConvert.DeserializeObject<CarOwner>(resJson);
+                    var deserializedOwner = JsonConvert.DeserializeObject<OwnerRequest>(resJson);
 
                     var res = await controller.GetCarsByCarOwner(deserializedOwner);
 
                     Assert.NotNull(res);
-                    Assert.IsAssignableFrom<IEnumerable<Car>>(res);
-
+                    Assert.IsAssignableFrom<OkObjectResult>(res);
                 }
             }
 
@@ -185,18 +228,22 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    using var serviceScope = _serviceProvider.CreateScope();
+                    var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
+                    await seed.Initialize(userManager, context);
 
                     Random rnd = new Random();
-                    var index = rnd.Next(0, context.CarOwners.AsNoTracking().ToHashSet().Count);
-                    var owner = context.CarOwners.AsNoTracking().ToList()[index];
+                    var index = rnd.Next(0, context.Users.AsNoTracking().ToHashSet().Count);
+                    var owner = context.Users.AsNoTracking().ToList()[index];
 
-                    var res = await context.CarOwners.AsNoTracking()
-                    .Include(c => c.ManyToManyCarOwner)
+                    var res = await context.Users.AsNoTracking()
+                    .Include(c => c.ManyToManyCustomUserToVehicle)
                         .ThenInclude(mtm => mtm.Car)
                     .FirstOrDefaultAsync(c => c.Id == owner.Id);
 
-                    var cars = res.ManyToManyCarOwner.Select(mtm => mtm.Car).ToList();//inner manyToManyLoading explicit loading reference json serialization error
+                    var cars = res.ManyToManyCustomUserToVehicle
+                        .Select(mtm => mtm.Car).ToList();//inner manyToManyLoading explicit loading reference json serialization error
 
                     Assert.NotNull(cars);
                     Assert.IsAssignableFrom<List<Car>>(cars);
@@ -221,21 +268,24 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    await SeedData.Initialize(context);
+                    var seed = new SeedData();
+                    using var serviceScope = _serviceProvider.CreateScope();
+                    var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
+                    await seed.Initialize(userManager, context);
                     var carOwnerRepo = new CarOwnersRepository(context);
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Cars.AsNoTracking().ToHashSet().Count);
                     var car = context.Cars.AsNoTracking().ToList()[index];
 
                     var res = await context.Cars.AsNoTracking()
-                    .Include(c => c.ManyToManyCarOwner)
+                    .Include(c => c.ManyToManyCustomUserToVehicle)
                         .ThenInclude(mtm => mtm.CarOwner)
                     .FirstOrDefaultAsync(c => c.UniqueNumber == car.UniqueNumber);
 
-                    var owners = res.ManyToManyCarOwner.Select(mtm => mtm.CarOwner).ToList();
+                    var owners = res.ManyToManyCustomUserToVehicle.Select(mtm => mtm.CarOwner).ToList();
 
                     Assert.NotNull(owners);
-                    Assert.IsAssignableFrom<List<CarOwner>>(owners);
+                    Assert.IsAssignableFrom<List<CustomUser>>(owners);
                     try
                     {
                         var resJson = JsonConvert.SerializeObject(owners);
@@ -250,6 +300,55 @@ namespace VehiclesXUnitTests
                 }
             }
         }
+        [Fact]
+        public async Task TestVehicleController_PostVehicle()
+        {
+            using (var transaction = Fixture.Connection.BeginTransaction())
+            {
+                using (var context = Fixture.CreateContext(transaction))
+                {
+                    var seed = new SeedData();
+                    using var serviceScope = _serviceProvider.CreateScope();
+                    var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
+                    await seed.Initialize(userManager, context);
+                    var carsRepo = new CarsRepository(context);
+
+                    var carService = new CarService(carsRepo);
+
+                    var mockLogger = new Mock<ILogger<VehiclesController>>();
+                    ILogger<VehiclesController> logger = mockLogger.Object;
+
+                    var controller = new VehiclesController(
+                        carService, 
+                        logger,
+                        new UriService("https://localhost:5010/"),
+                        new CustomMapper());
+
+                    var testCar = new CarRequest
+                    {
+                        Brand = "Test",
+                        Price = 23.4m,
+                        Date = DateTime.Now,
+                        CarEngine = 3,
+                        Color = "Grey",
+                        Description = "test",
+                        Drive = "Mixed",
+                        Transmision = "Auto",
+                        UniqueNumber = SeedData.GenerateRandomRegistrationPlateNumber()
+                    };
+
+                    var res = await controller.PostCarItem(testCar);
+
+                    Assert.NotNull(res);
+                    var car = await context.Cars.AsNoTracking().SingleOrDefaultAsync(c=>c.UniqueNumber==testCar.UniqueNumber);
+
+                    Assert.NotNull(car);
+                }
+            }
+        }
+
+
+
 
     }
 }
