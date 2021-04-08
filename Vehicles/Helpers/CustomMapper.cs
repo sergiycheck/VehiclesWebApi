@@ -3,22 +3,49 @@ using Vehicles.Models;
 using Vehicles.Contracts.Responces;
 using System.Linq;
 using Vehicles.Contracts.Requests;
-  
+using vehicles.Helpers;
+using System.IO;
+using Vehicles.Contracts.V1;
+using System.Threading.Tasks;
+using System;
+using Microsoft.AspNetCore.Mvc;
+
 namespace Vehicles.MyCustomMapper
 {  
     public interface ICustomMapper
     {
-        public CarResponse CarToCarResponse(Car car);
+        public Task<CarResponse> CarToCarResponse(Car car,string ImgDirectory);
         public OwnerResponce OwnerToOwnerResponse(CustomUser carOwnerUser);
         public Car CarRequestToCar(CarRequest carRequest);
         public CustomUser OwnerRequestToCarOwner(OwnerRequest OwnerRequest);
         
     }
     public class CustomMapper :ICustomMapper
-    {  
+    {
+        private readonly IVehicleImageRetriever _vehicleImageRetriever;
 
-        public CarResponse CarToCarResponse(Car car)
+        public CustomMapper(
+            IVehicleImageRetriever vehicleImageRetriever
+            )
         {
+            _vehicleImageRetriever = vehicleImageRetriever;
+        }
+        public async Task<CarResponse> CarToCarResponse(Car car,string ImgDirectory)
+        {
+            FileContentResult ImgFile = null;
+            try
+            {
+                var FileImgInfo = await _vehicleImageRetriever
+                    .GetImageByBrandAndUniqueNumber(
+                    car.Brand, car.UniqueNumber, ImgDirectory);
+                ImgFile = new FileContentResult(
+                    FileImgInfo.FileBytes, FileImgInfo.FileType);
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
             return new CarResponse
             {
                 Id = car.Id,
@@ -31,6 +58,7 @@ namespace Vehicles.MyCustomMapper
                 Description = car.Description,
                 Transmision = car.Transmision,
                 Drive = car.Drive,
+                ImgFile = ImgFile,
                 OwnerResponces =car.ManyToManyCustomUserToVehicle!=null? car.ManyToManyCustomUserToVehicle.Select(o => 
                             new OwnerResponce(){
                                 Id = o.CarOwnerId,
@@ -51,7 +79,7 @@ namespace Vehicles.MyCustomMapper
                 Name = owner.FirstName,
                 SurName = owner.LastName,
                 CarOwnerPhone = owner.PhoneNumber,
-                Location = owner.Address,
+                Location = $"{owner.Address} {owner.City}",
                 BirthDate = owner.BirthDate,
 
                 CarResponces = owner.ManyToManyCustomUserToVehicle!=null?owner.ManyToManyCustomUserToVehicle.Select(car=>

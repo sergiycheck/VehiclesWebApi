@@ -16,6 +16,9 @@ using Vehicles.Contracts.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
+using Microsoft.AspNetCore.Hosting; // for IWebHostEnvironment
+using System.IO;
+using vehicles.Helpers;
 
 namespace Vehicles.Controllers
 {
@@ -29,20 +32,33 @@ namespace Vehicles.Controllers
         private readonly ILogger<VehiclesController> _logger;
         private readonly IUriService _uriService;
         private readonly ICustomMapper _customMapper;
+        private readonly IWebHostEnvironment _appEnvironment;
+
+        private readonly IVehicleImageRetriever _vehicleImageRetriever;
+
+        private readonly string _imgDirectory;
 
         public VehiclesController(
             ICarService carService,
             ILogger<VehiclesController> logger,
             IUriService uriService,
-            ICustomMapper customMapper
+            ICustomMapper customMapper,
+            IWebHostEnvironment appEnvironment,
+            IVehicleImageRetriever vehicleImageRetriever
             )
         {
             _carService = carService;
             _logger = logger;
             _uriService = uriService;
             _customMapper = customMapper;
-            
+            _appEnvironment = appEnvironment;
+            _vehicleImageRetriever = vehicleImageRetriever;
+
+            var directory = Directory.GetCurrentDirectory();
+            var imgDirectory = $@"{directory}\{ApiRoutes.imgsPath}";
+            _imgDirectory = imgDirectory;
         }
+        
 
         [HttpGet(ApiRoutes.Vehicles.Default)]
         public ActionResult<string> DefaultGet() 
@@ -55,10 +71,16 @@ namespace Vehicles.Controllers
         {
             var result = await _carService.GetAllCars();
             var carResponses = new List<CarResponse>();
-            result.ForEach(c=>carResponses.Add(_customMapper.CarToCarResponse(c)));
+
+            
+
+            result.ForEach(async c=>carResponses.Add(
+                await _customMapper.CarToCarResponse(c, _imgDirectory)));
+
             return Ok(new Response<CarResponse[]>(carResponses.ToArray()));
         }
-        [Authorize]
+
+        //[Authorize]
         [HttpGet(ApiRoutes.Vehicles.Get)]
         public async Task<ActionResult<Car>> GetCarById(int? id)
         {
@@ -66,18 +88,24 @@ namespace Vehicles.Controllers
             if(car==null)
                 return NotFound();
 
-            return Ok(new Response<CarResponse>(_customMapper.CarToCarResponse(car)));
+            return Ok(new Response<CarResponse>(
+                await _customMapper.CarToCarResponse(car, _imgDirectory)));
         }
 
         //use postman post method or visual studio code extensions to send post method with existing carOwner json data that can be retrieved from get method for CarOwners
-        [Authorize]
+
+        //TODO: uncomment
+        //[Authorize]
+
         [HttpPost(ApiRoutes.Vehicles.GetCarsByOwner)]
         public async Task<ActionResult> GetCarsByCarOwner([FromBody] OwnerRequest value)
         {
             var res = await _carService.GetCars(_customMapper.OwnerRequestToCarOwner(value));
             _logger.LogInformation($"Getting cars by carOwner {value.Name}", res);
             var carsResponces = new List<CarResponse>();
-            res.ForEach(c=>carsResponces.Add(_customMapper.CarToCarResponse(c)));
+            res.ForEach(async c=>carsResponces.Add(
+                await _customMapper.CarToCarResponse(c, _imgDirectory)));
+
             return Ok(new Response<CarResponse[]>(carsResponces.ToArray()));
         }
 
@@ -88,7 +116,8 @@ namespace Vehicles.Controllers
             var car = _customMapper.CarRequestToCar(carRequest);
             await _carService.Create(car);//changes entity state to added and execute save changes that produces insert command
             var locationUri = _uriService.GetVehicleUri(car.Id.ToString());
-            return Created(locationUri, new Response<CarResponse>(_customMapper.CarToCarResponse(car)));
+            return Created(locationUri, new Response<CarResponse>(
+                await _customMapper.CarToCarResponse(car, _imgDirectory)));
         }
 
 
@@ -120,6 +149,37 @@ namespace Vehicles.Controllers
             return BadRequest();
             
         }
+        
+        [HttpGet(ApiRoutes.Vehicles.GetImage)]
+        public async Task<IActionResult> GetImage(string Brand, string UniqueNumber) 
+        {
+            if (string.IsNullOrEmpty(Brand) 
+                && string.IsNullOrEmpty(UniqueNumber))
+            {
+                return BadRequest($"Can not get img with empty name {Brand}");
+            }
+
+            var directory = Directory.GetCurrentDirectory();
+            var imgDirectory = $@"{directory}\{ApiRoutes.imgsPath}";
+
+            try
+            {
+                var FileImgInfo = await _vehicleImageRetriever
+                    .GetImageByBrandAndUniqueNumber(Brand, UniqueNumber, imgDirectory);
+                if (FileImgInfo != null)
+                {
+                    return Ok(File(FileImgInfo.FileBytes, FileImgInfo.FileType));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            return Ok(directory);
+
+        }
+
     }
 }
 //command to generate controller

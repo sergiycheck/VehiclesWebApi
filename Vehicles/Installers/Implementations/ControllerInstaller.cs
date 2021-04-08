@@ -15,7 +15,7 @@ using System.Text;
 using  Vehicles.Interfaces;
 using Vehicles.AuthorizationsManagers;
 using Vehicles.AuthorizationsManagers.Attributes;
-
+using vehicles.Helpers;
 
 namespace Vehicles.Installers.Implementations
 {
@@ -88,6 +88,10 @@ namespace Vehicles.Installers.Implementations
             services.AddScoped<ICustomUserManager,CustomUserManager>();
             services.AddScoped<ICustomSignInManager,CustomSignInManager>();
             services.AddScoped<IIdentityService,IdentityService>();
+
+            services.AddTransient<IVehicleImageRetriever, VehicleImageRetriever>();
+
+
             //services.AddSingleton<IAuthorizationMiddlewareResultHandler, MyAuthorizationMiddlewareResultHandler>(); comment to see if error exists
 
             services.AddSingleton<IUriService>(provider=>{

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
@@ -20,6 +21,8 @@ namespace Vehicles.Contracts.Responces
         public string Transmision{get;set;}
         public string Drive{get;set;}
         public IEnumerable<OwnerResponce> OwnerResponces {get;set;}
+
+        public FileContentResult ImgFile { get; set; }
 
     }
 }

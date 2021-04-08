@@ -1,8 +1,14 @@
-﻿//we use routes in a separated class cause we use it in responces and routes to controller methods
+﻿
+
+
+//we use routes in a separated class cause we use it in responces and routes to controller methods
 namespace Vehicles.Contracts.V1
 {
     public static class ApiRoutes
     {
+
+        public const string imgsPath = @"assets\vehicleImgs\";
+
         public const string Root = "api";
 
         public const string Version = "v1";
@@ -23,6 +29,8 @@ namespace Vehicles.Contracts.V1
             public const string Get = GetAll + "/{id:int}";
 
             public const string Create = GetAll + "/create";
+
+            public const string GetImage = GetAll + "getImage/{Brand}&{UniqueNumber}";
         }
         
         public static class Owners
