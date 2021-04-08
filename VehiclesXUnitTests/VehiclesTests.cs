@@ -23,6 +23,8 @@ using Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vehicles.Interfaces;
+using Microsoft.AspNetCore.Hosting;
+using vehicles.Helpers;
 
 namespace VehiclesXUnitTests
 {
@@ -165,7 +167,9 @@ namespace VehiclesXUnitTests
                         carOwnerService, 
                         logger,
                         new UriService("https://localhost:5010"),
-                        new CustomMapper());
+                        new CustomMapper(
+                            new VehicleImageRetriever())
+                        );
 
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Cars.AsNoTracking().ToHashSet().Count);
@@ -200,11 +204,17 @@ namespace VehiclesXUnitTests
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
 
+                    var mockWebHostingEnvironment = new Mock<IWebHostEnvironment>();
+
                     var controller = new VehiclesController( 
                         carService, 
                         logger,
                         new UriService("https://localhost:5010"),
-                        new CustomMapper());
+                        new CustomMapper(
+                            new VehicleImageRetriever()),
+                        mockWebHostingEnvironment.Object,
+                        new VehicleImageRetriever()
+                        );
 
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Users.AsNoTracking().ToHashSet().Count);
@@ -318,11 +328,16 @@ namespace VehiclesXUnitTests
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
 
+                    var mockWebHostingEnvironment = new Mock<IWebHostEnvironment>();
+
                     var controller = new VehiclesController(
                         carService, 
                         logger,
                         new UriService("https://localhost:5010/"),
-                        new CustomMapper());
+                        new CustomMapper(new VehicleImageRetriever()),
+                        mockWebHostingEnvironment.Object,
+                        new VehicleImageRetriever()
+                        );
 
                     var testCar = new CarRequest
                     {
