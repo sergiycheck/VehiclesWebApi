@@ -10,13 +10,27 @@ using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Vehicles.Helpers;
-
+using vehicles.Helpers;
+using System.IO;
+using Vehicles.Contracts.V1;
 
 namespace Vehicles.Data
 {
 
     public  class SeedData
     {
+        static IVehicleImageRetriever _vehicleImageRetriever;
+        string _imgDirectory;
+        public SeedData(IVehicleImageRetriever vehicleImageRetriever)
+        {
+            _vehicleImageRetriever = vehicleImageRetriever;
+
+            var directory = Directory.GetCurrentDirectory();
+            var imgDirectory = $@"{directory}\{ApiRoutes.imgsPath}";
+            _imgDirectory = imgDirectory;
+
+
+        }
      private static StringBuilder GetChars(Random rnd)
      {
           char ch;
@@ -59,7 +73,8 @@ namespace Vehicles.Data
                Drive = "Mixed",
                Price = 14999.9m,
                Transmision = "Auto",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "HN-8080-OV"
+
           },
           new Car()
           {
@@ -72,7 +87,7 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 7800,
                Transmision = "Auto",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "OD-7551-TX"
           },
           new Car()
           {
@@ -85,7 +100,7 @@ namespace Vehicles.Data
                Drive = "Mixed",
                Price = 25000,
                Transmision = "Auto",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "KA-3115-OY"
           },
           new Car()
           {
@@ -98,7 +113,7 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 14300,
                Transmision = "Auto/Manual",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "EU-0746-BG"
           },
           new Car()
           {
@@ -111,7 +126,7 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 7500,
                Transmision = "Auto/Manual",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "DU-1848-UF"
           },
           new Car()
           {
@@ -124,7 +139,7 @@ namespace Vehicles.Data
                Drive = "Full",
                Price = 36000,
                Transmision = "Auto",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "DH-5232-IF"
           },
           new Car()
           {
@@ -137,7 +152,7 @@ namespace Vehicles.Data
                Drive = "Full",
                Price = 27600,
                Transmision = "Auto",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "XX-7636-WX"
           },
           new Car()
           {
@@ -150,7 +165,7 @@ namespace Vehicles.Data
                Drive = "Back",
                Price = 12500,
                Transmision = "Full",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "QY-0324-PK"
           },
           new Car()
           {
@@ -163,7 +178,7 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 7800,
                Transmision = "Auto",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "BU-8032-UY"
           },
           new Car()
           {
@@ -176,7 +191,7 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 8999,
                Transmision = "Auto",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "NY-3363-MQ"
           },
           new Car()
           {
@@ -189,7 +204,7 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 7650,
                Transmision = "Manual",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "EG-6118-FB"
           },
           new Car()
           {
@@ -202,7 +217,7 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 15400,
                Transmision = "Manual",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "IA-8214-WC"
           },
           new Car()
           {
@@ -215,7 +230,7 @@ namespace Vehicles.Data
                Drive = "Full",
                Price = 35000,
                Transmision = "Auto",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "UT-1521-ZO"
           },
           new Car()
           {
@@ -228,7 +243,7 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 214999,
                Transmision = "Auto",
-               UniqueNumber = GenerateRandomRegistrationPlateNumber()
+               UniqueNumber = "DG-8676-ZA"
           }
      };
      public class UserAndPassword
@@ -452,9 +467,17 @@ namespace Vehicles.Data
 
           if (!context.Cars.Any()) 
           {
+                for (int i = 0; i < Cars.Length; i++)
+                {
+                    var ImgPath = _vehicleImageRetriever
+                            .GetFilePathByVehicleBrandAndUniqueNumber
+                                (Cars[i].Brand, Cars[i].UniqueNumber, _imgDirectory);
+                    Cars[i].ImgPath = ImgPath;
+                }
                context.Cars.AddRange(Cars);
                await context.SaveChangesAsync();
           }
+
           using(userManager)
           {
                if (!userManager.Users.AsNoTracking().Any())

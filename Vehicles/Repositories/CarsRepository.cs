@@ -33,7 +33,8 @@ namespace Vehicles.Repositories
                           CarEngine = car.CarEngine,
                           Description = car.Description,
                           Transmision = car.Transmision,
-                          Drive = car.Drive
+                          Drive = car.Drive,
+                          ImgPath = car.ImgPath
                       };
 
             return await res.ToListAsync();

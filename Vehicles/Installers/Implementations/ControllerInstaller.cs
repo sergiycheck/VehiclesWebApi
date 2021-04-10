@@ -16,6 +16,7 @@ using  Vehicles.Interfaces;
 using Vehicles.AuthorizationsManagers;
 using Vehicles.AuthorizationsManagers.Attributes;
 using vehicles.Helpers;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace Vehicles.Installers.Implementations
 {
@@ -102,6 +103,12 @@ namespace Vehicles.Installers.Implementations
             });
 
             services.AddSignalR();
+
+            services.Configure<FormOptions>(o => {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
+            });
 
         }
     }

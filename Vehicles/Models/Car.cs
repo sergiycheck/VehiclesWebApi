@@ -19,6 +19,7 @@ namespace Vehicles.Models
         public string Transmision{get;set;}
         public string Drive{get;set;}
         public virtual ICollection<ManyToManyCustomUserToVehicle> ManyToManyCustomUserToVehicle{get;set;}
+        public string ImgPath { get; set; }
 
     }
 }

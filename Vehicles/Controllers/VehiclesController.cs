@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Hosting; // for IWebHostEnvironment
 using System.IO;
 using vehicles.Helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace Vehicles.Controllers
 {
@@ -70,14 +71,19 @@ namespace Vehicles.Controllers
         public async Task<ActionResult> GetCars()
         {
             var result = await _carService.GetAllCars();
+
+            _logger.LogInformation($"list Car length is {result.Count}");
+
             var carResponses = new List<CarResponse>();
 
-            
+            result.ForEach( c=>carResponses.Add(
+                    _customMapper.CarToCarResponse(c)));
 
-            result.ForEach(async c=>carResponses.Add(
-                await _customMapper.CarToCarResponse(c, _imgDirectory)));
+            var responsesArray = carResponses.ToArray();
 
-            return Ok(new Response<CarResponse[]>(carResponses.ToArray()));
+            _logger.LogInformation($"responsesArray length is {responsesArray.Length}");
+
+            return Ok(new Response<CarResponse[]>(responsesArray));
         }
 
         //[Authorize]
@@ -89,7 +95,7 @@ namespace Vehicles.Controllers
                 return NotFound();
 
             return Ok(new Response<CarResponse>(
-                await _customMapper.CarToCarResponse(car, _imgDirectory)));
+                 _customMapper.CarToCarResponse(car)));
         }
 
         //use postman post method or visual studio code extensions to send post method with existing carOwner json data that can be retrieved from get method for CarOwners
@@ -103,34 +109,81 @@ namespace Vehicles.Controllers
             var res = await _carService.GetCars(_customMapper.OwnerRequestToCarOwner(value));
             _logger.LogInformation($"Getting cars by carOwner {value.Name}", res);
             var carsResponces = new List<CarResponse>();
-            res.ForEach(async c=>carsResponces.Add(
-                await _customMapper.CarToCarResponse(c, _imgDirectory)));
+            res.ForEach( c=>carsResponces.Add(
+                 _customMapper.CarToCarResponse(c)));
 
             return Ok(new Response<CarResponse[]>(carsResponces.ToArray()));
         }
 
         [Authorize]
-        [HttpPost(ApiRoutes.Vehicles.Create)]
-        public async Task<ActionResult> PostCarItem([FromBody] CarRequest carRequest)
+        [HttpPost(ApiRoutes.Vehicles.Create), DisableRequestSizeLimit]
+        public async Task<ActionResult> PostCarItem([FromForm] CarRequest carRequest)
         {
+
             var car = _customMapper.CarRequestToCar(carRequest);
+
+            car.ImgPath = await CreateImgFromRequest(Request, carRequest);
+
             await _carService.Create(car);//changes entity state to added and execute save changes that produces insert command
             var locationUri = _uriService.GetVehicleUri(car.Id.ToString());
+
+            
             return Created(locationUri, new Response<CarResponse>(
-                await _customMapper.CarToCarResponse(car, _imgDirectory)));
+                 _customMapper.CarToCarResponse(car)));
+        }
+
+        private async Task<string> CreateImgFromRequest(HttpRequest request, CarRequest carRequest)
+        {
+            var formCollection = await request.ReadFormAsync();
+            var ImgFile = formCollection.Files.First();
+
+            if (ImgFile != null && ImgFile.Length > 0)
+            {
+                var createdImgPathResult = await _vehicleImageRetriever
+                        .CreateImgByBrandAndUniqueNumber(
+                        ImgFile,
+                        carRequest.Brand,
+                        carRequest.UniqueNumber,
+                        _imgDirectory);
+
+                if (createdImgPathResult != string.Empty)
+                {
+                    
+                    _logger.LogInformation($"{ImgFile.FileName} created successfully");
+                    return createdImgPathResult;
+                }
+                else
+                {
+                    _logger.LogInformation($"{ImgFile.FileName} not created");
+
+                }
+            }
+            return string.Empty;
         }
 
 
         [Authorize]
-        [HttpPut(ApiRoutes.Vehicles.Update)]
-        public async Task<IActionResult> Put(int? id, [FromBody] CarRequest carRequest)
+        [HttpPut(ApiRoutes.Vehicles.Update), DisableRequestSizeLimit]
+        public async Task<IActionResult> Put(int? id, [FromForm] CarRequest carRequest)
         {
             if (id != carRequest.Id)
                 return BadRequest();
             var car = _customMapper.CarRequestToCar(carRequest);
+
+            var oldCar = await _carService.GetById(id);
+            _vehicleImageRetriever.DeleteFile(oldCar.ImgPath);
+
+            car.ImgPath = await CreateImgFromRequest(Request, carRequest);
+
+
             var updatedNums = await _carService.Update(car);
-            if(updatedNums>0)
-                return Ok(new Response<string>($"Car with id {carRequest.Id} and unique number {carRequest.UniqueNumber} successfully updated"));
+            if (updatedNums > 0)
+            {
+                return Ok(new Response<string>
+                    ($"Car with id {carRequest.Id} and unique number " +
+                        $"{carRequest.UniqueNumber} successfully updated"));
+            }
+
             return NoContent();
         }
 
@@ -142,6 +195,9 @@ namespace Vehicles.Controllers
             {
                 if (_carService.EntityExists((int)id))
                 {
+                    var car = await _carService.GetById(id);
+                    _vehicleImageRetriever.DeleteFile(car.ImgPath);
+
                     await _carService.Delete(id);
                     return Ok(new Response<string>($"Car with id {id} was successfully deleted"));
                 }

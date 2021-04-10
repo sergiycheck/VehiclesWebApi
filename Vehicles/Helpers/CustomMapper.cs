@@ -14,7 +14,7 @@ namespace Vehicles.MyCustomMapper
 {  
     public interface ICustomMapper
     {
-        public Task<CarResponse> CarToCarResponse(Car car,string ImgDirectory);
+        public CarResponse CarToCarResponse(Car car);
         public OwnerResponce OwnerToOwnerResponse(CustomUser carOwnerUser);
         public Car CarRequestToCar(CarRequest carRequest);
         public CustomUser OwnerRequestToCarOwner(OwnerRequest OwnerRequest);
@@ -30,14 +30,13 @@ namespace Vehicles.MyCustomMapper
         {
             _vehicleImageRetriever = vehicleImageRetriever;
         }
-        public async Task<CarResponse> CarToCarResponse(Car car,string ImgDirectory)
+        public CarResponse CarToCarResponse(Car car)
         {
             FileContentResult ImgFile = null;
             try
             {
-                var FileImgInfo = await _vehicleImageRetriever
-                    .GetImageByBrandAndUniqueNumber(
-                    car.Brand, car.UniqueNumber, ImgDirectory);
+                var FileImgInfo =  _vehicleImageRetriever
+                    .GetFileImgInfoByImgPath(car.ImgPath);
                 ImgFile = new FileContentResult(
                     FileImgInfo.FileBytes, FileImgInfo.FileType);
             }
