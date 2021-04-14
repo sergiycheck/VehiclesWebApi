@@ -9,6 +9,7 @@ using System;
 using vehicles.Hubs;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Vehicles.Contracts.V1;
 
 namespace Vehicles
 {
@@ -60,13 +61,13 @@ namespace Vehicles
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine(env.WebRootPath, @"assets\vehicleImgs")),
+                    Path.Combine(env.WebRootPath, ApiRoutes.imgsPath)),
                 RequestPath = "/MyImages"
             });
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine(env.WebRootPath, @"assets\vehicleImgs")),
+                    Path.Combine(env.WebRootPath, ApiRoutes.imgsPath)),
                 RequestPath = "/MyImages"
             });
 
