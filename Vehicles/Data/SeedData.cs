@@ -13,6 +13,9 @@ using Vehicles.Helpers;
 using vehicles.Helpers;
 using System.IO;
 using Vehicles.Contracts.V1;
+using Vehicles.AuthorizationsManagers;
+using vehicles.Authorization.AuthorizationsManagers;
+using vehicles.Models;
 
 namespace Vehicles.Data
 {
@@ -31,7 +34,9 @@ namespace Vehicles.Data
 
 
         }
-     private static StringBuilder GetChars(Random rnd)
+
+
+        private static StringBuilder GetChars(Random rnd)
      {
           char ch;
           StringBuilder builder = new StringBuilder();
@@ -43,7 +48,8 @@ namespace Vehicles.Data
 
           return builder;
      }
-     public static  string GenerateRandomRegistrationPlateNumber()
+        
+        public static  string GenerateRandomRegistrationPlateNumber()
      {
           Random rnd = new Random();
           string middle = "";
@@ -61,7 +67,8 @@ namespace Vehicles.Data
           return string.Format($"{part1}-{middle}-{part2}");
      }
 
-     public  Car[] Cars { get; set; } = {
+        public  Car[] Cars 
+        { get; set; } = {
           new Car()
           {
 
@@ -246,192 +253,194 @@ namespace Vehicles.Data
                UniqueNumber = "DG-8676-ZA"
           }
      };
-     public class UserAndPassword
+        public class UserAndPassword
      {
           public CustomUser CustomUser{get;set;}
           public string Password{get;set;}
      }
-     public  UserAndPassword[] UsersAndPasswords { get; set; } = {
-     new UserAndPassword()
-     {
-          CustomUser = new CustomUser()
-               {
+        public  UserAndPassword[] UsersAndPasswords 
+        { get; set; } = {
+
+             new UserAndPassword()
+             {
+                  CustomUser = new CustomUser()
+                       {
                     
-                    BirthDate = DateTime.Parse("1988-02-06"),
-                    PhoneNumber = "1-770-736-8031",
-                    City = "Wisokyburgh",
-                    FirstName= "Ervin",
-                    LastName= "Howell",
-                    EmailConfirmed = true,
-                    Email = "name1Email@domain.com",
-                    UserName = "ErvinUser"
-               },
-          Password = "!VeryStrPass1234_1"
-     },
-     new UserAndPassword()
-     {
-          CustomUser = new CustomUser()
-          {
-               BirthDate = DateTime.Parse("1978-07-26"),
-               PhoneNumber = "010-692-6593",
-               City = "Victor Plains",
-               FirstName= "Romaguera ",
-               LastName= "Deckow",
-               EmailConfirmed = true,
-               Email = "name2Email@domain.com",
-               UserName = "RomagueraUser"
-          },
-          Password = "!VeryStrPass1234_2"
-     },
-     new UserAndPassword()
-     {
-          CustomUser = new CustomUser()
-          {                    
-               BirthDate = DateTime.Parse("1991-06-14"),
-               PhoneNumber = "010-692-6593",
-               City = "Wisokyburgh",
-               FirstName= "Deckow",
-               LastName= "Crist",
-               EmailConfirmed = true,
-               Email = "name3Email@domain.com",
-               UserName = "DeckowUser"
-          },
-          Password = "!VeryStrPass1234_3"
-     },
-     new UserAndPassword()
-     {
-          CustomUser = new CustomUser()
-          {             
-               BirthDate = DateTime.Parse("1988-02-15"),
-               PhoneNumber = "1-463-123-4447",
-               City = "Hoeger Mall",
-               FirstName= "Robel",
-               LastName= "Corkery",
-               EmailConfirmed = true,
-               Email = "name4Email@domain.com",
-               UserName = "RobelUser"
+                            BirthDate = DateTime.Parse("1988-02-06"),
+                            PhoneNumber = "1-770-736-8031",
+                            City = "Wisokyburgh",
+                            FirstName= "Ervin",
+                            LastName= "Howell",
+                            EmailConfirmed = true,
+                            Email = "name1Email@domain.com",
+                            UserName = "ErvinUser"
+                       },
+                  Password = "!VeryStrPass1234_1"
+             },
+             new UserAndPassword()
+             {
+                  CustomUser = new CustomUser()
+                  {
+                       BirthDate = DateTime.Parse("1978-07-26"),
+                       PhoneNumber = "010-692-6593",
+                       City = "Victor Plains",
+                       FirstName= "Romaguera ",
+                       LastName= "Deckow",
+                       EmailConfirmed = true,
+                       Email = "name2Email@domain.com",
+                       UserName = "RomagueraUser"
+                  },
+                  Password = "!VeryStrPass1234_2"
+             },
+             new UserAndPassword()
+             {
+                  CustomUser = new CustomUser()
+                  {                    
+                       BirthDate = DateTime.Parse("1991-06-14"),
+                       PhoneNumber = "010-692-6593",
+                       City = "Wisokyburgh",
+                       FirstName= "Deckow",
+                       LastName= "Crist",
+                       EmailConfirmed = true,
+                       Email = "name3Email@domain.com",
+                       UserName = "DeckowUser"
+                  },
+                  Password = "!VeryStrPass1234_3"
+             },
+             new UserAndPassword()
+             {
+                  CustomUser = new CustomUser()
+                  {             
+                       BirthDate = DateTime.Parse("1988-02-15"),
+                       PhoneNumber = "1-463-123-4447",
+                       City = "Hoeger Mall",
+                       FirstName= "Robel",
+                       LastName= "Corkery",
+                       EmailConfirmed = true,
+                       Email = "name4Email@domain.com",
+                       UserName = "RobelUser"
      
-          },
-          Password = "!VeryStrPass1234_4"            
-     },
-     new UserAndPassword()
-     {
-          CustomUser = new CustomUser()
-          {      
-               BirthDate = DateTime.Parse("1976-02-04"),
-               PhoneNumber = "493-170-9623",
-               City = "Douglas",
-               FirstName= "Dennis",
-               LastName= "Schulist",
-               EmailConfirmed = true,
-               Email = "name5Email@domain.com",
-               UserName = "DennisUser"
-          },
-          Password = "!VeryStrPass1234_5" 
-     },
-     new UserAndPassword()
-     {
-          CustomUser = new CustomUser()
-          {
+                  },
+                  Password = "!VeryStrPass1234_4"            
+             },
+             new UserAndPassword()
+             {
+                  CustomUser = new CustomUser()
+                  {      
+                       BirthDate = DateTime.Parse("1976-02-04"),
+                       PhoneNumber = "493-170-9623",
+                       City = "Douglas",
+                       FirstName= "Dennis",
+                       LastName= "Schulist",
+                       EmailConfirmed = true,
+                       Email = "name5Email@domain.com",
+                       UserName = "DennisUser"
+                  },
+                  Password = "!VeryStrPass1234_5" 
+             },
+             new UserAndPassword()
+             {
+                  CustomUser = new CustomUser()
+                  {
                
-               BirthDate = DateTime.Parse("1989-02-01"),
-               PhoneNumber = "254-954-1289",
-               City = "Formerhoekweg",
-               FirstName= "Amelia",
-               LastName= "Van der Slik",
-               EmailConfirmed = true,
-               Email = "name6Email@domain.com",
-               UserName = "AmeliaUser"
+                       BirthDate = DateTime.Parse("1989-02-01"),
+                       PhoneNumber = "254-954-1289",
+                       City = "Formerhoekweg",
+                       FirstName= "Amelia",
+                       LastName= "Van der Slik",
+                       EmailConfirmed = true,
+                       Email = "name6Email@domain.com",
+                       UserName = "AmeliaUser"
           
-          },
-          Password = "!VeryStrPass1234_6"  
-     },
-     new UserAndPassword()
-     {
-          CustomUser = new CustomUser()
-          {
-               BirthDate = DateTime.Parse("1988-02-19"),
-               PhoneNumber = "477-935-8478",
-               City = "Wisokyburgh",
-               FirstName= "Sinne",
-               LastName= "Van Schooten",
-               EmailConfirmed = true,
-               Email = "name7Email@domain.com",
-               UserName = "SinneUser"
-          },
-          Password = "!VeryStrPass1234_7"  
-     },
-     new UserAndPassword()
-     {
-          CustomUser = new CustomUser()
-          {
+                  },
+                  Password = "!VeryStrPass1234_6"  
+             },
+             new UserAndPassword()
+             {
+                  CustomUser = new CustomUser()
+                  {
+                       BirthDate = DateTime.Parse("1988-02-19"),
+                       PhoneNumber = "477-935-8478",
+                       City = "Wisokyburgh",
+                       FirstName= "Sinne",
+                       LastName= "Van Schooten",
+                       EmailConfirmed = true,
+                       Email = "name7Email@domain.com",
+                       UserName = "SinneUser"
+                  },
+                  Password = "!VeryStrPass1234_7"  
+             },
+             new UserAndPassword()
+             {
+                  CustomUser = new CustomUser()
+                  {
                
-          BirthDate = DateTime.Parse("1988-02-04"),
-          PhoneNumber = "757-146-1278",
-          City = "Formerhoekweg",
-          FirstName= "Sinne",
-          LastName= "Van Schooten",
-          EmailConfirmed = true,
-          Email = "name8Email@domain.com",
-          UserName = "SinneUser"
+                  BirthDate = DateTime.Parse("1988-02-04"),
+                  PhoneNumber = "757-146-1278",
+                  City = "Formerhoekweg",
+                  FirstName= "Sinne",
+                  LastName= "Van Schooten",
+                  EmailConfirmed = true,
+                  Email = "name8Email@domain.com",
+                  UserName = "SinneUser"
           
-          },
-          Password = "!VeryStrPass1234_8"
-     },
-     new UserAndPassword()
-     {
-          CustomUser = new CustomUser()
-          {
+                  },
+                  Password = "!VeryStrPass1234_8"
+             },
+             new UserAndPassword()
+             {
+                  CustomUser = new CustomUser()
+                  {
                
-          BirthDate = DateTime.Parse("1988-02-25"),
-          PhoneNumber = "210-067-6132",
-          City = "Pune",
-          FirstName= "Mari",
-          LastName= "Guevara",
-          EmailConfirmed = true,
-          Email = "name9Email@domain.com",
-          UserName = "MariUser"
+                  BirthDate = DateTime.Parse("1988-02-25"),
+                  PhoneNumber = "210-067-6132",
+                  City = "Pune",
+                  FirstName= "Mari",
+                  LastName= "Guevara",
+                  EmailConfirmed = true,
+                  Email = "name9Email@domain.com",
+                  UserName = "MariUser"
           
-          },
-          Password = "!VeryStrPass1234_9"  
-     },
-     new UserAndPassword()
-     {
-          CustomUser = new CustomUser()
-          {
+                  },
+                  Password = "!VeryStrPass1234_9"  
+             },
+             new UserAndPassword()
+             {
+                  CustomUser = new CustomUser()
+                  {
                
-          BirthDate = DateTime.Parse("1988-02-14"),
-          PhoneNumber = "525-062-428",
-          City = "Santiago",
-          FirstName= "Rudi",
-          LastName= "Russo",
-          EmailConfirmed = true,
-          Email = "name10Email@domain.com",
-          UserName = "RudiUser"
+                  BirthDate = DateTime.Parse("1988-02-14"),
+                  PhoneNumber = "525-062-428",
+                  City = "Santiago",
+                  FirstName= "Rudi",
+                  LastName= "Russo",
+                  EmailConfirmed = true,
+                  Email = "name10Email@domain.com",
+                  UserName = "RudiUser"
                
-          },
-          Password = "!VeryStrPass1234_10"  
-     },
-     new UserAndPassword()
-     {
-          CustomUser = new CustomUser()
-          {
+                  },
+                  Password = "!VeryStrPass1234_10"  
+             },
+             new UserAndPassword()
+             {
+                  CustomUser = new CustomUser()
+                  {
                
-          BirthDate = DateTime.Parse("1988-02-17"),
-          PhoneNumber = "550-067-132",
-          City = "Cairo",
-          FirstName= "Juliet",
-          LastName= "Begum",
-          EmailConfirmed = true,
-          Email = "name11Email@domain.com",
-          UserName = "JulietUser"
+                  BirthDate = DateTime.Parse("1988-02-17"),
+                  PhoneNumber = "550-067-132",
+                  City = "Cairo",
+                  FirstName= "Juliet",
+                  LastName= "Begum",
+                  EmailConfirmed = true,
+                  Email = "name11Email@domain.com",
+                  UserName = "JulietUser"
                
-          },
-          Password = "!VeryStrPass1234_11"  
-     }
+                  },
+                  Password = "!VeryStrPass1234_11"  
+             }
      };
 
-     public  List<ManyToManyCustomUserToVehicle> GetManyToManyCustomUserToVehicle
+        public  List<ManyToManyCustomUserToVehicle> GetManyToManyCustomUserToVehicle
                (Car[] SomeCars, UserAndPassword[] SomeUserAndPasswords)
      {
           Random rnd = new Random();
@@ -461,9 +470,19 @@ namespace Vehicles.Data
           return manyToManyCustomUser;
           
      }
-     //public List<string> userIds = new List<string>();
-     public async Task Initialize(ICustomUserManager userManager, VehicleDbContext context)
-     { 
+        
+        
+        //public List<string> userIds = new List<string>();
+
+
+        public async Task Initialize(
+            ICustomUserManager userManager,
+            ICustomRoleManager roleManager, 
+            VehicleDbContext context)
+        {
+            
+            context.Database.Migrate();
+
 
           if (!context.Cars.Any()) 
           {
@@ -475,73 +494,152 @@ namespace Vehicles.Data
                     Cars[i].ImgPath = ImgPath;
                 }
                context.Cars.AddRange(Cars);
-               await context.SaveChangesAsync();
+               context.SaveChanges();
           }
 
-          using(userManager)
-          {
-               if (!userManager.Users.AsNoTracking().Any())
-               {
-                    //add password
-                    //new thread errors
-                    foreach (var user_password in UsersAndPasswords.ToList())
-                    {
-                        var id = EnsureUser(userManager,
-                                                  user_password.CustomUser,
-                                                  user_password.Password).GetAwaiter().GetResult();
-                    }
+          //using(userManager){
 
-               }
-          }
-//exeption here works from second start because for the first time users are not initialized due to userManager
-//https://entityframework.net/knowledge-base/7819002/the-insert-statement-conflicted-with-the-foreign-key-constraint-in-entity-framework
+            if (!userManager.Users.AsNoTracking().Any())
+            {
+                //add password
+                //new thread errors
+                foreach (var user_password in UsersAndPasswords.ToList())
+                {
+                    var id = EnsureUser(userManager,
+                                                user_password.CustomUser,
+                                                user_password.Password).GetAwaiter().GetResult();
+                }
+
+            context.SaveChanges();
+
+            }
+
+            //TODO: get admins data from ignored file
+            var adminFirstName = "admin_jHHHg3nnnwDn";
+            var adminPassword = "77n3fGGGewfnnlkjddNh#2!_";
+            var adminEmail = "adminUserName@custom.domain.com";
+            var adminUserName = "adminUserName";
+
+            var admin = await userManager.Users
+                .FirstOrDefaultAsync(u => u.FirstName == adminFirstName);
+
+            if (admin == null)
+            {
+                var adminId = await this.EnsureUser(
+                    userManager,
+                    new CustomUser() {
+                        Email = adminEmail,
+                        UserName = adminUserName,
+                        FirstName = adminFirstName,
+                        EmailConfirmed = true,
+                        BirthDate = DateTime.Parse("1978-02-06"),
+                    },
+                    adminPassword
+                    );
+
+                await this.EnsureRole(
+                    roleManager,
+                    userManager,
+                    adminId,
+                    AuthorizationConstants.ContactAdministratorsRole);
+
+                context.SaveChanges();
+
+            }
+          //}
+            
+            //exeption here works from second start because for the first time users are not initialized due to userManager
+            //https://entityframework.net/knowledge-base/7819002/the-insert-statement-conflicted-with-the-foreign-key-constraint-in-entity-framework
 
           if (!context.ManyToManyCarOwners.Any())
           {
-               var manyToManyCustomUserToVehicle = new List<ManyToManyCustomUserToVehicle>();
-               if(
-                    Cars.ToList().Find(c=>c.Id==0)==null &&
-                    UsersAndPasswords.ToList().Find(up=>up.CustomUser.Id==null)==null)
-               {
-                    manyToManyCustomUserToVehicle = GetManyToManyCustomUserToVehicle(Cars,UsersAndPasswords);
-               }else{
-                    var carsFromDb = await context.Cars.AsNoTracking().ToListAsync();
-                    var usersFromDb = await context.Users.AsNoTracking().ToListAsync();
-                    var userAndPasswordFromDb = new List<UserAndPassword>();
-                    for (int i = 0; i < usersFromDb.Count; i++)
+                try
+                {
+                    await TryAddManyToManyRelation(context);
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine(ex);
+                    
+                }
+          }
+          
+
+        }
+
+        private async Task TryAddManyToManyRelation(VehicleDbContext context)
+        {
+            var manyToManyCustomUserToVehicle = new List<ManyToManyCustomUserToVehicle>();
+
+                var carsFromDb = await context.Cars.AsNoTracking().ToListAsync();
+                var usersFromDb = await context.Users.AsNoTracking().ToListAsync();
+                var userAndPasswordFromDb = new List<UserAndPassword>();
+                for (int i = 0; i < usersFromDb.Count; i++)
+                {
+                    userAndPasswordFromDb.Add(new UserAndPassword()
                     {
-                         userAndPasswordFromDb.Add(new UserAndPassword()
-                         {
-                              CustomUser = usersFromDb[i],
-                              Password = UsersAndPasswords[i].Password
-                         });
-                    }
+                        CustomUser = usersFromDb[i],
+                        Password = UsersAndPasswords[i].Password
+                    });
+                }
 
-                    manyToManyCustomUserToVehicle = GetManyToManyCustomUserToVehicle(
-                         carsFromDb.ToArray(),userAndPasswordFromDb.ToArray());
-               }
-               context.AddRange(manyToManyCustomUserToVehicle);
-               await context.SaveChangesAsync();
-          }
+                manyToManyCustomUserToVehicle = GetManyToManyCustomUserToVehicle(
+                     carsFromDb.ToArray(), userAndPasswordFromDb.ToArray());
+            
+
+            context.ManyToManyCarOwners.AddRange(manyToManyCustomUserToVehicle);
+            context.SaveChanges();
+        }
+
+
+        private async Task<string> EnsureUser(
+              ICustomUserManager userManager,
+              CustomUser newUser,
+              string Password)
+        {
           
+              var user = await userManager.FindByNameAsync(newUser.UserName);
+              if (user == null)
+              {
+                   user = newUser;
+                   userManager.CreateAsync(user, Password).Wait();
+              }
+              return user.Id;
+        }
 
-     }
+        private async Task<IdentityResult> EnsureRole(
+            ICustomRoleManager roleManager,
+            ICustomUserManager userManager,
+            string uid, string role)
+        {
+            IdentityResult IR = null;
+
+            if (roleManager == null)
+            {
+                throw new Exception("roleManager null");
+            }
+
+            if (!await roleManager.RoleExistsAsync(role))//ensure that current role doesn't exists and create it
+            {
+                IR = await roleManager.CreateAsync(new CustomRole(role));
+            }
+
+            var user = await userManager.FindByIdAsync(uid);
+
+            if (user == null)
+            {
+                throw new Exception("User does not exists!");
+            }
+
+            if (!await userManager.IsInRoleAsync(user, role))
+            {
+                IR = await userManager.AddToRoleAsync(user, role);
+            }
 
 
-     private async Task<string> EnsureUser(
-          ICustomUserManager userManager,
-          CustomUser newUser,
-          string Password)
-     {
-          
-          var user = await userManager.FindByNameAsync(newUser.UserName);
-          if (user == null)
-          {
-               user = newUser;
-               userManager.CreateAsync(user, Password).Wait();
-          }
-          return user.Id;
-     }
+            return IR;
+        }
 
     }
 }

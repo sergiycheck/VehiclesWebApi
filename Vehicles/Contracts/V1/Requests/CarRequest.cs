@@ -22,5 +22,6 @@ namespace Vehicles.Contracts.Requests
         public string Drive{get;set;}
         public IEnumerable<OwnerRequest> OwnerRequests {get;set;}
 
+        public string Token { get; set; }
     }
 }

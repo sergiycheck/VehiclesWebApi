@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Vehicles.Models;
+using vehicles.Models;
 
 namespace Vehicles.Installers.Implementations
 {
@@ -23,7 +24,7 @@ namespace Vehicles.Installers.Implementations
                 options.UseSqlServer(
                     configuration.GetConnectionString("VehiclesDbConnection")));
             services.AddDefaultIdentity<CustomUser>()
-                .AddRoles<IdentityRole>()
+                .AddRoles<CustomRole>()
                 .AddEntityFrameworkStores<VehicleDbContext>();
             //services.AddDbContext<VehicleDbContext>(opt =>
             //   opt.UseInMemoryDatabase("VehiclesDbConnection"));//for testing

@@ -5,15 +5,41 @@ using Vehicles.Models;
 using Vehicles.Interfaces.RepositoryInterfaces;
 using Vehicles.Interfaces.ServiceInterfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Vehicles.Services
 {
     public class CarService:ICarService
     {
         private readonly ICarsRepository _repository;
-        public CarService(ICarsRepository repository)
+
+        private readonly ICarOwnersRepository _ownersRepository;
+        private readonly IIdentityService _identityService;
+        public CarService(ICarsRepository repository, 
+            ICarOwnersRepository carOwnersRepository, 
+            IIdentityService identityService)
         {
             _repository = repository;
+            _ownersRepository = carOwnersRepository;
+            _identityService = identityService;
+        }
+
+        public ClaimsPrincipal GetClaimsPrincipal(string token)
+        {
+            return _identityService.GetPrincipalFromToken(token);
+        }
+        public async Task<CustomUser> GetOwnerById(string id)
+        {
+            return await _ownersRepository.GetById(id);
+        }
+        public async Task<List<CustomUser>> GetOwnersByCar(int id)
+        {
+            var car = await _repository.GetById(id);
+            if(car == null)
+            {
+                return null;
+            }
+            return await _ownersRepository.GetCarOwners(car.UniqueNumber);
         }
 
         public async Task Create(Car entity)

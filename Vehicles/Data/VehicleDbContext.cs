@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Vehicles.Models;
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using vehicles.Models;
 
 namespace Vehicles.Data
 {
-    public class VehicleDbContext : IdentityDbContext<CustomUser>
+    public class VehicleDbContext : IdentityDbContext<CustomUser, CustomRole, string>
     {
         public DbSet<Car> Cars{get;set;}
         
@@ -20,9 +21,12 @@ namespace Vehicles.Data
         {
             //Database.EnsureCreated();//for initializing initial data//for testing
         }
+
+        //dotnet ef migrations add "InitialCreate"
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
+            
             builder.Entity<ManyToManyCustomUserToVehicle>()
                 .HasKey(mtm=>new{mtm.CarOwnerId,mtm.CarId});
 
@@ -39,6 +43,8 @@ namespace Vehicles.Data
             builder.Entity<Car>()
                 .Property(p => p.Price)
                 .HasColumnType("decimal(18,4)");
+
+            base.OnModelCreating(builder);
 
             //alternative way for data seeding that is better for testing
             //remove other ways of db initializing

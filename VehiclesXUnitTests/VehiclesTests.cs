@@ -25,6 +25,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vehicles.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using vehicles.Helpers;
+using Vehicles.AuthorizationsManagers;
+using vehicles.Authorization.AuthorizationsManagers;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VehiclesXUnitTests
 {
@@ -74,10 +78,11 @@ namespace VehiclesXUnitTests
                 using (var context = Fixture.CreateContext(transaction))
                 {
                     
-                    var seed = new SeedData();
+                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
-                    await seed.Initialize(userManager, context);
+                    var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
+                    await seed.Initialize(userManager, userRoleManager, context);
 
                     Assert.NotNull(context.Users);
                     Assert.NotNull(context.Cars);
@@ -93,12 +98,12 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData();
-
+                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
+                    var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
+                    await seed.Initialize(userManager, userRoleManager, context);
 
-                    await seed.Initialize(userManager, context);
                     var carOwnerRepo = new CarOwnersRepository(context);
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Cars.AsNoTracking().ToHashSet().Count);
@@ -122,10 +127,12 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData();
+                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
-                    await seed.Initialize(userManager, context);
+                    var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
+                    await seed.Initialize(userManager, userRoleManager, context);
+
                     var carsRepo = new CarsRepository(context);
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Users.AsNoTracking().ToHashSet().Count);
@@ -148,16 +155,20 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData();
-
+                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
+                    var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
+                    await seed.Initialize(userManager, userRoleManager, context);
 
-                    await seed.Initialize(userManager, context);
+
                     var carsRepo = new CarsRepository(context);
                     var carOwnerRepo = new CarOwnersRepository(context);
+                    var identitySevice = new Mock<IIdentityService>();
 
-                    var carService = new CarService(carsRepo);
+                    var carService = new CarService(carsRepo,carOwnerRepo,identitySevice.Object);
+
+                    
                     var carOwnerService = new CarOwnerService(carOwnerRepo);
 
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
@@ -191,20 +202,27 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData();
+                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
-                    await seed.Initialize(userManager, context);
+                    var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
+                    await seed.Initialize(userManager, userRoleManager, context);
+
                     var carsRepo = new CarsRepository(context);
                     var carOwnerRepo = new CarOwnersRepository(context);
+                    var identitySevice = new Mock<IIdentityService>();
 
-                    var carService = new CarService(carsRepo);
+                    var carService = new CarService(carsRepo,carOwnerRepo,identitySevice.Object);
                     var carOwnerService = new CarOwnerService(carOwnerRepo);
 
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
 
                     var mockWebHostingEnvironment = new Mock<IWebHostEnvironment>();
+
+                    var mockCustomAuthorizationService = new Mock<ICustomAuthorizationService>();
+                    mockCustomAuthorizationService
+                        .Setup(m => m.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object>(), It.IsAny<IAuthorizationRequirement>())).ReturnsAsync(AuthorizationResult.Success);
 
                     var controller = new VehiclesController( 
                         carService, 
@@ -213,7 +231,8 @@ namespace VehiclesXUnitTests
                         new CustomMapper(
                             new VehicleImageRetriever()),
                         mockWebHostingEnvironment.Object,
-                        new VehicleImageRetriever()
+                        new VehicleImageRetriever(),
+                        mockCustomAuthorizationService.Object
                         );
 
                     Random rnd = new Random();
@@ -238,10 +257,11 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData();
+                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
-                    await seed.Initialize(userManager, context);
+                    var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
+                    await seed.Initialize(userManager, userRoleManager, context);
 
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Users.AsNoTracking().ToHashSet().Count);
@@ -278,10 +298,13 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData();
+                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
-                    await seed.Initialize(userManager, context);
+                    var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
+                    await seed.Initialize(userManager, userRoleManager, context);
+
+
                     var carOwnerRepo = new CarOwnersRepository(context);
                     Random rnd = new Random();
                     var index = rnd.Next(0, context.Cars.AsNoTracking().ToHashSet().Count);
@@ -317,18 +340,26 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData();
+                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
-                    await seed.Initialize(userManager, context);
+                    var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
+                    await seed.Initialize(userManager, userRoleManager, context);
+                    
                     var carsRepo = new CarsRepository(context);
+                    var carOwnerRepo = new CarOwnersRepository(context);
+                    var identitySevice = new Mock<IIdentityService>();
 
-                    var carService = new CarService(carsRepo);
+                    var carService = new CarService(carsRepo,carOwnerRepo,identitySevice.Object);
 
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
 
                     var mockWebHostingEnvironment = new Mock<IWebHostEnvironment>();
+
+                    var mockCustomAuthorizationService = new Mock<ICustomAuthorizationService>();
+                    mockCustomAuthorizationService
+                        .Setup(m => m.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object>(), It.IsAny<IAuthorizationRequirement>())).ReturnsAsync(AuthorizationResult.Success);
 
                     var controller = new VehiclesController(
                         carService, 
@@ -336,7 +367,8 @@ namespace VehiclesXUnitTests
                         new UriService("https://localhost:5010/"),
                         new CustomMapper(new VehicleImageRetriever()),
                         mockWebHostingEnvironment.Object,
-                        new VehicleImageRetriever()
+                        new VehicleImageRetriever(),
+                        mockCustomAuthorizationService.Object
                         );
 
                     var testCar = new CarRequest

@@ -12,13 +12,18 @@ using Vehicles.Data;
 using Vehicles.Models;
 using Vehicles.Options;
 using Vehicles.Interfaces;
+using Vehicles.AuthorizationsManagers;
 
 namespace Vehicles.Services
 {
     public class IdentityService : IIdentityService
     {
         private readonly ICustomUserManager _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+
+        //private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ICustomRoleManager _roleManager;
+
+
         private readonly JwtSettings _jwtSettings;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly VehicleDbContext _context;
@@ -28,8 +33,9 @@ namespace Vehicles.Services
             ICustomUserManager userManager, 
             JwtSettings jwtSettings, 
             TokenValidationParameters tokenValidationParameters,
-            VehicleDbContext context, 
-            RoleManager<IdentityRole> roleManager
+            VehicleDbContext context,
+            //RoleManager<IdentityRole> roleManager
+            ICustomRoleManager roleManager
             //IFacebookAuthService facebookAuthService
             )
         {

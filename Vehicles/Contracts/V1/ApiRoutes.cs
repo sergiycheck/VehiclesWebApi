@@ -31,6 +31,7 @@ namespace Vehicles.Contracts.V1
             public const string Create = GetAll + "/create";
 
             public const string GetImage = GetAll + "getImage/{Brand}&{UniqueNumber}";
+            public const string CanAccess = GetAll + "/canAccess";
         }
         
         public static class Owners

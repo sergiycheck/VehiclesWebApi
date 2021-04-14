@@ -96,8 +96,8 @@ namespace VehiclesXUnitTests
         {
             var userLoginRequest = new UserLoginRequest()
             {
-                Email = "testname@domain.com",
-                Password = "test124!StrongPass"
+                Email = "name1Email@domain.com",
+                Password = "!VeryStrPass1234_1"
             };
 
             var loginResponse = await LoginAsync(userLoginRequest);

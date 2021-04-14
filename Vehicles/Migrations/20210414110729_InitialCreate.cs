@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace vehicles.Migrations
 {
-    public partial class changedOwnerToUser : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -66,7 +66,8 @@ namespace vehicles.Migrations
                     CarEngine = table.Column<float>(type: "real", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Transmision = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Drive = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Drive = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImgPath = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

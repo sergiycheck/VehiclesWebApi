@@ -20,6 +20,11 @@ using Microsoft.AspNetCore.Hosting; // for IWebHostEnvironment
 using System.IO;
 using vehicles.Helpers;
 using Microsoft.AspNetCore.Http;
+using vehicles.Authorization.AuthorizationsManagers;
+using vehicles.Models;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using System.Security.Claims;
+using vehicles.Contracts.V1.Requests;
 
 namespace Vehicles.Controllers
 {
@@ -39,13 +44,16 @@ namespace Vehicles.Controllers
 
         private readonly string _imgDirectory;
 
+        ICustomAuthorizationService _customAuthorizationService;
+
         public VehiclesController(
             ICarService carService,
             ILogger<VehiclesController> logger,
             IUriService uriService,
             ICustomMapper customMapper,
             IWebHostEnvironment appEnvironment,
-            IVehicleImageRetriever vehicleImageRetriever
+            IVehicleImageRetriever vehicleImageRetriever,
+            ICustomAuthorizationService authorizationService
             )
         {
             _carService = carService;
@@ -54,6 +62,8 @@ namespace Vehicles.Controllers
             _customMapper = customMapper;
             _appEnvironment = appEnvironment;
             _vehicleImageRetriever = vehicleImageRetriever;
+
+            _customAuthorizationService = authorizationService;
 
             var directory = Directory.GetCurrentDirectory();
             var imgDirectory = $@"{directory}\{ApiRoutes.imgsPath}";
@@ -106,7 +116,9 @@ namespace Vehicles.Controllers
         [HttpPost(ApiRoutes.Vehicles.GetCarsByOwner)]
         public async Task<ActionResult> GetCarsByCarOwner([FromBody] OwnerRequest value)
         {
-            var res = await _carService.GetCars(_customMapper.OwnerRequestToCarOwner(value));
+            var res = await _carService.GetCars(
+                _customMapper.OwnerRequestToCarOwner(value));
+
             _logger.LogInformation($"Getting cars by carOwner {value.Name}", res);
             var carsResponces = new List<CarResponse>();
             res.ForEach( c=>carsResponces.Add(
@@ -134,6 +146,11 @@ namespace Vehicles.Controllers
 
         private async Task<string> CreateImgFromRequest(HttpRequest request, CarRequest carRequest)
         {
+            if (request == null)
+            {
+                return string.Empty;
+            }
+
             var formCollection = await request.ReadFormAsync();
             var ImgFile = formCollection.Files.First();
 
@@ -162,14 +179,92 @@ namespace Vehicles.Controllers
         }
 
 
+        private async Task<bool> CheckIfUserAuthorizedForOperation(
+                            ClaimsPrincipal principalUser,
+                            OwnerResource resource,
+                            OperationAuthorizationRequirement requirement)
+        {
+            var isAuthorized = await _customAuthorizationService
+                                        .AuthorizeAsync(principalUser, resource, requirement);
+            if (!isAuthorized.Succeeded)
+            {
+                return false;
+            }
+            return true;
+
+        }
+
+
+
+
+        [HttpPost(ApiRoutes.Vehicles.CanAccess)]
+        public async Task<IActionResult> CanUserAccess([FromBody] CanAccessRequest canAccessRequest)
+        {
+            if(canAccessRequest==null || 
+                canAccessRequest.Token==null || 
+                canAccessRequest.Id== null ||  
+                canAccessRequest.Token==string.Empty)
+            {
+                return Ok(false);
+            }
+            if (!await CheckIsUserAuthorizedForAction((int)canAccessRequest.Id, canAccessRequest.Token))
+            {
+                return Ok(false);
+            }
+            return Ok(true);
+        }
+
+
+
+        private async Task<bool> CheckIsUserAuthorizedForAction(int? carId, string token)
+        {
+            //todo:
+            //refactor get owner by car id
+            if (carId == null || token == null || token ==string.Empty)
+            {
+                return false;
+            }
+
+            var actualOwners = await _carService.GetOwnersByCar((int)carId);
+            if (actualOwners == null)
+            {
+                return false;
+            }
+            var ownersId = actualOwners.Select(o => o.Id);
+
+            //get token and then get claims principal from token and set is to user
+            var claimsPrincipalCurrentUser = _carService.GetClaimsPrincipal(token);
+            if (claimsPrincipalCurrentUser != null)
+            {
+                HttpContext.User = claimsPrincipalCurrentUser;
+            }
+
+            if (!await CheckIfUserAuthorizedForOperation(
+                    HttpContext.User,
+                    new OwnerResource() { OwnersId = ownersId },
+                    Operations.Update))
+            {
+                return false;
+            }
+            return true;
+        }
+
         [Authorize]
         [HttpPut(ApiRoutes.Vehicles.Update), DisableRequestSizeLimit]
         public async Task<IActionResult> Put(int? id, [FromForm] CarRequest carRequest)
         {
             if (id != carRequest.Id)
                 return BadRequest();
-            var car = _customMapper.CarRequestToCar(carRequest);
 
+            //TODO:
+            //test
+
+            if(!await CheckIsUserAuthorizedForAction(carRequest.Id, carRequest.Token))
+            {
+                return BadRequest("You have not enough permissions for this action");
+            }
+            
+            var car = _customMapper.CarRequestToCar(carRequest);
             var oldCar = await _carService.GetById(id);
             _vehicleImageRetriever.DeleteFile(oldCar.ImgPath);
 
@@ -188,11 +283,20 @@ namespace Vehicles.Controllers
         }
 
         [Authorize]
-        [HttpDelete(ApiRoutes.Vehicles.Delete)]
-        public async Task<IActionResult> Delete(int? id)
+        [HttpPost(ApiRoutes.Vehicles.Delete)]
+        public async Task<IActionResult> Delete(int? id, [FromBody] CanAccessRequest canAccessRequest)
         {
             if (id != null) 
             {
+                //TODO:
+                //test
+
+                if (!await CheckIsUserAuthorizedForAction(canAccessRequest.Id, canAccessRequest.Token))
+                {
+                    return BadRequest("You have not enough permissions for this action");
+                }
+               
+
                 if (_carService.EntityExists((int)id))
                 {
                     var car = await _carService.GetById(id);

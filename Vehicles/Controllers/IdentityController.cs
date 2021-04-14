@@ -8,6 +8,7 @@ using Vehicles.Services;
 using Microsoft.AspNetCore.Authorization;
 using Vehicles.Models;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 
 namespace Vehicles.Controllers
 {
@@ -108,8 +109,9 @@ namespace Vehicles.Controllers
             {
                 return Challenge();
             }
-            var name=User.Identity.Name;
-            if(name!=null)
+            var name=User.Identity.Name;//Name is null
+
+            if (name!=null)
             {
                 return Ok($"{name}");
             }else

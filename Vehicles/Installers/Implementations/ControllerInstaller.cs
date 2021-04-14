@@ -17,6 +17,8 @@ using Vehicles.AuthorizationsManagers;
 using Vehicles.AuthorizationsManagers.Attributes;
 using vehicles.Helpers;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using vehicles.Authorization.AuthorizationsManagers;
 
 namespace Vehicles.Installers.Implementations
 {
@@ -42,7 +44,16 @@ namespace Vehicles.Installers.Implementations
 
                                   });
             });
-            services.AddControllers().AddJsonOptions(options =>
+
+
+            services.AddControllers(config=> {
+
+                //var policy = new AuthorizationPolicyBuilder()
+                //                .Build();
+
+                //config.Filters.Add(new AuthorizeFilter(policy));
+            })
+            .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.WriteIndented = true;
                 options.JsonSerializerOptions.Converters.Add(new DecimalToStringConverter());
@@ -66,16 +77,17 @@ namespace Vehicles.Installers.Implementations
             services.AddSingleton(tokenValidationParameters);
 
             services.AddAuthentication(authOpt =>
-                {
-                    authOpt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    authOpt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    authOpt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(configureOptions =>
-                {
-                    configureOptions.SaveToken = true;
-                    configureOptions.TokenValidationParameters = tokenValidationParameters;
-                });
+            {
+                authOpt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authOpt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                authOpt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(configureOptions =>
+            {
+                configureOptions.SaveToken = true;
+                configureOptions.TokenValidationParameters = tokenValidationParameters;
+            });
+
 
 
 
@@ -86,10 +98,28 @@ namespace Vehicles.Installers.Implementations
             services.AddTransient<ICarService, CarService>();
             services.AddTransient<ICustomMapper,CustomMapper>();
             
-            services.AddScoped<ICustomUserManager,CustomUserManager>();
-            services.AddScoped<ICustomSignInManager,CustomSignInManager>();
-            services.AddScoped<IIdentityService,IdentityService>();
 
+
+            //role managers
+
+            services.AddScoped<ICustomAuthorizationService, CustomAuthorizationService>();
+
+            services.AddScoped<IAuthorizationHandler,
+                      AdministratorAuthorizationHandler>();
+            services.AddScoped<IAuthorizationHandler,
+                                  OwnerAuthorizationHandler>();
+            
+            services.AddScoped<ICustomRoleManager, CustomRoleManager>();
+            services.AddScoped<ICustomRolesRespository, CustomRolesRepository>();
+
+            //user managers
+            services.AddScoped<ICustomUserManager, CustomUserManager>();
+            services.AddScoped<ICustomSignInManager, CustomSignInManager>();
+            services.AddScoped<IIdentityService, IdentityService>();
+
+
+
+            //get image
             services.AddTransient<IVehicleImageRetriever, VehicleImageRetriever>();
 
 
@@ -109,6 +139,8 @@ namespace Vehicles.Installers.Implementations
                 o.MultipartBodyLengthLimit = int.MaxValue;
                 o.MemoryBufferThreshold = int.MaxValue;
             });
+
+
 
         }
     }
