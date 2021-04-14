@@ -77,9 +77,10 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    
-                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
+                    var appEnvirontent = serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+                    var seed = new SeedData(new VehicleImageRetriever(),appEnvirontent);
+                    
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
                     var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
                     await seed.Initialize(userManager, userRoleManager, context);
@@ -98,8 +99,10 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
+                    var appEnvirontent = serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+                    var seed = new SeedData(new VehicleImageRetriever(),appEnvirontent);
+
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
                     var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
                     await seed.Initialize(userManager, userRoleManager, context);
@@ -127,8 +130,11 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
+                    var appEnvirontent = serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+                    var seed = new SeedData(new VehicleImageRetriever(),appEnvirontent);
+
+
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
                     var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
                     await seed.Initialize(userManager, userRoleManager, context);
@@ -155,8 +161,11 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
+                    var appEnvirontent = serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+                    var seed = new SeedData(new VehicleImageRetriever(),appEnvirontent);
+
+
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
                     var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
                     await seed.Initialize(userManager, userRoleManager, context);
@@ -202,8 +211,11 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
+                    var appEnvirontent = serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+                    var seed = new SeedData(new VehicleImageRetriever(),appEnvirontent);
+
+
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
                     var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
                     await seed.Initialize(userManager, userRoleManager, context);
@@ -257,8 +269,11 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
+                    var appEnvirontent = serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+                    var seed = new SeedData(new VehicleImageRetriever(),appEnvirontent);
+
+
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
                     var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
                     await seed.Initialize(userManager, userRoleManager, context);
@@ -298,8 +313,11 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
+                    var appEnvirontent = serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+                    var seed = new SeedData(new VehicleImageRetriever(),appEnvirontent);
+
+
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
                     var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
                     await seed.Initialize(userManager, userRoleManager, context);
@@ -340,8 +358,11 @@ namespace VehiclesXUnitTests
             {
                 using (var context = Fixture.CreateContext(transaction))
                 {
-                    var seed = new SeedData(new VehicleImageRetriever());
                     using var serviceScope = _serviceProvider.CreateScope();
+                    var appEnvirontent = serviceScope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+                    var seed = new SeedData(new VehicleImageRetriever(),appEnvirontent);
+
+                    
                     var userManager = serviceScope.ServiceProvider.GetRequiredService<ICustomUserManager>();
                     var userRoleManager = serviceScope.ServiceProvider.GetRequiredService<ICustomRoleManager>();
                     await seed.Initialize(userManager, userRoleManager, context);

@@ -7,7 +7,7 @@ namespace Vehicles.Contracts.V1
     public static class ApiRoutes
     {
 
-        public const string imgsPath = @"assets\vehicleImgs\";
+        public const string imgsPath = @"assets/vehicleImgs/";
 
         public const string Root = "api";
 

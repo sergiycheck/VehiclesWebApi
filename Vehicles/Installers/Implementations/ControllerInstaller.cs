@@ -140,7 +140,7 @@ namespace Vehicles.Installers.Implementations
                 o.MemoryBufferThreshold = int.MaxValue;
             });
 
-
+            services.AddDirectoryBrowser();
 
         }
     }

@@ -32,5 +32,27 @@
     <PackageReference Include="System.Collections" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\assets\vehicleImgs\cullinan_dddd.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\honda1_vevev0-12112.jpeg" />
+    <None Include="wwwroot\assets\vehicleImgs\honda4ergergerg_vevev0-12112.jpeg" />
+    <None Include="wwwroot\assets\vehicleImgs\hondavdfvfdvdfvdfv_vevev0-12112.jpeg" />
+    <None Include="wwwroot\assets\vehicleImgs\Kia_Ceed_1.6_crdi_2007_DU-1848-UF.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Kia_Mohave_OFFICIAL_FULL_AWD_HN-8080-OV.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Lexus_RC_350_AWD_2015_UT-1521-ZO.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Lincoln_Continental_2016_KA-3115-OY.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Mazda_CX-9_Signature_2018_DH-5232-IF.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Mercedes-Benz_C_200_2010_QY-0324-PK.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Mercedes-Benz_G_63_AMG_2020_DG-8676-ZA.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Opel_Zafira_COMFORT_LINE_IDEAL_2009_EG-6118-FB.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Porsche_Panamera_2010_XX-7636-WX.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Renault_Talisman_2017_EU-0746-BG.png" />
+    <None Include="wwwroot\assets\vehicleImgs\Toyota_Camry_MAX_2004_asss.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Toyota_Camry_MAX_2004_BU-8032-UY.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Toyota_Camry_MAX_2004_OD-7551-TX.png" />
+    <None Include="wwwroot\assets\vehicleImgs\Volkswagen_Passat_B6_IDEAL_NY-3363-MQ.jpg" />
+    <None Include="wwwroot\assets\vehicleImgs\Volkswagen_Passat_B7_Highline_2014_IA-8214-WC.jpg" />
+  </ItemGroup>
+
 
 </Project>

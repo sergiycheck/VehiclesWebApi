@@ -65,9 +65,15 @@ namespace Vehicles.Controllers
 
             _customAuthorizationService = authorizationService;
 
-            var directory = Directory.GetCurrentDirectory();
-            var imgDirectory = $@"{directory}\{ApiRoutes.imgsPath}";
+            // var directory = Directory.GetCurrentDirectory();
+            var directory = _appEnvironment.WebRootPath;
+
+            _logger.LogInformation($"current directory {directory}");
+
+            var imgDirectory = $@"{directory}/{ApiRoutes.imgsPath}";
             _imgDirectory = imgDirectory;
+
+            _logger.LogInformation($"VehiclesController _imgDirectory \n {_imgDirectory}");
         }
         
 

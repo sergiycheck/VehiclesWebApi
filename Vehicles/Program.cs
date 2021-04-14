@@ -32,7 +32,8 @@ namespace Vehicles
                     var context = new VehicleDbContext(
                                 services.GetRequiredService<DbContextOptions<VehicleDbContext>>());
 
-                    var seed = new SeedData(new VehicleImageRetriever());
+                    var appEnvironment = services.GetRequiredService<IWebHostEnvironment>();
+                    var seed = new SeedData(new VehicleImageRetriever(),appEnvironment);
                     var userManager = services.GetService<ICustomUserManager>();
 
                     var roleManager = services.GetRequiredService<ICustomRoleManager>();

@@ -16,6 +16,7 @@ using Vehicles.Contracts.V1;
 using Vehicles.AuthorizationsManagers;
 using vehicles.Authorization.AuthorizationsManagers;
 using vehicles.Models;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Vehicles.Data
 {
@@ -24,14 +25,23 @@ namespace Vehicles.Data
     {
         static IVehicleImageRetriever _vehicleImageRetriever;
         string _imgDirectory;
-        public SeedData(IVehicleImageRetriever vehicleImageRetriever)
+        private readonly IWebHostEnvironment _appEnvironment;
+        public SeedData(
+             IVehicleImageRetriever vehicleImageRetriever,
+             IWebHostEnvironment appEnvironment)
         {
+             _appEnvironment = appEnvironment;
             _vehicleImageRetriever = vehicleImageRetriever;
 
-            var directory = Directory.GetCurrentDirectory();
-            var imgDirectory = $@"{directory}\{ApiRoutes.imgsPath}";
-            _imgDirectory = imgDirectory;
 
+          //   var directory = Directory.GetCurrentDirectory();
+          var directory = _appEnvironment.WebRootPath;
+          Console.WriteLine($"directory from seed data {directory}");
+          
+          var imgDirectory = $@"{directory}/{ApiRoutes.imgsPath}";
+          
+          _imgDirectory = imgDirectory;
+          Console.WriteLine($"SeedData \n {_imgDirectory}");
 
         }
 

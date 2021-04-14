@@ -7,6 +7,8 @@ using Vehicles.Installers.Implementations;
 using AutoMapper;
 using System;
 using vehicles.Hubs;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace Vehicles
 {
@@ -54,7 +56,20 @@ namespace Vehicles
 
             app.UseHttpsRedirection();
             app.UseDefaultFiles();
-            app.UseStaticFiles();
+            
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(env.WebRootPath, @"assets\vehicleImgs")),
+                RequestPath = "/MyImages"
+            });
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(env.WebRootPath, @"assets\vehicleImgs")),
+                RequestPath = "/MyImages"
+            });
+
             app.UseRouting();
             app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();

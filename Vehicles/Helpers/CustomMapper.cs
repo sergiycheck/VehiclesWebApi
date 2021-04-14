@@ -35,6 +35,8 @@ namespace Vehicles.MyCustomMapper
             FileContentResult ImgFile = null;
             try
             {
+                Console.WriteLine($"{car.Brand} \n {car.ImgPath}");
+
                 var FileImgInfo =  _vehicleImageRetriever
                     .GetFileImgInfoByImgPath(car.ImgPath);
                 ImgFile = new FileContentResult(
