@@ -21,7 +21,7 @@ using Microsoft.AspNetCore.Hosting;
 namespace Vehicles.Data
 {
 
-    public  class SeedData
+    public class SeedData
     {
         static IVehicleImageRetriever _vehicleImageRetriever;
         string _imgDirectory;
@@ -30,52 +30,137 @@ namespace Vehicles.Data
              IVehicleImageRetriever vehicleImageRetriever,
              IWebHostEnvironment appEnvironment)
         {
-             _appEnvironment = appEnvironment;
+            _appEnvironment = appEnvironment;
             _vehicleImageRetriever = vehicleImageRetriever;
 
 
-          //   var directory = Directory.GetCurrentDirectory();
-          var directory = _appEnvironment.WebRootPath;
-          Console.WriteLine($"directory from seed data {directory}");
-          
-          var imgDirectory = $@"{directory}/{ApiRoutes.imgsPath}";
-          
-          _imgDirectory = imgDirectory;
-          Console.WriteLine($"SeedData \n {_imgDirectory}");
+            //   var directory = Directory.GetCurrentDirectory();
+            var directory = _appEnvironment.WebRootPath;
+            Console.WriteLine($"directory from seed data {directory}");
+
+            var imgDirectory = $@"{directory}/{ApiRoutes.imgsPath}";
+
+            _imgDirectory = imgDirectory;
+            Console.WriteLine($"SeedData \n {_imgDirectory}");
 
         }
 
 
         private static StringBuilder GetChars(Random rnd)
-     {
-          char ch;
-          StringBuilder builder = new StringBuilder();
-          for (int i = 0; i < 2; i++)
-          {
-               ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * rnd.NextDouble() + 65)));
-               builder.Append(ch);
-          }
+        {
+            char ch;
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < 2; i++)
+            {
+                ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * rnd.NextDouble() + 65)));
+                builder.Append(ch);
+            }
 
-          return builder;
-     }
-        
-        public static  string GenerateRandomRegistrationPlateNumber()
-     {
-          Random rnd = new Random();
-          string middle = "";
-          for (int i = 0; i < 4; i++)
-          {
-               middle += rnd.Next(0, 9).ToString();
-          }
-          StringBuilder builder = GetChars(rnd);
+            return builder;
+        }
 
-          string part1 = builder.ToString().ToUpper();
+        public static string GenerateRandomRegistrationPlateNumber()
+        {
+            Random rnd = new Random();
+            string middle = "";
+            for (int i = 0; i < 4; i++)
+            {
+                middle += rnd.Next(0, 9).ToString();
+            }
+            StringBuilder builder = GetChars(rnd);
 
-          StringBuilder builder1 = GetChars(rnd);
+            string part1 = builder.ToString().ToUpper();
 
-          string part2 = builder1.ToString().ToUpper();
-          return string.Format($"{part1}-{middle}-{part2}");
-     }
+            StringBuilder builder1 = GetChars(rnd);
+
+            string part2 = builder1.ToString().ToUpper();
+            return string.Format($"{part1}-{middle}-{part2}");
+        }
+        public Penalty[] Penalties { get; set; } =
+        {
+            new Penalty
+            {
+                PayedStatus = false,
+                Description =
+                "Operation by drivers of vehicles, the identification numbers of the components of which do not correspond to the entries in the registration documents, destroyed or forged;",
+                Location = "Kiev",
+                Price = 255,
+                Date = DateTime.Parse("08/18/2020"),
+            },
+            new Penalty
+            {
+                PayedStatus = false,
+                Description =
+                "transportation by drivers of vehicles operating in the mode of minibuses, passengers in excess of the maximum number provided by the technical characteristics of the vehicle or specified in the registration documents for this vehicle",
+                Price = 170,
+                Location = "Kiev",
+                Date = DateTime.Parse("08/3/2020"),
+            },
+            new Penalty
+            {
+                PayedStatus = false,
+                Description =
+                "Violation by drivers of vehicles operating in the mode of minibuses, the rules of stopping during the boarding (disembarkation) of passengers;",
+                Location = "Kiev",
+                Date = DateTime.Parse("08/3/2020"),
+            },
+            new Penalty
+            {
+                PayedStatus = false,
+                Description =
+                "Violation by drivers of vehicles operating in the mode of minibuses, the rules of stopping during the boarding (disembarkation) of passengers;",
+                Location = "Lviv",
+                Price = 255,
+                Date = DateTime.Parse("02/3/2020"),
+            },
+            new Penalty
+            {
+                PayedStatus = false,
+                Description =
+                "Violation of the rules of using seat belts or motorcycle helmets;",
+                Location = "Kharkiv",
+                Price =510,
+                Date = DateTime.Parse("02/20/2020"),
+            },
+            new Penalty
+            {
+                PayedStatus = false,
+                Description =
+                "Transportation of passengers on a bus route longer than five hundred kilometers by one driver;",
+                Location = "Odessa",
+                Price =340,
+                Date = DateTime.Parse("02/20/2020"),
+            },
+            new Penalty
+            {
+                PayedStatus = false,
+                Description =
+                "Driving a vehicle that has malfunctions of the brake or steering system, traction device, external lighting devices (dark time of day) or other technical malfunctions with which, in accordance with the established rules, its operation is prohibited, or re-equipped in violation of relevant rules, regulations and standards;",
+                Location = "Lviv",
+                Price =510,
+                Date = DateTime.Parse("02/20/2020"),
+            },
+            new Penalty
+            {
+                PayedStatus = false,
+                Description =
+                "Repeated within a year of violation of Art. 121 part 10 (violation of the rules of transportation of children);",
+                Location = "Zhytomyr",
+                Price =850,
+                Date = DateTime.Parse("02/20/2020"),
+            },
+            new Penalty
+            {
+                PayedStatus = false,
+                Description =
+                "Driving a vehicle used to provide services for the carriage of passengers, which has malfunctions under Art. 121 Part 1, or whose technical condition and equipment do not meet the requirements of standards, traffic rules and technical operation;",
+                Location = "Zhytomyr",
+                Price = 760,
+                Date = DateTime.Parse("02/20/2020"),
+            },
+
+
+        };
 
         public  Car[] Cars 
         { get; set; } = {
@@ -506,6 +591,33 @@ namespace Vehicles.Data
                context.Cars.AddRange(Cars);
                context.SaveChanges();
           }
+            if (!context.Penalties.Any())
+            {
+                var rnd = new Random();
+
+                var carsFromDb = await context.Cars.AsNoTracking().ToListAsync();
+                var finalPenalties = new List<Penalty>();
+                for (int i = 0; i < carsFromDb.Count; i++)
+                {
+                    var index = rnd.Next(0, carsFromDb.Count-1);
+                    var car = carsFromDb[index];
+                    var countOfPenaltiesForCar = rnd.Next(0, 5);
+                    for (int j = 0; j < countOfPenaltiesForCar; j++)
+                    {
+                        var tempPenalties = new List<Penalty>(Penalties);
+                        var penaltyIndex = rnd.Next(0, tempPenalties.Count - 1);
+                        var penalty = tempPenalties[penaltyIndex];
+                        penalty.CarId = car.Id;
+                        finalPenalties.Add(penalty);
+
+                        tempPenalties.Remove(penalty);
+                    }
+                    
+                    carsFromDb.Remove(car);
+                }
+                context.Penalties.AddRange(finalPenalties);
+                context.SaveChanges();
+            }
 
           //using(userManager){
 

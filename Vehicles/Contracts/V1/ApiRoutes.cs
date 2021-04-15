@@ -33,7 +33,21 @@ namespace Vehicles.Contracts.V1
             public const string GetImage = GetAll + "getImage/{Brand}&{UniqueNumber}";
             public const string CanAccess = GetAll + "/canAccess";
         }
-        
+        public static class PenaltiesRoutes
+        {
+            public const string GetAll = Base + "/penalties";
+            public const string GetPenaltiesByUniqueNumber = GetAll + "/vehicle-unique-number/{uniqueNumber}";
+            
+            public const string Get = GetAll + "/{id:int}";
+
+            public const string Create = GetAll + "/create";
+            public const string Update = GetAll + "/update/{id:int}";
+            public const string Delete = GetAll + "/delete/{id:int}";
+
+            public const string PayPenalty = GetAll + "/pay/{id:int}";
+
+        }
+
         public static class Owners
         {
             public const string GetAll = Base + "/owners";

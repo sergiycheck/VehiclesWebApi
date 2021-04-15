@@ -12,6 +12,7 @@ namespace Vehicles.Data
 {
     public class VehicleDbContext : IdentityDbContext<CustomUser, CustomRole, string>
     {
+        public DbSet<Penalty> Penalties { get; set; }
         public DbSet<Car> Cars{get;set;}
         
         public DbSet<ManyToManyCustomUserToVehicle> ManyToManyCarOwners{get;set;}
@@ -41,6 +42,10 @@ namespace Vehicles.Data
                 .HasForeignKey(c=>c.CarId);
                 
             builder.Entity<Car>()
+                .Property(p => p.Price)
+                .HasColumnType("decimal(18,4)");
+
+            builder.Entity<Penalty>()
                 .Property(p => p.Price)
                 .HasColumnType("decimal(18,4)");
 

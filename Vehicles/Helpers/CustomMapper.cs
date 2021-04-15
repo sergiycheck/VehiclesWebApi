@@ -9,6 +9,8 @@ using Vehicles.Contracts.V1;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Mvc;
+using vehicles.Contracts.V1.Responses;
+using vehicles.Models;
 
 namespace Vehicles.MyCustomMapper
 {  
@@ -18,7 +20,10 @@ namespace Vehicles.MyCustomMapper
         public OwnerResponce OwnerToOwnerResponse(CustomUser carOwnerUser);
         public Car CarRequestToCar(CarRequest carRequest);
         public CustomUser OwnerRequestToCarOwner(OwnerRequest OwnerRequest);
-        
+        public PenaltyResponse PenaltyToPenaltyResponse(Penalty penalty);
+        public Penalty PenaltyRequestToPenalty(PenaltyRequest penalty);
+
+
     }
     public class CustomMapper :ICustomMapper
     {
@@ -72,6 +77,35 @@ namespace Vehicles.MyCustomMapper
                             }).ToList():null
             };
         }
+
+        public PenaltyResponse PenaltyToPenaltyResponse(Penalty penalty)
+        {
+            return new PenaltyResponse()
+            {
+                Id = penalty.Id,
+                PayedStatus = penalty.PayedStatus,
+                CarId = penalty.CarId,
+                Date = penalty.Date,
+                Description = penalty.Description,
+                Location = penalty.Location,
+                Price = penalty.Price
+            };
+        }
+        public Penalty PenaltyRequestToPenalty(PenaltyRequest penalty)
+        {
+            return new Penalty()
+            {
+                Id = penalty.Id,
+                PayedStatus = penalty.PayedStatus,
+                CarId = (int) penalty.CarId,
+                Date = penalty.Date,
+                Description = penalty.Description,
+                Location = penalty.Location,
+                Price = penalty.Price
+            };
+        }
+
+
         public OwnerResponce OwnerToOwnerResponse(CustomUser owner)
         {
             return new OwnerResponce

@@ -19,6 +19,7 @@ using vehicles.Helpers;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using vehicles.Authorization.AuthorizationsManagers;
+using vehicles.Repositories;
 
 namespace Vehicles.Installers.Implementations
 {
@@ -97,7 +98,8 @@ namespace Vehicles.Installers.Implementations
             services.AddTransient<ICarOwnerService, CarOwnerService>();
             services.AddTransient<ICarService, CarService>();
             services.AddTransient<ICustomMapper,CustomMapper>();
-            
+
+            services.AddTransient<IPenaltyRepository, PenaltyRepository>();
 
 
             //role managers

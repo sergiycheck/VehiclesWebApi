@@ -44,7 +44,7 @@ namespace Vehicles.Controllers
 
         private readonly string _imgDirectory;
 
-        ICustomAuthorizationService _customAuthorizationService;
+        private readonly ICustomAuthorizationService _customAuthorizationService;
 
         public VehiclesController(
             ICarService carService,
@@ -135,7 +135,8 @@ namespace Vehicles.Controllers
 
         [Authorize]
         [HttpPost(ApiRoutes.Vehicles.Create), DisableRequestSizeLimit]
-        public async Task<ActionResult> PostCarItem([FromForm] CarRequest carRequest)
+        public async Task<ActionResult> PostCarItem(
+            [FromForm] CarRequest carRequest)
         {
 
             var car = _customMapper.CarRequestToCar(carRequest);
