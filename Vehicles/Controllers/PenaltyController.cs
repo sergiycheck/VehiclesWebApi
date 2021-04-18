@@ -70,6 +70,38 @@ namespace vehicles.Controllers
             return Ok(new Response<PenaltyResponse[]>(responsesArray));
         }
 
+        [Authorize]
+        [HttpGet(ApiRoutes.PenaltiesRoutes.GetPenaltiesByUserId)]
+        public async Task<ActionResult> GetPenaltiesByUser(string userId)
+        {
+            if(userId == null)
+            {
+                return BadRequest("empty user id");
+
+            }
+
+            var penalties = await _penaltyRepository.GetPenaltiesByUserId(userId);
+
+            _logger
+                .LogInformation($" penalties " +
+                $"by user id  {userId}  {penalties.Count}");
+
+            var penaltyResponses = new List<PenaltyResponse>();
+
+            penalties
+                .ForEach(p => penaltyResponses
+                    .Add(_customMapper
+                        .PenaltyToPenaltyResponse(p)));
+
+            var responsesArray = penaltyResponses.ToArray();
+            _logger.LogInformation($"responsesArray length is {responsesArray.Length}");
+
+            return Ok(new Response<PenaltyResponse[]>(responsesArray));
+
+
+        }
+
+
         //tested with postman
         [HttpGet(ApiRoutes.PenaltiesRoutes.GetPenaltiesByUniqueNumber)]
         public async Task<ActionResult> GetPenaltiesByUniqueNumber(string uniqueNumber)
@@ -136,7 +168,13 @@ namespace vehicles.Controllers
 
             if (penalty.Price > penaltyPayRequest.Fee)
             {
-                return BadRequest("not enough money to pay penalty");
+
+                return BadRequest(
+                    new Response<AuthFailedResponse>(
+                        new AuthFailedResponse()
+                        { Errors = new string[] { "not enough money to pay penalty" } }
+                        )
+                    );
             }
 
             var updatedResult = await _penaltyRepository.PayPenalty(penalty.Id);
@@ -269,6 +307,8 @@ namespace vehicles.Controllers
 
 
 
+
+
         private async Task<bool> 
             CheckIsUserAuthorizedForAction(int? penaltyId, string token)
         {
@@ -295,6 +335,8 @@ namespace vehicles.Controllers
             return true;
 
         }
+
+
 
         private async Task<bool> CheckIfUserAuthorizedForOperation(
                     ClaimsPrincipal principalUser,

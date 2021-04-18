@@ -16,6 +16,9 @@ namespace vehicles.Repositories
             GetPenaltiesFromCarUniqueNumber(string uniqueNumber);
         public Task<Penalty> GetPenaltyWithCar(int id);
         public Task<int> PayPenalty(int id);
+
+        public Task<List<Penalty>>
+            GetPenaltiesByUserId(string userId);
     }
 
     public class PenaltyRepository:GenericRepository<Penalty>,IPenaltyRepository
@@ -36,12 +39,38 @@ namespace vehicles.Repositories
                       where car.UniqueNumber == uniqueNumber
                       select new Penalty
                       {
+                          CarId = car.Id,
                           Id = penalty.Id,
                           Description = penalty.Description,
                           Location = penalty.Location,
                           PayedStatus = penalty.PayedStatus,
-                          Price = penalty.Price
+                          Price = penalty.Price,
+                          Date = penalty.Date
                       };
+            return await res.ToListAsync();
+        }
+
+        public async Task<List<Penalty>>
+            GetPenaltiesByUserId(string userId)
+        {
+            var res = from car in _dbContext.Cars.AsNoTracking()
+                      join mtmCarOwner in _dbContext.ManyToManyCarOwners.AsNoTracking()
+                      on car.Id equals mtmCarOwner.CarId
+                      join penalty in _dbContext.Penalties.AsNoTracking()
+                      on car.Id equals penalty.CarId
+
+                      where mtmCarOwner.CarOwner.Id == userId
+                      select new Penalty
+                      {
+                          CarId = car.Id,
+                          Id = penalty.Id,
+                          Description = penalty.Description,
+                          Location = penalty.Location,
+                          PayedStatus = penalty.PayedStatus,
+                          Price = penalty.Price,
+                          Date = penalty.Date
+                      };
+
             return await res.ToListAsync();
         }
 
@@ -71,6 +100,7 @@ namespace vehicles.Repositories
             }
             catch (DbUpdateConcurrencyException ex)
             {
+                Console.WriteLine(ex.Message);
             }
             return updatedResult;
         }

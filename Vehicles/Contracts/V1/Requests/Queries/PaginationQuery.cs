@@ -7,7 +7,7 @@ namespace Vehicles.Contracts.V1.Requests.Queries
         public PaginationQuery()
         {
             PageNumber = 1;
-            PageSize = 100;
+            PageSize = 10;
         }
 
         public PaginationQuery(int pageNumber, int pageSize)

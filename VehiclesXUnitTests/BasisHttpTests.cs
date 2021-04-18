@@ -16,6 +16,8 @@ using System.Linq;
 using Vehicles.Contracts.V1.Requests;
 using System.Net.Http.Headers;
 using vehicles.Helpers;
+using Vehicles.Models;
+using Vehicles.Contracts.Requests;
 
 namespace VehiclesXUnitTests
 {
@@ -90,7 +92,7 @@ namespace VehiclesXUnitTests
 
 
 
-        private const string FILE_PATH = @"C:\Users\sergi\source\repos\Infotech\Vehicles\assets\vehicleImgs\";
+        private const string FILE_PATH = @"C:\Users\sergi\source\repos\Infotech\Vehicles\wwwroot\assets\vehicleImgs\";
         [Theory]
         [InlineData(
             "Kia Mohave OFFICIAL FULL AWD",
@@ -133,8 +135,8 @@ namespace VehiclesXUnitTests
             var responseMessageJson = await responseMessage.Content.ReadAsStringAsync();
 
             Assert.Equal(HttpStatusCode.OK, responseMessage.StatusCode);
-            var carResponse = JsonConvert.DeserializeObject<Response<CarResponse>>(responseMessageJson);
-            Assert.IsAssignableFrom<Response<CarResponse>>(carResponse);
+            var carResponse = JsonConvert.DeserializeObject<Response<Car>>(responseMessageJson);
+            Assert.IsAssignableFrom<Response<Car>>(carResponse);
 
 
         }
@@ -149,10 +151,10 @@ namespace VehiclesXUnitTests
             //Act
             var result = await client.GetAsync(url);
             var carsJson = await client.GetStringAsync(url);
-            var cars = JsonConvert.DeserializeObject<Response<List<CarResponse>>>(carsJson);
+            var cars = JsonConvert.DeserializeObject<Response<List<Car>>>(carsJson);
 
             //Assert
-            Assert.IsAssignableFrom<List<CarResponse>>(cars.Data);
+            Assert.IsAssignableFrom<List<Car>>(cars.Data);
             //Assert
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
 
@@ -207,7 +209,7 @@ namespace VehiclesXUnitTests
         }
 
         [Theory]
-        [InlineData("2d0aeabf-60fc-475d-ab67-f51f340ba8c3")]
+        [InlineData("6352f791-a574-4e00-94a8-9f092ac2d0bd")]
         public async Task PostGetCarsByOwner(string idString)
         {
             //todo add logging...
@@ -219,11 +221,15 @@ namespace VehiclesXUnitTests
             var result = await client.GetAsync(url);
             var Json = await client.GetStringAsync(url);
 
+            var owner = JsonConvert.DeserializeObject<Response<OwnerResponce>>(Json);
+
+            var jsonOwnerRequest = JsonConvert.SerializeObject(owner.Data);
+
             var authSuccessLoginResponce = await GetLoginResponse();
 
             url = ApiRoutes.Vehicles.GetCarsByOwner;
 
-            var strContent = new StringContent(Json, 
+            var strContent = new StringContent(jsonOwnerRequest, 
                         Encoding.UTF8, "application/json");
 
             client.DefaultRequestHeaders.Authorization = 
@@ -232,9 +238,9 @@ namespace VehiclesXUnitTests
             var response = await client.PostAsync(url,strContent);
             
             var carsJson = await response.Content.ReadAsStringAsync();
-            var cars = JsonConvert.DeserializeObject<Response<List<CarResponse>>>(carsJson);
+            var cars = JsonConvert.DeserializeObject<Response<List<Car>>>(carsJson);
             //Assert
-            Assert.IsAssignableFrom<List<CarResponse>>(cars.Data);
+            Assert.IsAssignableFrom<List<Car>>(cars.Data);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -250,7 +256,7 @@ namespace VehiclesXUnitTests
             var client = _factory.CreateClient();
             //Act
             var JsonCar = await client.GetStringAsync(url);
-            var car = JsonConvert.DeserializeObject<Response<CarResponse>>(JsonCar);
+            var car = JsonConvert.DeserializeObject<Response<Car>>(JsonCar);//cannot deserialize file
             url = ApiRoutes.Owners
                     .GetOwnersByCarUniqueNumber
                     .Replace("{uniqueNumber}",car.Data.UniqueNumber);

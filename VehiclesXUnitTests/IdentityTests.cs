@@ -15,6 +15,7 @@ using Vehicles.Contracts.V1.Requests;
 using System;
 using Xunit.Abstractions;
 using System.Net.Http.Headers;
+using Vehicles.Models;
 
 namespace VehiclesXUnitTests
 {
@@ -165,13 +166,17 @@ namespace VehiclesXUnitTests
             var jsonDeleteResponce = await deleteResponse.Content.ReadAsStringAsync();
             _output.WriteLine(jsonDeleteResponce);
         }
-        [Fact]
-        public async Task VehiclesControllerGetByIdAuthorizeTest() 
+
+
+
+        [Theory]
+        [InlineData("name1Email@domain.com", "!VeryStrPass1234_1")]
+        public async Task VehiclesControllerGetByIdAuthorizeTest(string email,string password) 
         {
             var userLoginRequest = new UserLoginRequest()
             {
-                Email = "testname@domain.com",
-                Password = "test124!StrongPass"
+                Email = email,
+                Password = password
             };
 
             var url = ApiRoutes.Identity.Login;
@@ -202,8 +207,8 @@ namespace VehiclesXUnitTests
 
             var carJson = await responseCar.Content.ReadAsStringAsync();
             
-            var car = JsonConvert.DeserializeObject<Response<CarResponse>>(carJson);
-            Assert.IsAssignableFrom<Response<CarResponse>>(car);
+            var car = JsonConvert.DeserializeObject<Response<Car>>(carJson);
+            Assert.IsAssignableFrom<Response<Car>>(car);
 
 
         }

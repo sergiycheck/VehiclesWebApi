@@ -112,6 +112,7 @@ namespace Vehicles.MyCustomMapper
             {
                 Id = owner.Id,
                 Name = owner.FirstName,
+                UserName = owner.UserName,
                 SurName = owner.LastName,
                 CarOwnerPhone = owner.PhoneNumber,
                 Location = $"{owner.Address} {owner.City}",
@@ -160,6 +161,7 @@ namespace Vehicles.MyCustomMapper
             {
                 Id = OwnerRequest.Id,
                 FirstName = OwnerRequest.Name,
+                UserName = OwnerRequest.UserName,
                 LastName = OwnerRequest.SurName,
                 PhoneNumber = OwnerRequest.CarOwnerPhone,
                 Address = OwnerRequest.Location,

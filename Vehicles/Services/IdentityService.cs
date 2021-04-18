@@ -13,6 +13,7 @@ using Vehicles.Models;
 using Vehicles.Options;
 using Vehicles.Interfaces;
 using Vehicles.AuthorizationsManagers;
+using Vehicles.Contracts.V1.Requests;
 
 namespace Vehicles.Services
 {
@@ -47,9 +48,9 @@ namespace Vehicles.Services
             //_facebookAuthService = facebookAuthService;
         }
         
-        public async Task<AuthenticationResult> RegisterAsync(string email, string password)
+        public async Task<AuthenticationResult> RegisterAsync(UserRegistrationRequest request)
         {
-            var existingUser = await _userManager.FindByEmailAsync(email);
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
 
             if (existingUser != null)
             {
@@ -63,11 +64,12 @@ namespace Vehicles.Services
             var newUser = new CustomUser
             {
                 Id = newUserId.ToString(),
-                Email = email,
-                UserName = email
+                Email = request.Email,
+                UserName = request.UserName,
+                EmailConfirmed = true
             };
 
-            var createdUser = await _userManager.CreateAsync(newUser, password);
+            var createdUser = await _userManager.CreateAsync(newUser, request.Password);
 
             if (!createdUser.Succeeded)
             {

@@ -37,7 +37,9 @@ namespace Vehicles.Contracts.V1
         {
             public const string GetAll = Base + "/penalties";
             public const string GetPenaltiesByUniqueNumber = GetAll + "/vehicle-unique-number/{uniqueNumber}";
-            
+
+            public const string GetPenaltiesByUserId = GetAll + "/get-by-user/{userId}";
+
             public const string Get = GetAll + "/{id:int}";
 
             public const string Create = GetAll + "/create";

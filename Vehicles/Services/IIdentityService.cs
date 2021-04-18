@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Vehicles.Contracts.V1.Requests;
 using Vehicles.Models;
 
 
@@ -7,7 +8,7 @@ namespace Vehicles.Services
 {
     public interface IIdentityService
     {
-        Task<AuthenticationResult> RegisterAsync(string email, string password);
+        Task<AuthenticationResult> RegisterAsync(UserRegistrationRequest request);
         
         Task<AuthenticationResult> LoginAsync(string email, string password);
         

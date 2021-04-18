@@ -28,6 +28,14 @@ namespace Vehicles.Controllers
         [HttpPost(ApiRoutes.Identity.Register)]
         public async Task<IActionResult> Register([FromBody] UserRegistrationRequest request)
         {
+            if(request.Email == null ||
+                request.Password == null||
+                request.UserName == null)
+            {
+                return BadRequest("data cann't be empty for registration");
+            }
+
+            _logger.LogInformation($"New registration request {request.Email} {request.Password}");
             if (!ModelState.IsValid)
             {
                 return BadRequest(new AuthFailedResponse
@@ -36,7 +44,7 @@ namespace Vehicles.Controllers
                 });
             }
             
-            var authResponse = await _identityService.RegisterAsync(request.Email, request.Password);
+            var authResponse = await _identityService.RegisterAsync(request);
 
             if (!authResponse.Success)
             {
@@ -104,21 +112,23 @@ namespace Vehicles.Controllers
         [HttpPost(ApiRoutes.Identity.GetUser)]
         public async Task<IActionResult> GetUser([FromBody] TokenRequest tokenRequest)
         {
+            
+            //if(!User.Identity.IsAuthenticated)
+            //{
+            //    return Challenge();
+            //}
+            //var name=User.Identity.Name;//Name is null
 
-            if(!User.Identity.IsAuthenticated)
+            if (tokenRequest==null || tokenRequest.Token==null)
             {
-                return Challenge();
-            }
-            var name=User.Identity.Name;//Name is null
+                _logger.LogInformation($"bad request token is empty");
 
-            if (name!=null)
-            {
-                return Ok($"{name}");
+                return BadRequest("token is empty");
             }else
             {
-                CustomUser user = null;
-                if(tokenRequest!=null)
-                    user = await _identityService.GetUserFromToken(tokenRequest.Token);
+                _logger.LogInformation($"getting user with token");
+
+                var user = await _identityService.GetUserFromToken(tokenRequest.Token);
 
                 if(user!=null)
                     return Ok($"{user.Email}");
