@@ -25,6 +25,7 @@ using vehicles.Models;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using System.Security.Claims;
 using vehicles.Contracts.V1.Requests;
+using Newtonsoft.Json;
 
 namespace Vehicles.Controllers
 {
@@ -82,11 +83,23 @@ namespace Vehicles.Controllers
         {
             return Content("An API about vehicles and owners");
         }
+
+
+
         
         [HttpGet(ApiRoutes.Vehicles.GetAll)]
-        public async Task<ActionResult> GetCars()
+        public async Task<ActionResult> GetCars([FromQuery]CarsParameters carsParameters)
         {
-            var result = await _carService.GetAllCars();
+            var result = await _carService.GetAllCars(carsParameters);
+
+            var resultMetadata = new
+            {
+                result.TotalCount,
+                result.PageSize,
+                result.CurrentPage,
+                result.HasPrevious,
+                result.HasNext
+            };
 
             _logger.LogInformation($"list Car length is {result.Count}");
 
@@ -96,6 +109,11 @@ namespace Vehicles.Controllers
                     _customMapper.CarToCarResponse(c)));
 
             var responsesArray = carResponses.ToArray();
+            
+            Response.Headers.Add(
+                "X-Pagination", 
+                JsonConvert.SerializeObject(resultMetadata));
+            Response.Headers.Add("Access-Control-Expose-Headers", "X-Pagination");
 
             _logger.LogInformation($"responsesArray length is {responsesArray.Length}");
 

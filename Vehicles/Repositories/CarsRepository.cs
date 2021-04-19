@@ -55,10 +55,11 @@ namespace Vehicles.Repositories
             return await _dbContext.Cars.AsNoTracking().CountAsync();
         }
 
-        public IQueryable<Car> PaginationQuery(int pageNum, int PageSize)
+        public IQueryable<Car> PaginationQuery(int PageNum, int PageSize)
         {
             return _dbContext.Cars.AsQueryable().AsNoTracking()
-                .Skip(PageSize * (pageNum - 1))
+                .OrderBy(c=>c.Date)
+                .Skip(PageSize * (PageNum - 1))
                 .Take(PageSize);
 
         }

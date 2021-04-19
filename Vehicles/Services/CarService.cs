@@ -6,6 +6,8 @@ using Vehicles.Interfaces.RepositoryInterfaces;
 using Vehicles.Interfaces.ServiceInterfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using vehicles.Contracts.V1.Requests;
+using vehicles.Contracts.V1.Requests.Queries;
 
 namespace Vehicles.Services
 {
@@ -59,9 +61,14 @@ namespace Vehicles.Services
             return _repository.EntityExists(id);
         }
 
-        public async Task<List<Car>> GetAllCars()
+        public async Task<PagedList<Car>> GetAllCars(CarsParameters carsParameters)
         {
-            return await _repository.GetAll().ToListAsync();
+            var iQueryableCars = _repository.GetIQueryableCars();
+            return await PagedList<Car>
+                .ToPagedList(
+                iQueryableCars, 
+                    carsParameters.PageNum, 
+                    carsParameters.PageSize);
         }
 
         public async Task<Car> GetById(int? id)

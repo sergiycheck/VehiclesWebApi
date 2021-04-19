@@ -3,13 +3,15 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Vehicles.Models;
 using System.Security.Claims;
+using vehicles.Contracts.V1.Requests;
+using vehicles.Contracts.V1.Requests.Queries;
 
 namespace Vehicles.Interfaces.ServiceInterfaces
 {
     public interface ICarService
     {
         Task<List<Car>> GetCars(CustomUser carOwner);
-        Task<List<Car>> GetAllCars();
+        Task<PagedList<Car>> GetAllCars(CarsParameters carsParameters);
         Task<Car> GetById(int? id);
         Task Create(Car entity);
         Task<int> Update(Car entity);
