@@ -27,9 +27,12 @@ namespace Vehicles.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            
+
+            //builder.Entity<ManyToManyCustomUserToVehicle>()
+            //    .HasKey(mtm=>new{mtm.CarOwnerId,mtm.CarId});
+
             builder.Entity<ManyToManyCustomUserToVehicle>()
-                .HasKey(mtm=>new{mtm.CarOwnerId,mtm.CarId});
+                .HasKey(mtm=>new{mtm.Id});
 
             builder.Entity<ManyToManyCustomUserToVehicle>()
                 .HasOne(co=>co.CarOwner)

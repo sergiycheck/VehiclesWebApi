@@ -1,4 +1,675 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Vehicles.AuthorizationsManagers.Attributes.MyAuthorizationMiddlewareResultHandler" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAABAAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Authorization\Attributes\CustomAuthorizationBehaviour.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.AuthorizationsManagers.Attributes.Show404Requirement" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Authorization\Attributes\CustomAuthorizationBehaviour.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="vehicles.Authorization.AuthorizationsManagers.AdministratorAuthorizationHandler" Collapsed="true">
+    <Position X="20" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\AdministratorAuthorizationHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Authorization.AuthorizationsManagers.CustomAuthorizationService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\CustomAuthorizationService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="vehicles.Authorization.AuthorizationsManagers.Operations" Collapsed="true">
+    <Position X="14.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAgAAEAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\Operations.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Authorization.AuthorizationsManagers.AuthorizationConstants" Collapsed="true">
+    <Position X="27" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAABBAAAAQAAAAAAAAEAAAABA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\Operations.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Authorization.AuthorizationsManagers.OwnerAuthorizationHandler" Collapsed="true">
+    <Position X="16.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\OwnerAuthorizationHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.AuthorizationsManagers.CustomRolesRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAhBAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\CustomRoleManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.AuthorizationsManagers.CustomRoleManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAhAACAAAAAAAAEAAAAAIAAAAAAACAAAAAAAAIAAAJA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\CustomRoleManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.AuthorizationsManagers.CustomSignInManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAEAAAAAAAACAACAAACAAAA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\CustomSignInManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.AuthorizationsManagers.CustomUserManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAACAAAAAAAMAABAAAIAAEAACACAAAEAAAQIBAAJA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\CustomUserManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.Contracts.V1.Requests.RefreshTokenRequest" Collapsed="true">
+    <Position X="20" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\RefreshTokenRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Contracts.V1.Requests.UserLoginRequest" Collapsed="true">
+    <Position X="18.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\V1\Requests\UserLoginRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Contracts.V1.Requests.UserRegistrationRequest" Collapsed="true">
+    <Position X="20" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAACAQAAAAAAAAA=</HashCode>
+      <FileName>Contracts\V1\Requests\UserRegistrationRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Contracts.V1.Requests.Queries.PagedList&lt;T&gt;" Collapsed="true">
+    <Position X="23.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAQAABAAAAAAAAAAAAAAQAAAAAAAAFAAAAAI=</HashCode>
+      <FileName>Contracts\V1\Requests\Queries\PagedList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Contracts.V1.Requests.Queries.QueryStringParameters" Collapsed="true">
+    <Position X="0.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAIAAAAAAAAAAAAAAAACAAAQAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Contracts\V1\Requests\Queries\QueryStringParameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Contracts.V1.Requests.Queries.PaginationQuery" Collapsed="true">
+    <Position X="25.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Contracts\V1\Requests\Queries\PaginationQuery.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Contracts.V1.Requests.CanAccessRequest" Collapsed="true">
+    <Position X="16.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Contracts\V1\Requests\CanAccessRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Contracts.V1.Requests.CarsParameters" Collapsed="true">
+    <Position X="1.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\V1\Requests\CarsParameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Contracts.V1.Requests.MessageDto" Collapsed="true">
+    <Position X="25.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\V1\Requests\MessageDto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Contracts.Requests.CarRequest" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAkAAgAAAAAAAAAAAAAhAABQAAAgAABAAA=</HashCode>
+      <FileName>Contracts\V1\Requests\CarRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Contracts.Requests.OwnerRequest" Collapsed="true">
+    <Position X="18.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAIAAAAAAAIEAAQAAAAAAAAAAQAAAQAAAAA=</HashCode>
+      <FileName>Contracts\V1\Requests\OwnerRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Contracts.V1.Responses.PenaltyPayRequest" Collapsed="true">
+    <Position X="14.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAgAAAAAAAAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\V1\Requests\PenaltyRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Contracts.V1.Responses.PenaltyRequest" Collapsed="true">
+    <Position X="7.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQQgAAAAAAIgAACAAAAAAAABAAAAAAABAAA=</HashCode>
+      <FileName>Contracts\V1\Requests\PenaltyRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Contracts.V1.Responses.PenaltyResponse" Collapsed="true">
+    <Position X="10" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQQgAAAAAAIgAACAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\V1\Responses\PenaltyResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Contracts.V1.Responses.AuthFailedResponse" Collapsed="true">
+    <Position X="25.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\V1\Responses\AuthFailedResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Contracts.V1.Responses.AuthSuccessResponse" Collapsed="true">
+    <Position X="14.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Contracts\V1\Responses\AuthSuccessResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Contracts.V1.Responses.Response&lt;T&gt;" Collapsed="true">
+    <Position X="21.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Responses\Response.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Contracts.Responces.CarResponse" Collapsed="true">
+    <Position X="1" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAQAkAAgAAAAAAAAAEAAAhAABAAAAgAABAAA=</HashCode>
+      <FileName>Contracts\V1\Responses\CarResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Contracts.Responces.OwnerResponce" Collapsed="true">
+    <Position X="21.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAIEAAAAAAIEAAQAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Contracts\V1\Responses\OwnerResponce.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Contracts.V1.ApiRoutes" Collapsed="true">
+    <Position X="21.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAACAAQAA=</HashCode>
+      <FileName>Contracts\V1\ApiRoutes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Controllers.CarOwnersController" Collapsed="true">
+    <Position X="9.75" Y="7.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAIAAAAAAAIAIAAAAIAAAAAAEAAAAAABAAAQ=</HashCode>
+      <FileName>Controllers\CarOwnersController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Controllers.IdentityController" Collapsed="true">
+    <Position X="6" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAACAAAIAABAAABEAAQAAAAAAA=</HashCode>
+      <FileName>Controllers\IdentityController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Controllers.VehiclesController" Collapsed="true">
+    <Position X="1.5" Y="7.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAIAAAAAABggBMAAAAASIQEEAABgAAAAAABAAAw=</HashCode>
+      <FileName>Controllers\VehiclesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Controllers.ChatController" Collapsed="true">
+    <Position X="4.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAACAAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\ChatController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Controllers.PenaltyController" Collapsed="true">
+    <Position X="8" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAwABIAAAAACIgEgAEBgAAAAAAACAAg=</HashCode>
+      <FileName>Controllers\PenaltyController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Data.SeedData" Collapsed="true">
+    <Position X="23.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EABAAAACAAAAARAgGAEAAAAAAABAAABQAAABAAAAAAA=</HashCode>
+      <FileName>Data\SeedData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Data.VehicleDbContext" Collapsed="true">
+    <Position X="21.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAACAAIAAAAAAAAAUAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\VehicleDbContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.MyCustomMapper.CustomMapper" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAACQAAAAAgAAAAAAAAAAAAAAAAAAAAAQAYAAA=</HashCode>
+      <FileName>Helpers\CustomMapper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SystemTextJsonSamples.DecimalToStringConverter" Collapsed="true">
+    <Position X="21.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Helpers\NumberToStringConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SystemTextJsonSamples.FloatToStringConverter" Collapsed="true">
+    <Position X="25.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Helpers\NumberToStringConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SystemTextJsonSamples.IntToStringConverter" Collapsed="true">
+    <Position X="20" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Helpers\NumberToStringConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Helpers.CustomPair" Collapsed="true">
+    <Position X="21.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAgAAAAAIAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Helpers\Pair.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Helpers.FileImgInfo" Collapsed="true">
+    <Position X="23.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Helpers\VehicleImageRetriever.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Helpers.VehicleImageRetriever" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAgAAAAAAAAAAAAAgABAAEAAAQAAAA=</HashCode>
+      <FileName>Helpers\VehicleImageRetriever.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="vehicles.Hubs.ChatHubStrongly" Collapsed="true">
+    <Position X="14.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAAAAICAAABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Hubs\ChatHub.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Hubs.ChatHub" Collapsed="true">
+    <Position X="27" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAACAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Hubs\ChatHub.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Installers.Implementations.ControllerInstaller" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Installers\Implementations\ControllerInstaller.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.Installers.Implementations.DbInstaller" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Installers\Implementations\DbInstaller.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.Installers.Implementations.Installer" Collapsed="true">
+    <Position X="18.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Installers\Implementations\Installer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Installers.Implementations.SwaggerInstaller" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Installers\Implementations\SwaggerInstaller.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="vehicles.Migrations.InitialCreate" Collapsed="true">
+    <Position X="16.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20210414110729_InitialCreate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Migrations.AddPenalty" Collapsed="true">
+    <Position X="14.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20210415150117_AddPenalty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Migrations.AddPenaltyFixed" Collapsed="true">
+    <Position X="18.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20210415150248_AddPenaltyFixed.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Migrations.AddPenaltyAddDate" Collapsed="true">
+    <Position X="16.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20210415160218_AddPenaltyAddDate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Migrations.VehicleDbContextModelSnapshot" Collapsed="true">
+    <Position X="23.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Migrations\VehicleDbContextModelSnapshot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Models.AuthenticationResult" Collapsed="true">
+    <Position X="23.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAQAAAAAAAAAAAgAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Models\AuthenticationResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Models.BaseModel" Collapsed="true">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\BaseModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Models.Car" Collapsed="true">
+    <Position X="3.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAQAkAAgAAAAAAAIAAAAQhAABAAAAgAABAAA=</HashCode>
+      <FileName>Models\Car.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Models.CustomUser" Collapsed="true">
+    <Position X="16.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAIAAAAAAQAAAIQAAACAAAAAAAAAAg=</HashCode>
+      <FileName>Models\CustomUser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Models.ManyToManyCustomUserToVehicle" Collapsed="true">
+    <Position X="23.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAIAAAAAAAAACAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>Models\ManyToManyEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Models.RefreshToken" Collapsed="true">
+    <Position X="18.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAVAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAQAAAABAEA=</HashCode>
+      <FileName>Models\RefreshToken.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Models.CustomRole" Collapsed="true">
+    <Position X="23.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\CustomRole.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Models.OwnerResource" Collapsed="true">
+    <Position X="20" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Models\OwnerResource.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="vehicles.Models.Penalty" Collapsed="true">
+    <Position X="12.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQQgAAAAAAIgAACAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Penalty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Options.JwtSettings" Collapsed="true">
+    <Position X="21.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Options\JwtSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Repositories.CarOwnersRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="21.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAIAIAAAAAAAAAAgAAAAAAAIA=</HashCode>
+      <FileName>Repositories\CarOwnersRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.Repositories.CarsRepository" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAIBAwAACAAAAACAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Repositories\CarsRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Vehicles.Repositories.GenericRepository&lt;TEntity&gt;" Collapsed="true">
+    <Position X="1.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAQAAAAAAEAAAAAAIAAAAAEAAEAAAgAAAAAAAIA=</HashCode>
+      <FileName>Repositories\GenericRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="vehicles.Repositories.PenaltyRepository" Collapsed="true">
+    <Position X="2.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAIAAAAAAAAAABAAAAAAIAAAAA=</HashCode>
+      <FileName>Repositories\PenaltyRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Vehicles.Services.CarOwnerService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAIAAAAAAAAAAAAAAABAAIA=</HashCode>
+      <FileName>Services\CarOwnerService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.Services.CarService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="23.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAQAAABAAAAAAAAIAiACAgEAEEABAAAAAAAAAIA=</HashCode>
+      <FileName>Services\CarService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.Services.IdentityService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAABAAAIAAABAAgAAAACAAgAoEAAAAgAAJAAAAIAAA=</HashCode>
+      <FileName>Services\IdentityService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.Services.UriService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="16.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAQAAAAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\UriService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Vehicles.Program" Collapsed="true">
+    <Position X="16.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vehicles.Startup" Collapsed="true">
+    <Position X="27" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAABAAAAAAAAAAAAAgAAACAAAAAA=</HashCode>
+      <FileName>Startup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="vehicles.Authorization.AuthorizationsManagers.ICustomAuthorizationService" Collapsed="true">
+    <Position X="21.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\CustomAuthorizationService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.AuthorizationsManagers.ICustomRolesRespository" Collapsed="true">
+    <Position X="27" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAhAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\CustomRoleManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.AuthorizationsManagers.ICustomRoleManager" Collapsed="true">
+    <Position X="25.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAhAAAAAAAAAAAEAAAAAIAAAAAAACAAAAAAAAIAAAJA=</HashCode>
+      <FileName>Authorization\AuthorizationsManagers\CustomRoleManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.MyCustomMapper.ICustomMapper" Collapsed="true">
+    <Position X="23.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAACQAAAAAAAAAAAAAAAAAAAAAAAAAAAQAYAAA=</HashCode>
+      <FileName>Helpers\CustomMapper.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="vehicles.Helpers.IVehicleImageRetriever" Collapsed="true">
+    <Position X="23.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAgAAAAAAAAAAAAAAABAAEAAAQAAAA=</HashCode>
+      <FileName>Helpers\VehicleImageRetriever.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="vehicles.Hubs.IChatClient" Collapsed="true">
+    <Position X="20" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Hubs\ChatHub.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.Installers.IInstaller" Collapsed="true">
+    <Position X="20" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Installers\Interfaces\IInstaller.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.Interfaces.ICustomSignInManager" Collapsed="true">
+    <Position X="14.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAEAAAAAAAACAACAAACAAAA=</HashCode>
+      <FileName>Interfaces\AuthorizationInterfaces\ICustomSignInManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.Interfaces.ICustomUserManager" Collapsed="true">
+    <Position X="16.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAACAAAAAAAMAABAAAIAAEAACACAAAEAAAQIBAAJA=</HashCode>
+      <FileName>Interfaces\AuthorizationInterfaces\ICustomUserManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.Interfaces.RepositoryInterfaces.ICarOwnersRepository" Collapsed="true">
+    <Position X="16.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAgAAAAAAAIA=</HashCode>
+      <FileName>Interfaces\RepositoryInterfaces\ICarOwnersRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.Interfaces.RepositoryInterfaces.ICarsRepository" Collapsed="true">
+    <Position X="5.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAACAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\RepositoryInterfaces\ICarsRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.Interfaces.RepositoryInterfaces.IGenericRepository&lt;TEntity&gt;" Collapsed="true">
+    <Position X="6.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAQAAAAAAEAAAAAAAAAAAAEAAEAAAgAAAAAAAIA=</HashCode>
+      <FileName>Interfaces\RepositoryInterfaces\IGenericRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.Interfaces.ServiceInterfaces.ICarOwnerService" Collapsed="true">
+    <Position X="14.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAABAAIA=</HashCode>
+      <FileName>Interfaces\ServiceInterfaces\ICarOwnerService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.Interfaces.ServiceInterfaces.ICarService" Collapsed="true">
+    <Position X="18.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAQAAAAAAAAAAAAIACACAgEAEEAAAAAAAAAAAIA=</HashCode>
+      <FileName>Interfaces\ServiceInterfaces\ICarService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="vehicles.Repositories.IPenaltyRepository" Collapsed="true">
+    <Position X="7.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAIAAAAAAAAAABAAAAAAIAAAAA=</HashCode>
+      <FileName>Repositories\PenaltyRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.Services.IIdentityService" Collapsed="true">
+    <Position X="18.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAIAAAAAAgAAAACAAAAAAAAAAgAABAAAAAAAA=</HashCode>
+      <FileName>Services\IIdentityService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Vehicles.Services.IUriService" Collapsed="true">
+    <Position X="21.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\IUriService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

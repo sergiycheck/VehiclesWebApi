@@ -10,8 +10,8 @@ using Vehicles.Data;
 namespace vehicles.Migrations
 {
     [DbContext(typeof(VehicleDbContext))]
-    [Migration("20210415150117_AddPenalty")]
-    partial class AddPenalty
+    [Migration("20210422170735_initialCreate")]
+    partial class initialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -256,15 +256,25 @@ namespace vehicles.Migrations
 
             modelBuilder.Entity("Vehicles.Models.ManyToManyCustomUserToVehicle", b =>
                 {
-                    b.Property<string>("CarOwnerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
 
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
-                    b.HasKey("CarOwnerId", "CarId");
+                    b.Property<string>("CarOwnerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("TimeMark")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("CarId");
+
+                    b.HasIndex("CarOwnerId");
 
                     b.ToTable("ManyToManyCarOwners");
                 });
@@ -337,6 +347,9 @@ namespace vehicles.Migrations
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -347,7 +360,7 @@ namespace vehicles.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
 
@@ -417,9 +430,7 @@ namespace vehicles.Migrations
 
                     b.HasOne("Vehicles.Models.CustomUser", "CarOwner")
                         .WithMany("ManyToManyCustomUserToVehicle")
-                        .HasForeignKey("CarOwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CarOwnerId");
 
                     b.Navigation("Car");
 

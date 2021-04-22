@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace vehicles.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -207,20 +207,47 @@ namespace vehicles.Migrations
                 name: "ManyToManyCarOwners",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TimeMark = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CarId = table.Column<int>(type: "int", nullable: false),
-                    CarOwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    CarOwnerId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ManyToManyCarOwners", x => new { x.CarOwnerId, x.CarId });
+                    table.PrimaryKey("PK_ManyToManyCarOwners", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ManyToManyCarOwners_AspNetUsers_CarOwnerId",
                         column: x => x.CarOwnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ManyToManyCarOwners_Cars_CarId",
+                        column: x => x.CarId,
+                        principalTable: "Cars",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Penalties",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PayedStatus = table.Column<bool>(type: "bit", nullable: false),
+                    CarId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Penalties", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Penalties_Cars_CarId",
                         column: x => x.CarId,
                         principalTable: "Cars",
                         principalColumn: "Id",
@@ -272,6 +299,16 @@ namespace vehicles.Migrations
                 column: "CarId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ManyToManyCarOwners_CarOwnerId",
+                table: "ManyToManyCarOwners",
+                column: "CarOwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Penalties_CarId",
+                table: "Penalties",
+                column: "CarId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_UserId",
                 table: "RefreshTokens",
                 column: "UserId");
@@ -296,6 +333,9 @@ namespace vehicles.Migrations
 
             migrationBuilder.DropTable(
                 name: "ManyToManyCarOwners");
+
+            migrationBuilder.DropTable(
+                name: "Penalties");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");

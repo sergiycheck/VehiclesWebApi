@@ -13,8 +13,9 @@ namespace Vehicles.Models
     //     public DateTime BirthDate{get;set;}
         
     // }
-    public class ManyToManyCustomUserToVehicle
+    public class ManyToManyCustomUserToVehicle:BaseModel
     {
+        public DateTime TimeMark { get; set; }
         public int CarId{get;set;}
         public Car Car{get;set;}
         public string CarOwnerId{get;set;}

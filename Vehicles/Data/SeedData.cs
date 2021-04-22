@@ -557,6 +557,7 @@ namespace Vehicles.Data
                (
                     new ManyToManyCustomUserToVehicle()
                     {
+                        TimeMark = DateTime.Now,
                          CarId = el.First,
                          CarOwnerId = el.Second
                     }
