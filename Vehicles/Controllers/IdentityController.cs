@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Vehicles.Models;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
+using Vehicles.MyCustomMapper;
+using Vehicles.Contracts.Responces;
 
 namespace Vehicles.Controllers
 {
@@ -16,13 +18,15 @@ namespace Vehicles.Controllers
     {
         private readonly IIdentityService _identityService;
         protected readonly ILogger<IdentityController> _logger;
-        
+        private readonly ICustomMapper _customMapper;
         public IdentityController(
             IIdentityService identityService,
-            ILogger<IdentityController> logger)
+            ILogger<IdentityController> logger,
+            ICustomMapper customMapper)
         {
             _identityService = identityService;
             _logger = logger;
+            _customMapper = customMapper;
         }
 
         [HttpPost(ApiRoutes.Identity.Register)]
@@ -85,7 +89,12 @@ namespace Vehicles.Controllers
         [HttpPost(ApiRoutes.Identity.Refresh)]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
         {
+            if(request!=null && request.Token!=null && request.RefreshToken!=null){
+                _logger.LogInformation($"refreshing token {request.Token} {request.RefreshToken}");
+            }
+            
             var authResponse = await _identityService.RefreshTokenAsync(request.Token, request.RefreshToken);
+            
 
             if (!authResponse.Success)
             {
@@ -129,9 +138,10 @@ namespace Vehicles.Controllers
                 _logger.LogInformation($"getting user with token");
 
                 var user = await _identityService.GetUserFromToken(tokenRequest.Token);
+                var ownerResponse = _customMapper.OwnerToOwnerResponse(user);
 
                 if(user!=null)
-                    return Ok($"{user.Email}");
+                    return Ok(new Response<OwnerResponce>(ownerResponse));
             }
             return(Ok("Empty")); 
                 

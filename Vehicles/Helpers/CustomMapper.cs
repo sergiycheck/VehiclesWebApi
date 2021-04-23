@@ -111,6 +111,7 @@ namespace Vehicles.MyCustomMapper
             return new OwnerResponce
             {
                 Id = owner.Id,
+                Email = owner.Email,
                 Name = owner.FirstName,
                 UserName = owner.UserName,
                 SurName = owner.LastName,
@@ -160,6 +161,7 @@ namespace Vehicles.MyCustomMapper
             return new CustomUser
             {
                 Id = OwnerRequest.Id,
+                Email = OwnerRequest.Email,
                 FirstName = OwnerRequest.Name,
                 UserName = OwnerRequest.UserName,
                 LastName = OwnerRequest.SurName,
