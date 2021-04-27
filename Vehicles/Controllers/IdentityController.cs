@@ -11,6 +11,11 @@ using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using Vehicles.MyCustomMapper;
 using Vehicles.Contracts.Responces;
+using Vehicles.Contracts.Requests;
+using System.Collections.Generic;
+using vehicles.Contracts.V1.Requests;
+using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace Vehicles.Controllers
 {
@@ -112,11 +117,6 @@ namespace Vehicles.Controllers
         }
 
 
-        public class TokenRequest
-        {
-            public string Token{get;set;}
-        }
-
         [Authorize]//send token in auth header
         [HttpPost(ApiRoutes.Identity.GetUser)]
         public async Task<IActionResult> GetUser([FromBody] TokenRequest tokenRequest)
@@ -170,8 +170,120 @@ namespace Vehicles.Controllers
             return BadRequest("Empty token request");
            
         }
-
         
+        [Authorize]
+        [HttpPut(ApiRoutes.Identity.Update), DisableRequestSizeLimit]
+        public async Task<IActionResult>
+            Put(string id, [FromForm]OwnerRequest ownerRequest)
+        {
+            if (id != ownerRequest.Id)
+                return BadRequest();
+
+            if(ownerRequest.Token == null)
+            {
+                _logger.LogInformation($"bad request token is empty");
+
+                return BadRequest("token is empty");
+            }
+            else
+            {
+                _logger.LogInformation($"getting user with token");
+
+                var user = await _identityService.GetUserFromToken(ownerRequest.Token);
+                if(user.Id == ownerRequest.Id)
+                {
+                    var customUser = _customMapper
+                        .OwnerRequestToCarOwner(ownerRequest);
+                    var result = await _identityService.UpdateUser(customUser);
+                    if (result.Succeeded)
+                    {
+                        return Ok($"{customUser.Email} was successfylly  updated ");
+                    }
+                    else
+                    {
+                        var Errors = GetErrors(result);
+
+                        return BadRequest(new AuthFailedResponse
+                        {
+                            Errors = Errors
+                        });
+                    }
+                }
+                else
+                {
+                    _logger.LogInformation($"bad request token is not yours");
+
+                    return BadRequest("bad token");
+                }
+
+            }
+        }
+
+        private List<string> GetErrors(IdentityResult result)
+        {
+            var Errors = new List<string>();
+            result.Errors.ToList().ForEach(e =>
+            {
+                Errors.Add($"{e.Description}");
+            });
+            return Errors;
+        }
+
+        [Authorize]
+        [HttpPost(ApiRoutes.Identity.Delete)]
+        public async Task<IActionResult>
+            Delete(string id, [FromBody] TokenRequest tokenRequest)
+        {
+            if (id == null)
+            {
+                return BadRequest("Id is empty");
+            }
+            var user = await _identityService.FindUser(id);
+            if(user == null)
+            {
+                return BadRequest("no user with such id");
+            }
+            var userFromToken = await _identityService
+                .GetUserFromToken(tokenRequest.Token);
+
+            if (user.Id != userFromToken.Id)
+            {
+                return BadRequest("The token is not yours");
+            }
+            try
+            {
+                var res = await _identityService.RevokeToken(tokenRequest.Token);
+                if (res > 0)
+                {
+                    _logger.LogInformation("Token revoked successfully");
+                    var deleteResult =
+                        await _identityService.DeleteUser(user);
+                    if (deleteResult.Succeeded)
+                    {
+                        return Ok($"{user.Email} was successfylly deleted ");
+                    }
+                    else
+                    {
+                        var Errors = GetErrors(deleteResult);
+
+                        return BadRequest(new AuthFailedResponse
+                        {
+                            Errors = Errors
+                        });
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.InnerException.Message;
+                _logger.LogInformation(msg);
+                return BadRequest(msg);
+            }
+            return NoContent();
+
+        }
+
         // [HttpPost(ApiRoutes.Identity.FacebookAuth)]
         // public async Task<IActionResult> FacebookAuth([FromBody] UserFacebookAuthRequest request)
         // {
@@ -184,7 +296,7 @@ namespace Vehicles.Controllers
         //             Errors = authResponse.Errors
         //         });
         //     }
-            
+
         //     return Ok(new AuthSuccessResponse
         //     {
         //         Token = authResponse.Token,

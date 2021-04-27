@@ -47,6 +47,8 @@ namespace Vehicles.Services
             _roleManager = roleManager;
             //_facebookAuthService = facebookAuthService;
         }
+
+        
         
         public async Task<AuthenticationResult> RegisterAsync(UserRegistrationRequest request)
         {
@@ -242,6 +244,21 @@ namespace Vehicles.Services
             var validatedToken = GetPrincipalFromToken(token);
             var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
             return user;
+        }
+
+        public async Task<IdentityResult> UpdateUser(CustomUser user)
+        {
+            var updatedIdentityResult = await  _userManager.UpdateAsync(user);
+            return updatedIdentityResult;
+        }
+        public async Task<IdentityResult> DeleteUser(CustomUser user)
+        {
+            var deleteResult = await _userManager.DeleteAsync(user);
+            return deleteResult;
+        }
+        public async Task<CustomUser> FindUser(string id)
+        {
+            return await _userManager.FindByIdAsync(id);
         }
 
         // public async Task<AuthenticationResult> LoginWithFacebookAsync(string accessToken)

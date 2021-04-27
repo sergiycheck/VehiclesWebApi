@@ -16,5 +16,6 @@ namespace Vehicles.Contracts.Requests
         public string Location{get;set;}
         public DateTime BirthDate{get;set;}
         public IEnumerable<CarRequest> CarRequests{get;set;}
+        public string Token { get; set; }
     }
 }

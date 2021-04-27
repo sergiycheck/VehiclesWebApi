@@ -80,6 +80,9 @@ namespace Vehicles.AuthorizationsManagers
         {
             return base.AddToRoleAsync(user,role);
         }
+        public override Task<IdentityResult> RemoveFromRoleAsync(CustomUser user, string role){
+            return base.RemoveFromRoleAsync(user,role);
+        }
         
         public override Task<IList<Claim>> GetClaimsAsync(CustomUser user)
         {
@@ -96,6 +99,9 @@ namespace Vehicles.AuthorizationsManagers
         public override Task<IdentityResult> DeleteAsync(CustomUser user)
         {
             return base.DeleteAsync(user);
+        }
+        public override Task<IdentityResult> UpdateAsync(CustomUser user){
+            return base.UpdateAsync(user);
         }
     }
 }

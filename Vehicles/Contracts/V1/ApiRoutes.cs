@@ -58,20 +58,17 @@ namespace Vehicles.Contracts.V1
             public const string GetOwnersByCarUniqueNumber = GetAll+"/vehicle-unique-number/{uniqueNumber}";
             public const string Get = GetAll + "/{id}";
             
-            //public const string Create = GetAll + "/create";
-            //public const string Update = GetAll + "/update/{id:int}";
-            
-            //public const string Delete = GetAll + "/delete/{id:int}";
         }
 
         public static class Identity
         {
             public const string Login = Base + "/identity/login";
-            
             public const string Register = Base + "/identity/register";
-            
             public const string Refresh = Base + "/identity/refresh";
-            public const string Delete = Base + "/identity/delete";
+            
+            public const string Delete = Base + "/identity/delete/{id}";
+            public const string Update = Base + "/identity/update/{id}";
+
             public const string GetUser = Base + "/identity/get-user";
             public const string RevokeToken = Base + "/identity/revoke";
             

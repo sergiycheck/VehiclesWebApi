@@ -10,4 +10,11 @@ namespace vehicles.Contracts.V1.Requests
     {
 
     }
+
+    public class UsersParameters: QueryStringParameters
+    {
+
+    }
+
+
 }

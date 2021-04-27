@@ -18,6 +18,8 @@ using System.Net.Http.Headers;
 using vehicles.Helpers;
 using Vehicles.Models;
 using Vehicles.Contracts.Requests;
+using vehicles.Contracts.V1.Requests;
+using System;
 
 namespace VehiclesXUnitTests
 {
@@ -208,26 +210,43 @@ namespace VehiclesXUnitTests
             return authSuccessLoginResponce;
         }
 
-        [Theory]
-        [InlineData("6352f791-a574-4e00-94a8-9f092ac2d0bd")]
-        public async Task PostGetCarsByOwner(string idString)
+        [Fact]
+        public async Task PostGetCarsByOwner()
         {
-            //todo add logging...
-
-            var url = ApiRoutes.Owners.Get.Replace("{id}", idString);
             //Arrange
             var client = _factory.CreateClient();
-            //Act
-            var result = await client.GetAsync(url);
-            var Json = await client.GetStringAsync(url);
 
-            var owner = JsonConvert.DeserializeObject<Response<OwnerResponce>>(Json);
+            var userParams = new UsersParameters()
+            {
+                PageSize = 1
+            };
 
-            var jsonOwnerRequest = JsonConvert.SerializeObject(owner.Data);
+            var getOwnersUrl = ApiRoutes.Owners.GetAll;
+
+            var propertyList = userParams.GetType().GetProperties();
+            var queryString = "?";
+            foreach(var prop in propertyList)
+            {
+                queryString += $"{prop.Name}={prop.GetValue(userParams, null)}&";
+            }
+            queryString = queryString.Remove(queryString.Length - 1, 1);
+
+            _output.WriteLine(queryString);
+            var ownersUrlAndQuery = $"{getOwnersUrl}{queryString}";
+            _output.WriteLine(ownersUrlAndQuery);
+
+            var json = await client.GetStringAsync(ownersUrlAndQuery);
+            Assert.NotNull(json);
+            var ownerFromDbResponse = JsonConvert.DeserializeObject<Response<IEnumerable<OwnerResponce>>>(json);
+            Assert.IsAssignableFrom<Response<IEnumerable<OwnerResponce>>>(ownerFromDbResponse);
+            var owner = ownerFromDbResponse.Data.ToArray()[0];
+            Assert.NotNull(owner);
+
+            var jsonOwnerRequest = JsonConvert.SerializeObject(owner);
 
             var authSuccessLoginResponce = await GetLoginResponse();
 
-            url = ApiRoutes.Vehicles.GetCarsByOwner;
+            var url = ApiRoutes.Vehicles.GetCarsByOwner;
 
             var strContent = new StringContent(jsonOwnerRequest, 
                         Encoding.UTF8, "application/json");

@@ -113,6 +113,7 @@ namespace Vehicles.Controllers
             Response.Headers.Add(
                 "X-Pagination", 
                 JsonConvert.SerializeObject(resultMetadata));
+                
             Response.Headers.Add("Access-Control-Expose-Headers", "X-Pagination");
 
             _logger.LogInformation($"responsesArray length is {responsesArray.Length}");
@@ -276,7 +277,8 @@ namespace Vehicles.Controllers
 
         [Authorize]
         [HttpPut(ApiRoutes.Vehicles.Update), DisableRequestSizeLimit]
-        public async Task<IActionResult> Put(int? id, [FromForm] CarRequest carRequest)
+        public async Task<IActionResult> 
+            Put(int? id, [FromForm] CarRequest carRequest)
         {
             if (id != carRequest.Id)
                 return BadRequest();
@@ -309,7 +311,8 @@ namespace Vehicles.Controllers
 
         [Authorize]
         [HttpPost(ApiRoutes.Vehicles.Delete)]
-        public async Task<IActionResult> Delete(int? id, [FromBody] CanAccessRequest canAccessRequest)
+        public async Task<IActionResult> 
+            Delete(int? id, [FromBody] CanAccessRequest canAccessRequest)
         {
             if (id != null) 
             {

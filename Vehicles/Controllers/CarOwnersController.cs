@@ -13,6 +13,9 @@ using Vehicles.Contracts.V1.Responses;
 using Vehicles.MyCustomMapper;
 using Vehicles.Contracts.Responces;
 using Vehicles.Contracts.Requests;
+using vehicles.Contracts.V1.Requests;
+using vehicles.Contracts.V1.Requests.Queries;
+using Newtonsoft.Json;
 
 namespace Vehicles.Controllers
 {
@@ -54,11 +57,35 @@ namespace Vehicles.Controllers
         }
 
         [HttpGet(ApiRoutes.Owners.GetAll)]
-        public async Task<ActionResult<IEnumerable<OwnerResponce>>> GetOwners()
+        public async Task<ActionResult<IEnumerable<OwnerResponce>>> 
+            GetOwners([FromQuery] UsersParameters usersParameters)
         {
-            var owners = await _carOwnerService.GetAllCarOwners();
+            var owners = await _carOwnerService.GetAllCarOwners(usersParameters);
+            
+            var resultMetadata = new
+            {
+                owners.TotalCount,
+                owners.PageSize,
+                owners.CurrentPage,
+                owners.HasPrevious,
+                owners.HasNext
+            };
+
+            _logger.LogInformation($"list users length is {owners.Count}");
+            
+            Response.Headers.Add(
+                "X-Pagination", 
+                JsonConvert.SerializeObject(resultMetadata));
+                
+            Response.Headers.Add("Access-Control-Expose-Headers", "X-Pagination");
+
+
+
             var ownersResponces = new List<OwnerResponce>();
-            owners.ForEach(o=>ownersResponces.Add(_customMapper.OwnerToOwnerResponse(o)));
+
+            owners.ForEach(o=>ownersResponces
+                .Add(_customMapper.OwnerToOwnerResponse(o)));
+
             return Ok(new Response<OwnerResponce[]>(ownersResponces.ToArray()));
 
         }

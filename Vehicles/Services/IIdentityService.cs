@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Vehicles.Contracts.V1.Requests;
@@ -18,5 +19,8 @@ namespace Vehicles.Services
 
         ClaimsPrincipal GetPrincipalFromToken(string token);
         //Task<AuthenticationResult> LoginWithFacebookAsync(string accessToken);
+        Task<IdentityResult> UpdateUser(CustomUser user);
+        Task<IdentityResult> DeleteUser(CustomUser user);
+        Task<CustomUser> FindUser(string id);
     }
 }
