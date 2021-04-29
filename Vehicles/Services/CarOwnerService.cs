@@ -7,6 +7,7 @@ using Vehicles.Interfaces.ServiceInterfaces;
 using Microsoft.EntityFrameworkCore;
 using vehicles.Contracts.V1.Requests;
 using vehicles.Contracts.V1.Requests.Queries;
+using System.Linq;
 
 namespace Vehicles.Services
 {
@@ -20,7 +21,7 @@ namespace Vehicles.Services
 
         public async Task<PagedList<CustomUser>> GetAllCarOwners(UsersParameters usersParameters)
         {
-            var iQueryableUsers = _repository.GetIQueryableUsers();
+            var iQueryableUsers = _repository.GetIQueryableUsers().OrderBy(u=>u.FirstName);
             return await PagedList<CustomUser>
                 .ToPagedList(
                     iQueryableUsers,

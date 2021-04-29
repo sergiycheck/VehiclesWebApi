@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using vehicles.Contracts.V1.Requests;
 using vehicles.Contracts.V1.Requests.Queries;
+using System.Linq;
 
 namespace Vehicles.Services
 {
@@ -63,7 +64,7 @@ namespace Vehicles.Services
 
         public async Task<PagedList<Car>> GetAllCars(CarsParameters carsParameters)
         {
-            var iQueryableCars = _repository.GetIQueryableCars();
+            var iQueryableCars = _repository.GetIQueryableCars().OrderBy(c=>c.Brand);
             return await PagedList<Car>
                 .ToPagedList(
                 iQueryableCars, 

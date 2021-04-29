@@ -252,6 +252,7 @@ namespace Vehicles.Controllers
             }
             try
             {
+                //remove all user tokens before deleting
                 var res = await _identityService.RevokeToken(tokenRequest.Token);
                 if (res > 0)
                 {
