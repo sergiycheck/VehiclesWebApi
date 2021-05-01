@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Authorization.Infrastructure;
 using System.Security.Claims;
 using vehicles.Contracts.V1.Requests;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Primitives;
 
 namespace Vehicles.Controllers
 {
@@ -160,14 +161,28 @@ namespace Vehicles.Controllers
 
             var car = _customMapper.CarRequestToCar(carRequest);
 
+            ClaimsPrincipal claimsPrincipalCurrentUser;
+            var userId = string.Empty;
+            if (carRequest.Token!=string.Empty)
+            {
+
+                claimsPrincipalCurrentUser = _carService.GetClaimsPrincipal(carRequest.Token);
+                userId = claimsPrincipalCurrentUser.Claims.Single(x => x.Type == "id").Value;
+                
+            }
+
+
             car.ImgPath = await CreateImgFromRequest(Request, carRequest);
 
-            await _carService.Create(car);//changes entity state to added and execute save changes that produces insert command
-            var locationUri = _uriService.GetVehicleUri(car.Id.ToString());
-
+            var createResult = await _carService.Create(car,userId);//changes entity state to added and execute save changes that produces insert command
+            if (createResult)
+            {
+                var locationUri = _uriService.GetVehicleUri(car.Id.ToString());
+                return Created(locationUri, new Response<CarResponse>(
+                     _customMapper.CarToCarResponse(car)));
+            }
+            return Ok("Something went wrong");
             
-            return Created(locationUri, new Response<CarResponse>(
-                 _customMapper.CarToCarResponse(car)));
         }
 
         private async Task<string> CreateImgFromRequest(HttpRequest request, CarRequest carRequest)

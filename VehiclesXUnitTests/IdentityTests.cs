@@ -88,6 +88,7 @@ namespace VehiclesXUnitTests
             var loginResponse = await client.PostAsync(url, strContent);
             return loginResponse;
         }
+        
         [Fact]
         public async Task IdentityControllerLoginTest()
         {

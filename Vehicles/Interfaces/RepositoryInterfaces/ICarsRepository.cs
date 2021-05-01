@@ -11,5 +11,6 @@ namespace Vehicles.Interfaces.RepositoryInterfaces
         Task<List<Car>> GetCars(CustomUser carOwner);
         IQueryable<Car> PaginationQuery(int PageNum, int PageSize);
         IQueryable<Car> GetIQueryableCars();
+        Task<int> AddVehicleRelationToUser(int carId, string userId);
     }
 }

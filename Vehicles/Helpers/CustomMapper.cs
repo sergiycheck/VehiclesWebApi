@@ -65,16 +65,16 @@ namespace Vehicles.MyCustomMapper
                 Transmision = car.Transmision,
                 Drive = car.Drive,
                 ImgFile = ImgFile,
-                OwnerResponces =car.ManyToManyCustomUserToVehicle!=null? car.ManyToManyCustomUserToVehicle.Select(o => 
+                OwnerResponces =car.ManyToManyCustomUserToVehicle?.Select(o => 
                             new OwnerResponce(){
                                 Id = o.CarOwnerId,
-                                Name = o.CarOwner.FirstName,
-                                SurName = o.CarOwner.LastName,
-                                CarOwnerPhone = o.CarOwner.PhoneNumber,
-                                Location = o.CarOwner.Address,
-                                BirthDate = o.CarOwner.BirthDate,
+                                Name = o.CarOwner?.FirstName,
+                                SurName = o.CarOwner?.LastName,
+                                CarOwnerPhone = o.CarOwner?.PhoneNumber,
+                                Location = o.CarOwner?.Address,
+                                BirthDate = o.CarOwner!=null?o.CarOwner.BirthDate:DateTime.Now,
                                 CarResponces = null
-                            }).ToList():null
+                            }).ToList()
             };
         }
 
@@ -119,20 +119,20 @@ namespace Vehicles.MyCustomMapper
                 Location = $"{owner.Address} {owner.City}",
                 BirthDate = owner.BirthDate,
 
-                CarResponces = owner.ManyToManyCustomUserToVehicle!=null?owner.ManyToManyCustomUserToVehicle.Select(car=>
+                CarResponces = owner.ManyToManyCustomUserToVehicle?.Select(car=>
                     new CarResponse(){
-                        Id = car.Car.Id,
-                        UniqueNumber = car.Car.UniqueNumber,
-                        Brand = car.Car.Brand,
-                        Color = car.Car.Color,
-                        Date = car.Car.Date,
-                        Price = car.Car.Price,
-                        CarEngine = car.Car.CarEngine,
-                        Description = car.Car.Description,
-                        Transmision = car.Car.Transmision,
-                        Drive = car.Car.Drive,
+                        Id = car.Car!=null?car.Car.Id:0,
+                        UniqueNumber = car.Car?.UniqueNumber,
+                        Brand = car.Car?.Brand,
+                        Color = car.Car?.Color,
+                        Date = car.Car!=null?car.Car.Date:DateTime.Now,
+                        Price = car.Car != null ? car.Car.Price:0,
+                        CarEngine = car.Car != null ? car.Car.CarEngine:0,
+                        Description = car.Car?.Description,
+                        Transmision = car.Car?.Transmision,
+                        Drive = car.Car?.Drive,
                         OwnerResponces = null
-                    }).ToList():null   
+                    }).ToList()   
             };
         }
         public Car CarRequestToCar(CarRequest carRequest)
@@ -149,11 +149,11 @@ namespace Vehicles.MyCustomMapper
                 Description = carRequest.Description,
                 Transmision = carRequest.Transmision,
                 Drive = carRequest.Drive,
-                ManyToManyCustomUserToVehicle =carRequest.OwnerRequests!=null? carRequest.OwnerRequests.Select(o => 
+                ManyToManyCustomUserToVehicle =carRequest.OwnerRequests?.Select(o => 
                             new ManyToManyCustomUserToVehicle(){
                                 CarId = carRequest.Id,
                                 CarOwnerId = o.Id
-                            }).ToList():null
+                            }).ToList()
             };
         }
         public CustomUser OwnerRequestToCarOwner(OwnerRequest OwnerRequest)
@@ -168,11 +168,11 @@ namespace Vehicles.MyCustomMapper
                 PhoneNumber = OwnerRequest.CarOwnerPhone,
                 Address = OwnerRequest.Location,
                 BirthDate = OwnerRequest.BirthDate,
-                ManyToManyCustomUserToVehicle = OwnerRequest.CarRequests!=null?OwnerRequest.CarRequests.Select(car=>
+                ManyToManyCustomUserToVehicle = OwnerRequest.CarRequests?.Select(car=>
                     new ManyToManyCustomUserToVehicle(){
                         CarId = car.Id,
                         CarOwnerId = OwnerRequest.Id
-                    }).ToList():null   
+                    }).ToList()   
             };
         }
     }  

@@ -50,6 +50,19 @@ namespace Vehicles.Repositories
 
         }
 
+        public async Task<int> AddVehicleRelationToUser(int carId, string userId)
+        {
+            await _dbContext.ManyToManyCarOwners.AddAsync(
+                new ManyToManyCustomUserToVehicle()
+                {
+                    CarId = carId,
+                    CarOwnerId = userId,
+                    TimeMark = DateTime.Now
+                });
+
+            return await _dbContext.SaveChangesAsync();
+        }
+
         public async Task<int> TotalCount()
         {
             return await _dbContext.Cars.AsNoTracking().CountAsync();

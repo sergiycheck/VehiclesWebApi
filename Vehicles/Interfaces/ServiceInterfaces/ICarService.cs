@@ -13,7 +13,7 @@ namespace Vehicles.Interfaces.ServiceInterfaces
         Task<List<Car>> GetCars(CustomUser carOwner);
         Task<PagedList<Car>> GetAllCars(CarsParameters carsParameters);
         Task<Car> GetById(int? id);
-        Task Create(Car entity);
+        Task<bool> Create(Car entity, string userId);
         Task<int> Update(Car entity);
         Task Delete(int? id);
         bool EntityExists(int id);

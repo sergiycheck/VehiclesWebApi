@@ -45,10 +45,30 @@ namespace Vehicles.Services
             return await _ownersRepository.GetCarOwners(car.UniqueNumber);
         }
 
-        public async Task Create(Car entity)
+        public async Task<bool> Create(Car entity, string userId)
         {
             await _repository.Create(entity);
             await _repository.SaveChangesAsync();
+
+            var car = await _repository.GetIQueryableCars()
+                    .FirstOrDefaultAsync(c => c.UniqueNumber == entity.UniqueNumber);
+
+            CustomUser user;
+            if(userId != string.Empty)
+            {
+                user = await _identityService.FindUser(userId);
+                if (car != null && user != null)
+                {
+                    var carId = car.Id;
+                    var result = await _repository.AddVehicleRelationToUser(carId, userId);
+                    if (result > 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
         }
 
         public async Task Delete(int? id)

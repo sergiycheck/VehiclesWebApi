@@ -262,8 +262,6 @@ namespace VehiclesXUnitTests
             Assert.IsAssignableFrom<List<Car>>(cars.Data);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            Assert.True(cars.Data.Count > 0);
         }
 
 

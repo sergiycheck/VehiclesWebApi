@@ -32,6 +32,7 @@ using Microsoft.AspNetCore.Authorization;
 using Xunit.Abstractions;
 using vehicles.Repositories;
 using vehicles.Models;
+using Vehicles.Contracts.V1.Requests;
 
 namespace VehiclesXUnitTests
 {
@@ -378,9 +379,20 @@ namespace VehiclesXUnitTests
 
                     var carsRepo = new CarsRepository(context);
                     var carOwnerRepo = new CarOwnersRepository(context);
-                    var identitySevice = new Mock<IIdentityService>();
 
-                    var carService = new CarService(carsRepo, carOwnerRepo, identitySevice.Object);
+
+                    var identitySevice = serviceScope.ServiceProvider.GetRequiredService<IIdentityService>();
+
+                    var userLoginRequest = new UserLoginRequest()
+                    {
+                        Email = "name1Email@domain.com",
+                        Password = "!VeryStrPass1234_1"
+                    };
+
+                    var loginResponse = await identitySevice
+                        .LoginAsync(userLoginRequest.Email, userLoginRequest.Password);
+
+                    var carService = new CarService(carsRepo, carOwnerRepo, identitySevice);
 
                     var mockLogger = new Mock<ILogger<VehiclesController>>();
                     ILogger<VehiclesController> logger = mockLogger.Object;
@@ -389,7 +401,11 @@ namespace VehiclesXUnitTests
 
                     var mockCustomAuthorizationService = new Mock<ICustomAuthorizationService>();
                     mockCustomAuthorizationService
-                        .Setup(m => m.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object>(), It.IsAny<IAuthorizationRequirement>())).ReturnsAsync(AuthorizationResult.Success);
+                        .Setup(m => m.AuthorizeAsync(
+                            It.IsAny<ClaimsPrincipal>(), 
+                            It.IsAny<object>(), 
+                            It.IsAny<IAuthorizationRequirement>()))
+                        .ReturnsAsync(AuthorizationResult.Success);
 
                     var controller = new VehiclesController(
                         carService,
@@ -411,7 +427,8 @@ namespace VehiclesXUnitTests
                         Description = "test",
                         Drive = "Mixed",
                         Transmision = "Auto",
-                        UniqueNumber = SeedData.GenerateRandomRegistrationPlateNumber()
+                        UniqueNumber = SeedData.GenerateRandomRegistrationPlateNumber(),
+                        Token = loginResponse.Token
                     };
 
                     var res = await controller.PostCarItem(testCar);
@@ -483,7 +500,7 @@ namespace VehiclesXUnitTests
         }
 
         [Theory]
-        [InlineData("756f62e3-e7d7-4336-b473-1739e6166d8b", 2)]
+        [InlineData("373279b2-a13a-4179-8359-5084af21064a", 1)]
         public async Task TestGetPenaltiesByUserId(string userId, int expectedCount)
         {
             using (var transaction = Fixture.Connection.BeginTransaction())
