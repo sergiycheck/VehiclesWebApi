@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Vehicles.Data;
 using Microsoft.EntityFrameworkCore;
 using Vehicles.Interfaces;
+using vehicles.Helpers;
+using Vehicles.AuthorizationsManagers;
 
 namespace Vehicles
 {
@@ -30,9 +32,13 @@ namespace Vehicles
                     var context = new VehicleDbContext(
                                 services.GetRequiredService<DbContextOptions<VehicleDbContext>>());
 
-                    var seed = new SeedData();
-                    using var userManager = services.GetService<ICustomUserManager>();
-                    seed.Initialize(userManager, context).Wait();//good way for initializing id set automatically on savechanges
+                    var appEnvironment = services.GetRequiredService<IWebHostEnvironment>();
+                    var seed = new SeedData(new VehicleImageRetriever(),appEnvironment);
+                    var userManager = services.GetService<ICustomUserManager>();
+
+                    var roleManager = services.GetRequiredService<ICustomRoleManager>();
+
+                    seed.Initialize(userManager,roleManager, context).Wait();//good way for initializing id set automatically on savechanges
                 }
                 catch (Exception ex)
                 {

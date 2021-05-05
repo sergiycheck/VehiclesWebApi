@@ -3,7 +3,15 @@ using Vehicles.Models;
 using Vehicles.Contracts.Responces;
 using System.Linq;
 using Vehicles.Contracts.Requests;
-  
+using vehicles.Helpers;
+using System.IO;
+using Vehicles.Contracts.V1;
+using System.Threading.Tasks;
+using System;
+using Microsoft.AspNetCore.Mvc;
+using vehicles.Contracts.V1.Responses;
+using vehicles.Models;
+
 namespace Vehicles.MyCustomMapper
 {  
     public interface ICustomMapper
@@ -12,13 +20,39 @@ namespace Vehicles.MyCustomMapper
         public OwnerResponce OwnerToOwnerResponse(CustomUser carOwnerUser);
         public Car CarRequestToCar(CarRequest carRequest);
         public CustomUser OwnerRequestToCarOwner(OwnerRequest OwnerRequest);
-        
+        public PenaltyResponse PenaltyToPenaltyResponse(Penalty penalty);
+        public Penalty PenaltyRequestToPenalty(PenaltyRequest penalty);
+        void UpdateUserFromDb(CustomUser userFromDb,CustomUser userFromRequest);
+
+
     }
     public class CustomMapper :ICustomMapper
-    {  
+    {
+        private readonly IVehicleImageRetriever _vehicleImageRetriever;
 
+        public CustomMapper(
+            IVehicleImageRetriever vehicleImageRetriever
+            )
+        {
+            _vehicleImageRetriever = vehicleImageRetriever;
+        }
         public CarResponse CarToCarResponse(Car car)
         {
+            FileContentResult ImgFile = null;
+            try
+            {
+                Console.WriteLine($"{car.Brand} \n {car.ImgPath}");
+
+                var FileImgInfo =  _vehicleImageRetriever
+                    .GetFileImgInfoByImgPath(car.ImgPath);
+                ImgFile = new FileContentResult(
+                    FileImgInfo.FileBytes, FileImgInfo.FileType);
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
             return new CarResponse
             {
                 Id = car.Id,
@@ -31,43 +65,75 @@ namespace Vehicles.MyCustomMapper
                 Description = car.Description,
                 Transmision = car.Transmision,
                 Drive = car.Drive,
-                OwnerResponces =car.ManyToManyCustomUserToVehicle!=null? car.ManyToManyCustomUserToVehicle.Select(o => 
+                ImgFile = ImgFile,
+                OwnerResponces =car.ManyToManyCustomUserToVehicle?.Select(o => 
                             new OwnerResponce(){
                                 Id = o.CarOwnerId,
-                                Name = o.CarOwner.FirstName,
-                                SurName = o.CarOwner.LastName,
-                                CarOwnerPhone = o.CarOwner.PhoneNumber,
-                                Location = o.CarOwner.Address,
-                                BirthDate = o.CarOwner.BirthDate,
+                                Name = o.CarOwner?.FirstName,
+                                SurName = o.CarOwner?.LastName,
+                                CarOwnerPhone = o.CarOwner?.PhoneNumber,
+                                Location = o.CarOwner?.Address,
+                                BirthDate = o.CarOwner!=null?o.CarOwner.BirthDate:DateTime.Now,
                                 CarResponces = null
-                            }).ToList():null
+                            }).ToList()
             };
         }
+
+        public PenaltyResponse PenaltyToPenaltyResponse(Penalty penalty)
+        {
+            return new PenaltyResponse()
+            {
+                Id = penalty.Id,
+                PayedStatus = penalty.PayedStatus,
+                CarId = penalty.CarId,
+                Date = penalty.Date,
+                Description = penalty.Description,
+                Location = penalty.Location,
+                Price = penalty.Price
+            };
+        }
+        public Penalty PenaltyRequestToPenalty(PenaltyRequest penalty)
+        {
+            return new Penalty()
+            {
+                Id = penalty.Id,
+                PayedStatus = penalty.PayedStatus,
+                CarId = (int) penalty.CarId,
+                Date = penalty.Date,
+                Description = penalty.Description,
+                Location = penalty.Location,
+                Price = penalty.Price
+            };
+        }
+
+
         public OwnerResponce OwnerToOwnerResponse(CustomUser owner)
         {
             return new OwnerResponce
             {
                 Id = owner.Id,
+                Email = owner.Email,
                 Name = owner.FirstName,
+                UserName = owner.UserName,
                 SurName = owner.LastName,
                 CarOwnerPhone = owner.PhoneNumber,
                 Location = owner.Address,
                 BirthDate = owner.BirthDate,
 
-                CarResponces = owner.ManyToManyCustomUserToVehicle!=null?owner.ManyToManyCustomUserToVehicle.Select(car=>
+                CarResponces = owner.ManyToManyCustomUserToVehicle?.Select(car=>
                     new CarResponse(){
-                        Id = car.Car.Id,
-                        UniqueNumber = car.Car.UniqueNumber,
-                        Brand = car.Car.Brand,
-                        Color = car.Car.Color,
-                        Date = car.Car.Date,
-                        Price = car.Car.Price,
-                        CarEngine = car.Car.CarEngine,
-                        Description = car.Car.Description,
-                        Transmision = car.Car.Transmision,
-                        Drive = car.Car.Drive,
+                        Id = car.Car!=null?car.Car.Id:0,
+                        UniqueNumber = car.Car?.UniqueNumber,
+                        Brand = car.Car?.Brand,
+                        Color = car.Car?.Color,
+                        Date = car.Car!=null?car.Car.Date:DateTime.Now,
+                        Price = car.Car != null ? car.Car.Price:0,
+                        CarEngine = car.Car != null ? car.Car.CarEngine:0,
+                        Description = car.Car?.Description,
+                        Transmision = car.Car?.Transmision,
+                        Drive = car.Car?.Drive,
                         OwnerResponces = null
-                    }).ToList():null   
+                    }).ToList()   
             };
         }
         public Car CarRequestToCar(CarRequest carRequest)
@@ -84,11 +150,11 @@ namespace Vehicles.MyCustomMapper
                 Description = carRequest.Description,
                 Transmision = carRequest.Transmision,
                 Drive = carRequest.Drive,
-                ManyToManyCustomUserToVehicle =carRequest.OwnerRequests!=null? carRequest.OwnerRequests.Select(o => 
+                ManyToManyCustomUserToVehicle =carRequest.OwnerRequests?.Select(o => 
                             new ManyToManyCustomUserToVehicle(){
                                 CarId = carRequest.Id,
                                 CarOwnerId = o.Id
-                            }).ToList():null
+                            }).ToList()
             };
         }
         public CustomUser OwnerRequestToCarOwner(OwnerRequest OwnerRequest)
@@ -96,17 +162,31 @@ namespace Vehicles.MyCustomMapper
             return new CustomUser
             {
                 Id = OwnerRequest.Id,
+                Email = OwnerRequest.Email,
                 FirstName = OwnerRequest.Name,
+                UserName = OwnerRequest.UserName,
                 LastName = OwnerRequest.SurName,
                 PhoneNumber = OwnerRequest.CarOwnerPhone,
                 Address = OwnerRequest.Location,
                 BirthDate = OwnerRequest.BirthDate,
-                ManyToManyCustomUserToVehicle = OwnerRequest.CarRequests!=null?OwnerRequest.CarRequests.Select(car=>
+                ManyToManyCustomUserToVehicle = OwnerRequest.CarRequests?.Select(car=>
                     new ManyToManyCustomUserToVehicle(){
                         CarId = car.Id,
                         CarOwnerId = OwnerRequest.Id
-                    }).ToList():null   
+                    }).ToList()   
             };
         }
+        public void UpdateUserFromDb(CustomUser userFromDb,CustomUser userFromRequest){
+            userFromDb.FirstName = userFromRequest.FirstName;
+            userFromDb.UserName = userFromRequest.UserName;
+            userFromDb.Email = userFromRequest.Email;
+            userFromDb.LastName = userFromRequest.LastName;
+            userFromDb.Address = userFromRequest.Address;
+            userFromDb.BirthDate = userFromRequest.BirthDate;
+            userFromDb.PhoneNumber = userFromRequest.PhoneNumber;
+
+
+        }
+
     }  
 }

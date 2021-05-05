@@ -1,8 +1,14 @@
-﻿//we use routes in a separated class cause we use it in responces and routes to controller methods
+﻿
+
+
+//we use routes in a separated class cause we use it in responces and routes to controller methods
 namespace Vehicles.Contracts.V1
 {
     public static class ApiRoutes
     {
+
+        public const string imgsPath = @"assets/vehicleImgs/";
+
         public const string Root = "api";
 
         public const string Version = "v1";
@@ -23,8 +29,27 @@ namespace Vehicles.Contracts.V1
             public const string Get = GetAll + "/{id:int}";
 
             public const string Create = GetAll + "/create";
+
+            public const string GetImage = GetAll + "getImage/{Brand}&{UniqueNumber}";
+            public const string CanAccess = GetAll + "/canAccess";
         }
-        
+        public static class PenaltiesRoutes
+        {
+            public const string GetAll = Base + "/penalties";
+            public const string GetPenaltiesByUniqueNumber = GetAll + "/vehicle-unique-number/{uniqueNumber}";
+
+            public const string GetPenaltiesByUserId = GetAll + "/get-by-user/{userId}";
+
+            public const string Get = GetAll + "/{id:int}";
+
+            public const string Create = GetAll + "/create";
+            public const string Update = GetAll + "/update/{id:int}";
+            public const string Delete = GetAll + "/delete/{id:int}";
+
+            public const string PayPenalty = GetAll + "/pay/{id:int}";
+
+        }
+
         public static class Owners
         {
             public const string GetAll = Base + "/owners";
@@ -33,20 +58,17 @@ namespace Vehicles.Contracts.V1
             public const string GetOwnersByCarUniqueNumber = GetAll+"/vehicle-unique-number/{uniqueNumber}";
             public const string Get = GetAll + "/{id}";
             
-            //public const string Create = GetAll + "/create";
-            //public const string Update = GetAll + "/update/{id:int}";
-            
-            //public const string Delete = GetAll + "/delete/{id:int}";
         }
 
         public static class Identity
         {
             public const string Login = Base + "/identity/login";
-            
             public const string Register = Base + "/identity/register";
-            
             public const string Refresh = Base + "/identity/refresh";
-            public const string Delete = Base + "/identity/delete";
+            
+            public const string Delete = Base + "/identity/delete/{id}";
+            public const string Update = Base + "/identity/update/{id}";
+
             public const string GetUser = Base + "/identity/get-user";
             public const string RevokeToken = Base + "/identity/revoke";
             

@@ -15,7 +15,11 @@ using System.Text;
 using  Vehicles.Interfaces;
 using Vehicles.AuthorizationsManagers;
 using Vehicles.AuthorizationsManagers.Attributes;
-
+using vehicles.Helpers;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using vehicles.Authorization.AuthorizationsManagers;
+using vehicles.Repositories;
 
 namespace Vehicles.Installers.Implementations
 {
@@ -41,7 +45,16 @@ namespace Vehicles.Installers.Implementations
 
                                   });
             });
-            services.AddControllers().AddJsonOptions(options =>
+
+
+            services.AddControllers(config=> {
+
+                //var policy = new AuthorizationPolicyBuilder()
+                //                .Build();
+
+                //config.Filters.Add(new AuthorizeFilter(policy));
+            })
+            .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.WriteIndented = true;
                 options.JsonSerializerOptions.Converters.Add(new DecimalToStringConverter());
@@ -65,16 +78,17 @@ namespace Vehicles.Installers.Implementations
             services.AddSingleton(tokenValidationParameters);
 
             services.AddAuthentication(authOpt =>
-                {
-                    authOpt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    authOpt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    authOpt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(configureOptions =>
-                {
-                    configureOptions.SaveToken = true;
-                    configureOptions.TokenValidationParameters = tokenValidationParameters;
-                });
+            {
+                authOpt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authOpt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                authOpt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(configureOptions =>
+            {
+                configureOptions.SaveToken = true;
+                configureOptions.TokenValidationParameters = tokenValidationParameters;
+            });
+
 
 
 
@@ -84,10 +98,33 @@ namespace Vehicles.Installers.Implementations
             services.AddTransient<ICarOwnerService, CarOwnerService>();
             services.AddTransient<ICarService, CarService>();
             services.AddTransient<ICustomMapper,CustomMapper>();
+
+            services.AddTransient<IPenaltyRepository, PenaltyRepository>();
+
+
+            //role managers
+
+            services.AddScoped<ICustomAuthorizationService, CustomAuthorizationService>();
+
+            services.AddScoped<IAuthorizationHandler,
+                      AdministratorAuthorizationHandler>();
+            services.AddScoped<IAuthorizationHandler,
+                                  OwnerAuthorizationHandler>();
             
-            services.AddScoped<ICustomUserManager,CustomUserManager>();
-            services.AddScoped<ICustomSignInManager,CustomSignInManager>();
-            services.AddScoped<IIdentityService,IdentityService>();
+            services.AddScoped<ICustomRoleManager, CustomRoleManager>();
+            services.AddScoped<ICustomRolesRespository, CustomRolesRepository>();
+
+            //user managers
+            services.AddScoped<ICustomUserManager, CustomUserManager>();
+            services.AddScoped<ICustomSignInManager, CustomSignInManager>();
+            services.AddScoped<IIdentityService, IdentityService>();
+
+
+
+            //get image
+            services.AddTransient<IVehicleImageRetriever, VehicleImageRetriever>();
+
+
             //services.AddSingleton<IAuthorizationMiddlewareResultHandler, MyAuthorizationMiddlewareResultHandler>(); comment to see if error exists
 
             services.AddSingleton<IUriService>(provider=>{
@@ -98,6 +135,14 @@ namespace Vehicles.Installers.Implementations
             });
 
             services.AddSignalR();
+
+            services.Configure<FormOptions>(o => {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
+            });
+
+            services.AddDirectoryBrowser();
 
         }
     }

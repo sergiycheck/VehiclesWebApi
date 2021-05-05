@@ -10,8 +10,8 @@ using Vehicles.Data;
 namespace vehicles.Migrations
 {
     [DbContext(typeof(VehicleDbContext))]
-    [Migration("20210203162132_changedOwnerToUser")]
-    partial class changedOwnerToUser
+    [Migration("20210422170735_initialCreate")]
+    partial class initialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,33 +20,6 @@ namespace vehicles.Migrations
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.1");
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
@@ -181,6 +154,9 @@ namespace vehicles.Migrations
                     b.Property<string>("Drive")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImgPath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,4)");
 
@@ -280,15 +256,25 @@ namespace vehicles.Migrations
 
             modelBuilder.Entity("Vehicles.Models.ManyToManyCustomUserToVehicle", b =>
                 {
-                    b.Property<string>("CarOwnerId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
 
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
-                    b.HasKey("CarOwnerId", "CarId");
+                    b.Property<string>("CarOwnerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("TimeMark")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("CarId");
+
+                    b.HasIndex("CarOwnerId");
 
                     b.ToTable("ManyToManyCarOwners");
                 });
@@ -324,9 +310,68 @@ namespace vehicles.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("vehicles.Models.CustomRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles");
+                });
+
+            modelBuilder.Entity("vehicles.Models.Penalty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PayedStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarId");
+
+                    b.ToTable("Penalties");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("vehicles.Models.CustomRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -353,7 +398,7 @@ namespace vehicles.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("vehicles.Models.CustomRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -385,9 +430,7 @@ namespace vehicles.Migrations
 
                     b.HasOne("Vehicles.Models.CustomUser", "CarOwner")
                         .WithMany("ManyToManyCustomUserToVehicle")
-                        .HasForeignKey("CarOwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CarOwnerId");
 
                     b.Navigation("Car");
 
@@ -403,9 +446,22 @@ namespace vehicles.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("vehicles.Models.Penalty", b =>
+                {
+                    b.HasOne("Vehicles.Models.Car", "Car")
+                        .WithMany("Penalties")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+                });
+
             modelBuilder.Entity("Vehicles.Models.Car", b =>
                 {
                     b.Navigation("ManyToManyCustomUserToVehicle");
+
+                    b.Navigation("Penalties");
                 });
 
             modelBuilder.Entity("Vehicles.Models.CustomUser", b =>

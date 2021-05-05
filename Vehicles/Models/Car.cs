@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using SystemTextJsonSamples;
+using vehicles.Models;
 
 namespace Vehicles.Models
 {
@@ -19,6 +20,8 @@ namespace Vehicles.Models
         public string Transmision{get;set;}
         public string Drive{get;set;}
         public virtual ICollection<ManyToManyCustomUserToVehicle> ManyToManyCustomUserToVehicle{get;set;}
+        public string ImgPath { get; set; }
+        public virtual ICollection<Penalty> Penalties { get; set; }
 
     }
 }

@@ -23,6 +23,9 @@ namespace Vehicles.Repositories
         {
             return await _dbSet.AsNoTracking().ToListAsync();
         }
+        public IQueryable<CustomUser> GetIQueryableUsers(){
+            return _dbContext.Users.AsQueryable().AsNoTracking();
+        }
         public async Task<CustomUser> GetById(string id)
         {
             return await _dbSet.AsNoTracking().FirstOrDefaultAsync(user=>user.Id==id);

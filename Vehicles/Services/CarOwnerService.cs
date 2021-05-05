@@ -5,6 +5,9 @@ using Vehicles.Models;
 using Vehicles.Interfaces.RepositoryInterfaces;
 using Vehicles.Interfaces.ServiceInterfaces;
 using Microsoft.EntityFrameworkCore;
+using vehicles.Contracts.V1.Requests;
+using vehicles.Contracts.V1.Requests.Queries;
+using System.Linq;
 
 namespace Vehicles.Services
 {
@@ -16,9 +19,15 @@ namespace Vehicles.Services
             _repository = repository;
         }
 
-        public async Task<List<CustomUser>> GetAllCarOwners()
+        public async Task<PagedList<CustomUser>> GetAllCarOwners(UsersParameters usersParameters)
         {
-            return await _repository.GetAll();
+            var iQueryableUsers = _repository.GetIQueryableUsers().OrderBy(u=>u.FirstName);
+            return await PagedList<CustomUser>
+                .ToPagedList(
+                    iQueryableUsers,
+                    usersParameters.PageNum,
+                    usersParameters.PageSize
+                );
         }
 
         public async Task<CustomUser> GetById(string id)

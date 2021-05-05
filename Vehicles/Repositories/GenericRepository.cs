@@ -9,7 +9,7 @@ namespace Vehicles.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : BaseModel
     {
-        protected readonly VehicleDbContext _dbContext;
+        public readonly VehicleDbContext _dbContext;
         protected readonly DbSet<TEntity> _dbSet;
         
         public GenericRepository(VehicleDbContext dbContext)

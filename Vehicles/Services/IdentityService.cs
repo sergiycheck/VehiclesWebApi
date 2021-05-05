@@ -12,13 +12,20 @@ using Vehicles.Data;
 using Vehicles.Models;
 using Vehicles.Options;
 using Vehicles.Interfaces;
+using Vehicles.AuthorizationsManagers;
+using Vehicles.Contracts.V1.Requests;
+
 
 namespace Vehicles.Services
 {
     public class IdentityService : IIdentityService
     {
         private readonly ICustomUserManager _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+
+        //private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ICustomRoleManager _roleManager;
+
+
         private readonly JwtSettings _jwtSettings;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly VehicleDbContext _context;
@@ -28,8 +35,9 @@ namespace Vehicles.Services
             ICustomUserManager userManager, 
             JwtSettings jwtSettings, 
             TokenValidationParameters tokenValidationParameters,
-            VehicleDbContext context, 
-            RoleManager<IdentityRole> roleManager
+            VehicleDbContext context,
+            //RoleManager<IdentityRole> roleManager
+            ICustomRoleManager roleManager
             //IFacebookAuthService facebookAuthService
             )
         {
@@ -40,10 +48,12 @@ namespace Vehicles.Services
             _roleManager = roleManager;
             //_facebookAuthService = facebookAuthService;
         }
+
         
-        public async Task<AuthenticationResult> RegisterAsync(string email, string password)
+        
+        public async Task<AuthenticationResult> RegisterAsync(UserRegistrationRequest request)
         {
-            var existingUser = await _userManager.FindByEmailAsync(email);
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
 
             if (existingUser != null)
             {
@@ -57,11 +67,12 @@ namespace Vehicles.Services
             var newUser = new CustomUser
             {
                 Id = newUserId.ToString(),
-                Email = email,
-                UserName = email
+                Email = request.Email,
+                UserName = request.UserName,
+                EmailConfirmed = true
             };
 
-            var createdUser = await _userManager.CreateAsync(newUser, password);
+            var createdUser = await _userManager.CreateAsync(newUser, request.Password);
 
             if (!createdUser.Succeeded)
             {
@@ -232,8 +243,74 @@ namespace Vehicles.Services
         public async Task<CustomUser> GetUserFromToken(string token)
         {
             var validatedToken = GetPrincipalFromToken(token);
-            var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
+            // var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
+            var id = validatedToken.Claims.Single(x => x.Type == "id").Value;
+            var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u=>u.Id==id);
             return user;
+        }
+
+        
+
+        public async Task<CustomIdentityResult> UpdateUser(CustomUser user)
+        {
+            // var updatedIdentityResult = await  _userManager.UpdateAsync(user);
+            var userWithSameEmailExists = await _context.Users
+                .AsNoTracking()
+                .Where(u=>u.Id!=user.Id && u.Email==user.Email).FirstOrDefaultAsync();
+
+            if(userWithSameEmailExists!=null){
+                return new CustomIdentityResult(){
+                    Succeeded = false,
+                    Errors = new string [] {"User with the same email already exists"}
+                };
+            }
+
+            var userWithSameUserNameExists = await _context.Users
+                .AsNoTracking()
+                .Where(u=>u.Id!=user.Id && u.UserName==user.UserName).FirstOrDefaultAsync();
+            if(userWithSameEmailExists!=null){
+                return new CustomIdentityResult(){
+                    Succeeded = false,
+                    Errors = new string [] {"User with the same UserName already exists"}
+                };
+            }
+            _context.Users.Update(user);
+            try
+            {
+
+                var updatedResult = await _context.SaveChangesAsync(); 
+                if(updatedResult>0){
+                    return new CustomIdentityResult(){
+                        Succeeded = true
+                    };
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return new CustomIdentityResult(){
+                        Succeeded = false,
+                        Errors = new string [] {"Updating user finished with errors"}
+                    };
+            
+        }
+        public async Task<CustomIdentityResult> DeleteUser(CustomUser user)
+        {
+            var deleteResult = await _userManager.DeleteAsync(user);
+            if(deleteResult.Succeeded){
+                return new CustomIdentityResult(){
+                        Succeeded = true
+                    };;
+            }
+            return new CustomIdentityResult(){
+                        Succeeded = false,
+                        Errors = new string [] {"Deleting user finished with errors"}
+                    };;
+        }
+        public async Task<CustomUser> FindUser(string id)
+        {
+            return await _userManager.FindByIdAsync(id);
         }
 
         // public async Task<AuthenticationResult> LoginWithFacebookAsync(string accessToken)
@@ -303,12 +380,18 @@ namespace Vehicles.Services
         {
             var user = await GetUserFromToken(token);
             if(user==null) return 0;
-            var refreshToken = await _context.RefreshTokens.FirstOrDefaultAsync(r=>r.UserId==user.Id);
-            if(refreshToken!=null)
+            var refreshTokens = await _context.RefreshTokens.Where(r=>r.UserId==user.Id).ToListAsync();
+            
+            if(refreshTokens!=null && refreshTokens.Count()>0)
             {
-                _context.RefreshTokens.Remove(refreshToken);
-                var res = await _context.SaveChangesAsync();
-                return res;
+                var all = 0;
+                foreach(var refreshToken in refreshTokens){
+                    _context.RefreshTokens.Remove(refreshToken);
+                    var res = await _context.SaveChangesAsync();
+                    all++;
+                }
+                    
+                return all;
             }
             return 0;
 

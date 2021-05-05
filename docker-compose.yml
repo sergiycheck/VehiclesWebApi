@@ -1,0 +1,21 @@
+version: '3'
+services:
+ ms-sql-server:
+  image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+  environment:
+   ACCEPT_EULA: "Y"
+   SA_PASSWORD: "seRGi_paSsWord9312"
+   MSSQL_PID: Express
+  ports:
+   - "1433:1433"
+ web-api-vehicles-app:
+  build: .
+  depends_on: 
+   - ms-sql-server
+  environment: 
+   DbServer: "ms-sql-server"
+   Database: "VehiclesWebApiDb"
+   DbUser: "SA"
+   Password: "seRGi_paSsWord9312"
+  ports: 
+   - "5010:80"

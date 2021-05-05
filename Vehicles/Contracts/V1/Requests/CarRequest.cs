@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
@@ -21,5 +22,6 @@ namespace Vehicles.Contracts.Requests
         public string Drive{get;set;}
         public IEnumerable<OwnerRequest> OwnerRequests {get;set;}
 
+        public string Token { get; set; }
     }
 }

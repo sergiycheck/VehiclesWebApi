@@ -15,6 +15,11 @@ using Xunit.Abstractions;
 using System.Linq;
 using Vehicles.Contracts.V1.Requests;
 using System.Net.Http.Headers;
+using vehicles.Helpers;
+using Vehicles.Models;
+using Vehicles.Contracts.Requests;
+using vehicles.Contracts.V1.Requests;
+using System;
 
 namespace VehiclesXUnitTests
 {
@@ -47,7 +52,98 @@ namespace VehiclesXUnitTests
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
 
         }
-        
+        [Fact]
+        public async Task GetVehicleImgs()
+        {
+            var url = ApiRoutes.Vehicles.GetImage;
+            var client = _factory.CreateClient();
+
+            var response = await client.GetAsync(url);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var dataJson = await response.Content.ReadAsStringAsync();
+            _output.WriteLine(dataJson);
+
+            Assert.NotEmpty(dataJson);
+            Assert.NotEqual("Directory does not exists or file not found with this name {name}", dataJson.Trim());
+        }
+
+
+        [Theory]
+        [InlineData(
+            "Kia Mohave OFFICIAL FULL AWD",
+            "HN-8080-OV", 
+            "Kia_Mohave_OFFICIAL_FULL_AWD_HN-8080-OV")]
+        [InlineData(
+            "Porsche Panamera 2010", 
+            "XX-7636-WX", 
+            "Porsche_Panamera_2010_XX-7636-WX")]
+        [InlineData(
+            "Mercedes-Benz C 200 2010",
+            "QY-0324-PK",
+            "Mercedes-Benz_C_200_2010_QY-0324-PK")]
+        public void ReplaceSpaceWithDash(string Brand, string UniqueNumber,string expected)
+        {
+            var imgRetriever = new VehicleImageRetriever();
+            var nameResult = imgRetriever.ReplaceSpaceWithDash(Brand, UniqueNumber);
+            _output.WriteLine($"nameResult {nameResult}");
+            Assert.Equal(expected, nameResult);
+        }
+
+
+
+
+        private const string FILE_PATH = @"C:\Users\sergi\source\repos\Infotech\Vehicles\wwwroot\assets\vehicleImgs\";
+        [Theory]
+        [InlineData(
+            "Kia Mohave OFFICIAL FULL AWD",
+            "HN-8080-OV",
+            FILE_PATH)]
+        [InlineData(
+            "Porsche Panamera 2010",
+            "XX-7636-WX",
+           FILE_PATH)]
+        [InlineData(
+            "Mercedes-Benz C 200 2010",
+            "QY-0324-PK",
+            FILE_PATH)]
+        public async Task GetImageByBrandAndUniqueNumber(string Brand, string UniqueNumber, string imgDirectory)
+        {
+            var imgRetriever = new VehicleImageRetriever();
+            var imgFileInfo = await imgRetriever
+                .GetImageByBrandAndUniqueNumber(
+                    Brand,
+                    UniqueNumber,
+                    imgDirectory);
+
+            Assert.NotNull(imgFileInfo);
+            Assert.IsAssignableFrom<FileImgInfo>(imgFileInfo);
+            _output.WriteLine($"{imgFileInfo.FileType} \n" +
+                $"{imgFileInfo.FileBytes.Length}");
+        }
+
+
+        //passed without authorization
+        [Theory]
+        [InlineData(1)]
+        public async Task GetCarById(int id)
+        {
+            var url = ApiRoutes.Vehicles.Get;
+            var getByIdUrl = url.Replace("{id:int}",$"{id}");
+            //Arrange
+            var client = _factory.CreateClient();
+            var responseMessage = await client.GetAsync(getByIdUrl);
+            var responseMessageJson = await responseMessage.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.OK, responseMessage.StatusCode);
+            var carResponse = JsonConvert.DeserializeObject<Response<Car>>(responseMessageJson);
+            Assert.IsAssignableFrom<Response<Car>>(carResponse);
+
+
+        }
+
+
         [Fact]
         public async Task GetApiVehiclesAll()
         {
@@ -57,10 +153,10 @@ namespace VehiclesXUnitTests
             //Act
             var result = await client.GetAsync(url);
             var carsJson = await client.GetStringAsync(url);
-            var cars = JsonConvert.DeserializeObject<Response<List<CarResponse>>>(carsJson);
+            var cars = JsonConvert.DeserializeObject<Response<List<Car>>>(carsJson);
 
             //Assert
-            Assert.IsAssignableFrom<List<CarResponse>>(cars.Data);
+            Assert.IsAssignableFrom<List<Car>>(cars.Data);
             //Assert
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
 
@@ -90,8 +186,8 @@ namespace VehiclesXUnitTests
         {
             var userLoginRequest = new UserLoginRequest()
             {
-                Email = "testname@domain.com",
-                Password = "test124!StrongPass"
+                Email = "name1Email@domain.com",
+                Password = "!VeryStrPass1234_1"
             };
 
             var url = ApiRoutes.Identity.Login;
@@ -117,33 +213,55 @@ namespace VehiclesXUnitTests
         [Fact]
         public async Task PostGetCarsByOwner()
         {
-            //todo add logging...
-
-            var url = ApiRoutes.Owners.Get.Replace("{id}", "2d0aeabf-60fc-475d-ab67-f51f340ba8c3");
             //Arrange
             var client = _factory.CreateClient();
-            //Act
-            var result = await client.GetAsync(url);
-            var Json = await client.GetStringAsync(url);
+
+            var userParams = new UsersParameters()
+            {
+                PageSize = 1
+            };
+
+            var getOwnersUrl = ApiRoutes.Owners.GetAll;
+
+            var propertyList = userParams.GetType().GetProperties();
+            var queryString = "?";
+            foreach(var prop in propertyList)
+            {
+                queryString += $"{prop.Name}={prop.GetValue(userParams, null)}&";
+            }
+            queryString = queryString.Remove(queryString.Length - 1, 1);
+
+            _output.WriteLine(queryString);
+            var ownersUrlAndQuery = $"{getOwnersUrl}{queryString}";
+            _output.WriteLine(ownersUrlAndQuery);
+
+            var json = await client.GetStringAsync(ownersUrlAndQuery);
+            Assert.NotNull(json);
+            var ownerFromDbResponse = JsonConvert.DeserializeObject<Response<IEnumerable<OwnerResponce>>>(json);
+            Assert.IsAssignableFrom<Response<IEnumerable<OwnerResponce>>>(ownerFromDbResponse);
+            var owner = ownerFromDbResponse.Data.ToArray()[0];
+            Assert.NotNull(owner);
+
+            var jsonOwnerRequest = JsonConvert.SerializeObject(owner);
 
             var authSuccessLoginResponce = await GetLoginResponse();
 
-            url = ApiRoutes.Vehicles.GetCarsByOwner;
+            var url = ApiRoutes.Vehicles.GetCarsByOwner;
 
-            var strContent = new StringContent(Json, 
+            var strContent = new StringContent(jsonOwnerRequest, 
                         Encoding.UTF8, "application/json");
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authSuccessLoginResponce.Token);
+            client.DefaultRequestHeaders.Authorization = 
+                    new AuthenticationHeaderValue("Bearer", authSuccessLoginResponce.Token);
+
             var response = await client.PostAsync(url,strContent);
             
             var carsJson = await response.Content.ReadAsStringAsync();
-            var cars = JsonConvert.DeserializeObject<Response<List<CarResponse>>>(carsJson);
+            var cars = JsonConvert.DeserializeObject<Response<List<Car>>>(carsJson);
             //Assert
-            Assert.IsAssignableFrom<List<CarResponse>>(cars.Data);
+            Assert.IsAssignableFrom<List<Car>>(cars.Data);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            Assert.True(cars.Data.Count > 0);
         }
 
 
@@ -155,7 +273,7 @@ namespace VehiclesXUnitTests
             var client = _factory.CreateClient();
             //Act
             var JsonCar = await client.GetStringAsync(url);
-            var car = JsonConvert.DeserializeObject<Response<CarResponse>>(JsonCar);
+            var car = JsonConvert.DeserializeObject<Response<Car>>(JsonCar);// we user Car instead of carResponse because we cannot deserialize file
             url = ApiRoutes.Owners
                     .GetOwnersByCarUniqueNumber
                     .Replace("{uniqueNumber}",car.Data.UniqueNumber);

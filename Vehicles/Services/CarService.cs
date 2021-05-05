@@ -5,21 +5,70 @@ using Vehicles.Models;
 using Vehicles.Interfaces.RepositoryInterfaces;
 using Vehicles.Interfaces.ServiceInterfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using vehicles.Contracts.V1.Requests;
+using vehicles.Contracts.V1.Requests.Queries;
+using System.Linq;
 
 namespace Vehicles.Services
 {
     public class CarService:ICarService
     {
         private readonly ICarsRepository _repository;
-        public CarService(ICarsRepository repository)
+
+        private readonly ICarOwnersRepository _ownersRepository;
+        private readonly IIdentityService _identityService;
+        public CarService(ICarsRepository repository, 
+            ICarOwnersRepository carOwnersRepository, 
+            IIdentityService identityService)
         {
             _repository = repository;
+            _ownersRepository = carOwnersRepository;
+            _identityService = identityService;
         }
 
-        public async Task Create(Car entity)
+        public ClaimsPrincipal GetClaimsPrincipal(string token)
+        {
+            return _identityService.GetPrincipalFromToken(token);
+        }
+        public async Task<CustomUser> GetOwnerById(string id)
+        {
+            return await _ownersRepository.GetById(id);
+        }
+        public async Task<List<CustomUser>> GetOwnersByCar(int id)
+        {
+            var car = await _repository.GetById(id);
+            if(car == null)
+            {
+                return null;
+            }
+            return await _ownersRepository.GetCarOwners(car.UniqueNumber);
+        }
+
+        public async Task<bool> Create(Car entity, string userId)
         {
             await _repository.Create(entity);
             await _repository.SaveChangesAsync();
+
+            var car = await _repository.GetIQueryableCars()
+                    .FirstOrDefaultAsync(c => c.UniqueNumber == entity.UniqueNumber);
+
+            CustomUser user;
+            if(userId != string.Empty)
+            {
+                user = await _identityService.FindUser(userId);
+                if (car != null && user != null)
+                {
+                    var carId = car.Id;
+                    var result = await _repository.AddVehicleRelationToUser(carId, userId);
+                    if (result > 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
         }
 
         public async Task Delete(int? id)
@@ -33,9 +82,14 @@ namespace Vehicles.Services
             return _repository.EntityExists(id);
         }
 
-        public async Task<List<Car>> GetAllCars()
+        public async Task<PagedList<Car>> GetAllCars(CarsParameters carsParameters)
         {
-            return await _repository.GetAll().ToListAsync();
+            var iQueryableCars = _repository.GetIQueryableCars().OrderBy(c=>c.Brand);
+            return await PagedList<Car>
+                .ToPagedList(
+                iQueryableCars, 
+                    carsParameters.PageNum, 
+                    carsParameters.PageSize);
         }
 
         public async Task<Car> GetById(int? id)
@@ -62,5 +116,7 @@ namespace Vehicles.Services
             return 0;
             
         }
+    
+    
     }
 }

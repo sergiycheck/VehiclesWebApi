@@ -12,6 +12,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Vehicles.Models;
+using vehicles.Models;
+
 
 namespace Vehicles.Installers.Implementations
 {
@@ -19,11 +21,20 @@ namespace Vehicles.Installers.Implementations
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
+            var server = configuration["DbServer"] ?? "DESKTOP-SH1NLDB\\SQLEXPRESS";
+            var port = configuration["DbPort"] ?? "1433"; // Default SQL Server port
+            var user = configuration["DbUser"] ?? "sergi_user"; // Warning do not use the SA account
+            var password = configuration["Password"] ?? "sergi_password";
+            var database = configuration["Database"] ?? "VehiclesWebApiDb";
+
             services.AddDbContext<VehicleDbContext>(options =>
                 options.UseSqlServer(
-                    configuration.GetConnectionString("VehiclesDbConnection")));
+                    $"Server={server}, {port};Initial Catalog={database};User ID={user};Password={password}"
+                    //configuration.GetConnectionString("VehiclesDbConnection")
+                    ));
+
             services.AddDefaultIdentity<CustomUser>()
-                .AddRoles<IdentityRole>()
+                .AddRoles<CustomRole>()
                 .AddEntityFrameworkStores<VehicleDbContext>();
             //services.AddDbContext<VehicleDbContext>(opt =>
             //   opt.UseInMemoryDatabase("VehiclesDbConnection"));//for testing
