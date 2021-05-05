@@ -22,6 +22,7 @@ namespace Vehicles.MyCustomMapper
         public CustomUser OwnerRequestToCarOwner(OwnerRequest OwnerRequest);
         public PenaltyResponse PenaltyToPenaltyResponse(Penalty penalty);
         public Penalty PenaltyRequestToPenalty(PenaltyRequest penalty);
+        void UpdateUserFromDb(CustomUser userFromDb,CustomUser userFromRequest);
 
 
     }
@@ -116,7 +117,7 @@ namespace Vehicles.MyCustomMapper
                 UserName = owner.UserName,
                 SurName = owner.LastName,
                 CarOwnerPhone = owner.PhoneNumber,
-                Location = $"{owner.Address} {owner.City}",
+                Location = owner.Address,
                 BirthDate = owner.BirthDate,
 
                 CarResponces = owner.ManyToManyCustomUserToVehicle?.Select(car=>
@@ -175,5 +176,17 @@ namespace Vehicles.MyCustomMapper
                     }).ToList()   
             };
         }
+        public void UpdateUserFromDb(CustomUser userFromDb,CustomUser userFromRequest){
+            userFromDb.FirstName = userFromRequest.FirstName;
+            userFromDb.UserName = userFromRequest.UserName;
+            userFromDb.Email = userFromRequest.Email;
+            userFromDb.LastName = userFromRequest.LastName;
+            userFromDb.Address = userFromRequest.Address;
+            userFromDb.BirthDate = userFromRequest.BirthDate;
+            userFromDb.PhoneNumber = userFromRequest.PhoneNumber;
+
+
+        }
+
     }  
 }

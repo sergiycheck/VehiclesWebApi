@@ -19,8 +19,8 @@ namespace Vehicles.Services
 
         ClaimsPrincipal GetPrincipalFromToken(string token);
         //Task<AuthenticationResult> LoginWithFacebookAsync(string accessToken);
-        Task<IdentityResult> UpdateUser(CustomUser user);
-        Task<IdentityResult> DeleteUser(CustomUser user);
+        Task<CustomIdentityResult> UpdateUser(CustomUser user);
+        Task<CustomIdentityResult> DeleteUser(CustomUser user);
         Task<CustomUser> FindUser(string id);
     }
 }

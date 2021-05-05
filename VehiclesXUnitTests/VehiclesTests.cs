@@ -33,6 +33,9 @@ using Xunit.Abstractions;
 using vehicles.Repositories;
 using vehicles.Models;
 using Vehicles.Contracts.V1.Requests;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 
 namespace VehiclesXUnitTests
 {
@@ -244,7 +247,11 @@ namespace VehiclesXUnitTests
 
                     var mockCustomAuthorizationService = new Mock<ICustomAuthorizationService>();
                     mockCustomAuthorizationService
-                        .Setup(m => m.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object>(), It.IsAny<IAuthorizationRequirement>())).ReturnsAsync(AuthorizationResult.Success);
+                        .Setup(m => m.AuthorizeAsync(
+                            It.IsAny<ClaimsPrincipal>(), 
+                            It.IsAny<object>(), 
+                            It.IsAny<IAuthorizationRequirement>())
+                        ).ReturnsAsync(AuthorizationResult.Success);
 
                     var controller = new VehiclesController(
                         carService,
@@ -267,6 +274,7 @@ namespace VehiclesXUnitTests
 
                     Assert.NotNull(res);
                     Assert.IsAssignableFrom<OkObjectResult>(res);
+
                 }
             }
 

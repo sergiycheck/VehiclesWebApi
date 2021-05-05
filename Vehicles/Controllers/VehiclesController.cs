@@ -140,7 +140,7 @@ namespace Vehicles.Controllers
         //[Authorize]
 
         [HttpPost(ApiRoutes.Vehicles.GetCarsByOwner)]
-        public async Task<ActionResult> GetCarsByCarOwner([FromBody] OwnerRequest value)
+        public async Task<IActionResult> GetCarsByCarOwner([FromBody] OwnerRequest value)
         {
             var res = await _carService.GetCars(
                 _customMapper.OwnerRequestToCarOwner(value));

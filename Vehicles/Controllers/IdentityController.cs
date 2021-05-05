@@ -194,17 +194,21 @@ namespace Vehicles.Controllers
                 {
                     var customUser = _customMapper
                         .OwnerRequestToCarOwner(ownerRequest);
-                    var result = await _identityService.UpdateUser(customUser);
+                    _customMapper.UpdateUserFromDb(user,customUser);
+
+                    var result = await _identityService.UpdateUser(user);
                     if (result.Succeeded)
                     {
-                        return Ok($"{customUser.Email} was successfylly  updated ");
+                        return Ok(
+                            new Response<string>($"{user.Email} was successfylly  updated "));
                     }
                     else
                     {
                         var Errors = GetErrors(result);
 
-                        return BadRequest(new AuthFailedResponse
+                        return Ok(new AuthFailedResponse
                         {
+                            ContainsErrors = true,
                             Errors = Errors
                         });
                     }
@@ -219,12 +223,12 @@ namespace Vehicles.Controllers
             }
         }
 
-        private List<string> GetErrors(IdentityResult result)
+        private List<string> GetErrors(CustomIdentityResult result)
         {
             var Errors = new List<string>();
             result.Errors.ToList().ForEach(e =>
             {
-                Errors.Add($"{e.Description}");
+                Errors.Add($"{e}");
             });
             return Errors;
         }
@@ -261,7 +265,8 @@ namespace Vehicles.Controllers
                         await _identityService.DeleteUser(user);
                     if (deleteResult.Succeeded)
                     {
-                        return Ok($"{user.Email} was successfylly deleted ");
+                        return Ok(
+                            new Response<string>($"{user.Email} was successfylly deleted "));
                     }
                     else
                     {

@@ -273,7 +273,7 @@ namespace VehiclesXUnitTests
             var client = _factory.CreateClient();
             //Act
             var JsonCar = await client.GetStringAsync(url);
-            var car = JsonConvert.DeserializeObject<Response<Car>>(JsonCar);//cannot deserialize file
+            var car = JsonConvert.DeserializeObject<Response<Car>>(JsonCar);// we user Car instead of carResponse because we cannot deserialize file
             url = ApiRoutes.Owners
                     .GetOwnersByCarUniqueNumber
                     .Replace("{uniqueNumber}",car.Data.UniqueNumber);
