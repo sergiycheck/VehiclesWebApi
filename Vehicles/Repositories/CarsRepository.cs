@@ -102,7 +102,7 @@ namespace Vehicles.Repositories
         public IQueryable<Car> SearchQueryPrice
             (IQueryable<Car> carQueryable, decimal? max,decimal? min)
         {
-            if(max!=null && min != null)
+            if(max!=null && min != null && max>min)
             {
                 return carQueryable
                     .Where(c => c.Price >= min && c.Price <= max);
@@ -119,9 +119,9 @@ namespace Vehicles.Repositories
         }
 
         public IQueryable<Car> SearchQueryCarEngine
-            (IQueryable<Car> carQueryable, int? max, int? min)
+            (IQueryable<Car> carQueryable, float? max, float? min)
         {
-            if(max!= null && min != null)
+            if(max!= null && min != null && max>min)
             {
                 return carQueryable
                 .Where(c => c.CarEngine >= min && c.CarEngine <= max);

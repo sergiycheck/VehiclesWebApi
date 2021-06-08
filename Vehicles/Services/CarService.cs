@@ -84,7 +84,51 @@ namespace Vehicles.Services
 
         public async Task<PagedList<Car>> GetAllCars(CarsParameters carsParameters)
         {
-            var iQueryableCars = _repository.GetIQueryableCars().OrderBy(c=>c.Brand);
+            var iQueryableCars = _repository.GetIQueryableCars();
+
+            if (carsParameters.searchText != null &&
+                !carsParameters.searchText.Equals(string.Empty) && 
+                carsParameters.searchText.Length>2)
+            {
+                iQueryableCars = _repository
+                    .SearchQuery(iQueryableCars, carsParameters.searchText);
+            }
+
+            if (carsParameters.minPrice != null ||
+                carsParameters.maxPrice != null)
+            {
+
+                iQueryableCars = _repository
+                    .SearchQueryPrice(
+                        iQueryableCars,
+                        carsParameters.maxPrice,
+                        carsParameters.minPrice);
+            }
+
+            if (carsParameters.minEnginePower != null ||
+                carsParameters.maxEnginePower != null)
+            {
+                iQueryableCars = _repository
+                    .SearchQueryCarEngine(
+                        iQueryableCars,
+                        carsParameters.maxEnginePower,
+                        carsParameters.minEnginePower
+                        );
+            }
+
+            if(carsParameters.minDate!=null || 
+                carsParameters.maxDate!=null)
+            {
+                iQueryableCars = _repository.SearchQueryDate(
+                    iQueryableCars,
+                    carsParameters.maxDate,
+                    carsParameters.minDate
+                    );
+            }
+
+
+            iQueryableCars = iQueryableCars.OrderBy(c => c.Brand);
+
             return await PagedList<Car>
                 .ToPagedList(
                 iQueryableCars, 

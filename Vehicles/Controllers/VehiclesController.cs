@@ -308,10 +308,16 @@ namespace Vehicles.Controllers
             
             var car = _customMapper.CarRequestToCar(carRequest);
             var oldCar = await _carService.GetById(id);
-            _vehicleImageRetriever.DeleteFile(oldCar.ImgPath);
-
-            car.ImgPath = await CreateImgFromRequest(Request, carRequest);
-
+            if (string.Equals(carRequest?.UpdateImage,"true"))
+            {
+                _vehicleImageRetriever.DeleteFile(oldCar.ImgPath);
+                car.ImgPath = await CreateImgFromRequest(Request, carRequest);
+            }
+            else
+            {
+                car.ImgPath = oldCar.ImgPath;
+            }
+            
 
             var updatedNums = await _carService.Update(car);
             if (updatedNums > 0)

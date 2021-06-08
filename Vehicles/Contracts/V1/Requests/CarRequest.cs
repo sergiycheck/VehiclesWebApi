@@ -23,5 +23,7 @@ namespace Vehicles.Contracts.Requests
         public IEnumerable<OwnerRequest> OwnerRequests {get;set;}
 
         public string Token { get; set; }
+
+        public string UpdateImage { get; set; }
     }
 }
