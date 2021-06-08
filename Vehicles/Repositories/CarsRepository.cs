@@ -63,6 +63,11 @@ namespace Vehicles.Repositories
             return await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<Car> GetByUniqueNumber(string uniqueNumber)
+        {
+            return await _dbContext.Cars.AsNoTracking().FirstOrDefaultAsync(c=>c.UniqueNumber==uniqueNumber);
+        }
+
         public async Task<int> TotalCount()
         {
             return await _dbContext.Cars.AsNoTracking().CountAsync();

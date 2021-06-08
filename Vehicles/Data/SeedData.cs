@@ -103,6 +103,7 @@ namespace Vehicles.Data
                 "Violation by drivers of vehicles operating in the mode of minibuses, the rules of stopping during the boarding (disembarkation) of passengers;",
                 Location = "Kiev",
                 Date = DateTime.Parse("08/3/2020"),
+                Price = 366
             },
             new Penalty
             {
@@ -602,13 +603,14 @@ namespace Vehicles.Data
                 {
                     var index = rnd.Next(0, carsFromDb.Count-1);
                     var car = carsFromDb[index];
-                    var countOfPenaltiesForCar = rnd.Next(0, 5);
+                    var countOfPenaltiesForCar = rnd.Next(2, 5);
                     for (int j = 0; j < countOfPenaltiesForCar; j++)
                     {
                         var tempPenalties = new List<Penalty>(Penalties);
                         var penaltyIndex = rnd.Next(0, tempPenalties.Count - 1);
                         var penalty = tempPenalties[penaltyIndex];
                         penalty.CarId = car.Id;
+                        penalty.CarUniqueNumber = car.UniqueNumber;
                         finalPenalties.Add(penalty);
 
                         tempPenalties.Remove(penalty);

@@ -12,8 +12,7 @@ namespace vehicles.Contracts.V1.Responses
     public class PenaltyResponse : BaseModel
     {
         public bool PayedStatus { get; set; }
-        public CarResponse Car { get; set; }
-        public int CarId { get; set; }
+        public string CarUniqueNumber { get; set; }
         public string Description { get; set; }
         public string Location { get; set; }
         [JsonConverter(typeof(DecimalToStringConverter))]

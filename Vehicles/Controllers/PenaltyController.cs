@@ -209,19 +209,20 @@ namespace vehicles.Controllers
             {
                 return BadRequest("You have not enough permissions for this action");
             }
-            if(penaltyRequest.CarId == null)
+            if(penaltyRequest.CarUniqueNumber == null)
             {
                 return BadRequest("Cannot create penalty for empty CarId");
             }
-            var car = await _carService.GetById(penaltyRequest.CarId);
+            var car = await _carService.GetByUniqueNumber(penaltyRequest.CarUniqueNumber);
             if(car == null)
             {
-                return BadRequest($"The car with id {penaltyRequest.CarId} not exist");
+                return BadRequest($"The car with id {penaltyRequest.CarUniqueNumber} not exist");
             }
 
             var penalty = _customMapper
-                .PenaltyRequestToPenalty(penaltyRequest);
+                .PenaltyRequestToPenalty(penaltyRequest,car.Id);
 
+            penalty.Id = 0;
             await _penaltyRepository.Create(penalty);
             await _penaltyRepository.SaveChangesAsync();
 
@@ -250,19 +251,19 @@ namespace vehicles.Controllers
             }
 
 
-            if (penaltyRequest.CarId == null)
+            if (penaltyRequest.CarUniqueNumber == null)
             {
                 return BadRequest("Cannot create penalty for empty CarId");
             }
-            var car = await _carService.GetById(penaltyRequest.CarId);
+            var car = await _carService.GetByUniqueNumber(penaltyRequest.CarUniqueNumber);
             if (car == null)
             {
-                return BadRequest($"The car with id {penaltyRequest.CarId} not exist");
+                return BadRequest($"The car with id {penaltyRequest.CarUniqueNumber} not exist");
             }
 
 
             var penalty = _customMapper
-                .PenaltyRequestToPenalty(penaltyRequest);
+                .PenaltyRequestToPenalty(penaltyRequest,car.Id);
 
             _penaltyRepository.Update(penalty);
             var updatedNums = await _penaltyRepository.SaveChangesAsync();

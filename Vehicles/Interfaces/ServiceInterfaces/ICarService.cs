@@ -21,5 +21,6 @@ namespace Vehicles.Interfaces.ServiceInterfaces
         ClaimsPrincipal GetClaimsPrincipal(string token);
 
         Task<List<CustomUser>> GetOwnersByCar(int id);
+        Task<Car> GetByUniqueNumber(string uniqueNumber);
     }
 }

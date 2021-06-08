@@ -9,6 +9,7 @@ namespace Vehicles.Interfaces.RepositoryInterfaces
 {
     public interface ICarsRepository:IGenericRepository<Car>
     {
+        Task<Car> GetByUniqueNumber(string uniqueNumber);
         Task<List<Car>> GetCars(CustomUser carOwner);
         IQueryable<Car> PaginationQuery(int PageNum, int PageSize);
         IQueryable<Car> GetIQueryableCars();

@@ -21,7 +21,7 @@ namespace Vehicles.MyCustomMapper
         public Car CarRequestToCar(CarRequest carRequest);
         public CustomUser OwnerRequestToCarOwner(OwnerRequest OwnerRequest);
         public PenaltyResponse PenaltyToPenaltyResponse(Penalty penalty);
-        public Penalty PenaltyRequestToPenalty(PenaltyRequest penalty);
+        public Penalty PenaltyRequestToPenalty(PenaltyRequest penalty,int carId);
         void UpdateUserFromDb(CustomUser userFromDb,CustomUser userFromRequest);
 
 
@@ -85,24 +85,25 @@ namespace Vehicles.MyCustomMapper
             {
                 Id = penalty.Id,
                 PayedStatus = penalty.PayedStatus,
-                CarId = penalty.CarId,
+                CarUniqueNumber = penalty.CarUniqueNumber,
                 Date = penalty.Date,
                 Description = penalty.Description,
                 Location = penalty.Location,
                 Price = penalty.Price
             };
         }
-        public Penalty PenaltyRequestToPenalty(PenaltyRequest penalty)
+        public Penalty PenaltyRequestToPenalty(PenaltyRequest penalty,int carId)
         {
             return new Penalty()
             {
                 Id = penalty.Id,
                 PayedStatus = penalty.PayedStatus,
-                CarId = (int) penalty.CarId,
+                CarId = carId,
                 Date = penalty.Date,
                 Description = penalty.Description,
                 Location = penalty.Location,
-                Price = penalty.Price
+                Price = penalty.Price,
+                CarUniqueNumber = penalty.CarUniqueNumber
             };
         }
 

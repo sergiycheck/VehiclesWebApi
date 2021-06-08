@@ -19,6 +19,7 @@ namespace vehicles.Repositories
 
         public Task<List<Penalty>>
             GetPenaltiesByUserId(string userId);
+        IQueryable<Penalty> GetAllPenaltiesWithCarIncluded();
     }
 
     public class PenaltyRepository:GenericRepository<Penalty>,IPenaltyRepository
@@ -27,6 +28,11 @@ namespace vehicles.Repositories
         : base(context)
         {
 
+        }
+
+        public  IQueryable<Penalty> GetAllPenaltiesWithCarIncluded()
+        {
+            return _dbContext.Penalties.AsNoTracking().Include(p=>p.Car).AsNoTracking(); 
         }
 
         //get penalties from carUnique number
@@ -39,6 +45,7 @@ namespace vehicles.Repositories
                       where car.UniqueNumber == uniqueNumber
                       select new Penalty
                       {
+                          CarUniqueNumber = car.UniqueNumber,
                           CarId = car.Id,
                           Id = penalty.Id,
                           Description = penalty.Description,
@@ -62,6 +69,7 @@ namespace vehicles.Repositories
                       where mtmCarOwner.CarOwner.Id == userId
                       select new Penalty
                       {
+                          CarUniqueNumber = car.UniqueNumber,
                           CarId = car.Id,
                           Id = penalty.Id,
                           Description = penalty.Description,
