@@ -18,6 +18,7 @@ namespace Vehicles.Models
         public float CarEngine{get;set;}
         public string Description{get;set;}
         public string Transmision{get;set;}
+        public bool ForSale { get; set; }
         public string Drive{get;set;}
         public virtual ICollection<ManyToManyCustomUserToVehicle> ManyToManyCustomUserToVehicle{get;set;}
         public string ImgPath { get; set; }

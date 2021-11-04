@@ -93,10 +93,13 @@ namespace Vehicles.Controllers
         [HttpGet(ApiRoutes.Owners.Get)]
         public async Task<ActionResult<OwnerResponce>> GetOwnerById(string id)
         {
-            return Ok(
-                new Response<OwnerResponce>(
-                    _customMapper.OwnerToOwnerResponse(
-                        await _carOwnerService.GetById(id))));
+            var owner = await _carOwnerService.GetById(id);
+            if (owner != null)
+            {
+                return Ok(new Response<OwnerResponce>(_customMapper.OwnerToOwnerResponse(owner)));
+
+            }
+            return Ok(new Response<string>($"No owner with such id {id}"));
         }
         //use postman post method or visual studio code extensions to send post method with existing carOwner json data that can be retrieved from get method for CarOwners
 

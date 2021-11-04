@@ -36,6 +36,11 @@ namespace vehicles.Helpers
                 (string Brand, string UniqueNumber, string imgDirectory);
 
         public bool DeleteFile(string imgPath);
+        public string
+    GetImageForEmptyImagePropery(
+        string Brand,
+        string UniqueNumber,
+        string imgDirectory);
     }
 
     public class VehicleImageRetriever : IVehicleImageRetriever
@@ -142,7 +147,29 @@ namespace vehicles.Helpers
             return "";
         }
         
-
+        public string
+            GetImageForEmptyImagePropery(
+                string Brand,
+                string UniqueNumber,
+                string imgDirectory)
+        {
+            var sourceFileName = Path.Combine($@"{imgDirectory}\forEmpty", "empty_car.jpg");
+            if (File.Exists(sourceFileName))
+            {
+                try
+                {
+                    var fileExtension = Path.GetExtension(sourceFileName);
+                    var destFileName = Path.Combine(imgDirectory, $"{Brand.Trim()}_{UniqueNumber.Trim()}_{Guid.NewGuid()}{fileExtension}");
+                    File.Copy(sourceFileName, destFileName, true);
+                    return destFileName;
+                }
+                catch (IOException copyError)
+                {
+                    Console.WriteLine(copyError.Message);
+                }
+            }
+            return string.Empty;
+        }
 
         public async Task<string> 
             CreateImgByBrandAndUniqueNumber(
@@ -153,7 +180,7 @@ namespace vehicles.Helpers
         {
             if (file == null)
             {
-                return "file is null";
+                return string.Empty;
             }
             var fileExtension = Path.GetExtension(file.FileName);
             var nameResult = ReplaceSpaceWithDash(Brand, UniqueNumber);

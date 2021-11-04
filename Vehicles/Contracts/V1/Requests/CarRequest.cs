@@ -19,11 +19,18 @@ namespace Vehicles.Contracts.Requests
         public float CarEngine{get;set;}
         public string Description{get;set;}
         public string Transmision{get;set;}
+        public bool ForSale { get; set; }
         public string Drive{get;set;}
         public IEnumerable<OwnerRequest> OwnerRequests {get;set;}
 
         public string Token { get; set; }
 
         public string UpdateImage { get; set; }
+
+        public override string ToString()
+        {
+            var forSale = this.ForSale ? "true" : "false";
+            return $"{Brand} {this.Color} {this.CarEngine} {this.Date} {this.Description} {this.Drive} {forSale} {this.Id} {this.Price}  {this.Transmision} {this.UniqueNumber} {this.UpdateImage} ";
+        }
     }
 }

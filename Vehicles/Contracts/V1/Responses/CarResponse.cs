@@ -18,6 +18,7 @@ namespace Vehicles.Contracts.Responces
         [JsonConverter(typeof(FloatToStringConverter))]
         public float CarEngine{get;set;}
         public string Description{get;set;}
+        public bool ForSale { get; set; }
         public string Transmision{get;set;}
         public string Drive{get;set;}
         public IEnumerable<OwnerResponce> OwnerResponces {get;set;}

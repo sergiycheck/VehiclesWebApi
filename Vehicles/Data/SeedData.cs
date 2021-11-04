@@ -176,7 +176,8 @@ namespace Vehicles.Data
                Drive = "Mixed",
                Price = 14999.9m,
                Transmision = "Auto",
-               UniqueNumber = "HN-8080-OV"
+               UniqueNumber = "HN-8080-OV",
+               ForSale = true,
 
           },
           new Car()
@@ -190,7 +191,8 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 7800,
                Transmision = "Auto",
-               UniqueNumber = "OD-7551-TX"
+               UniqueNumber = "OD-7551-TX",
+               ForSale = true,
           },
           new Car()
           {
@@ -203,7 +205,8 @@ namespace Vehicles.Data
                Drive = "Mixed",
                Price = 25000,
                Transmision = "Auto",
-               UniqueNumber = "KA-3115-OY"
+               UniqueNumber = "KA-3115-OY",
+               ForSale = true,
           },
           new Car()
           {
@@ -216,7 +219,8 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 14300,
                Transmision = "Auto/Manual",
-               UniqueNumber = "EU-0746-BG"
+               UniqueNumber = "EU-0746-BG",
+               ForSale = true,
           },
           new Car()
           {
@@ -229,7 +233,8 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 7500,
                Transmision = "Auto/Manual",
-               UniqueNumber = "DU-1848-UF"
+               UniqueNumber = "DU-1848-UF",
+               ForSale = false,
           },
           new Car()
           {
@@ -242,7 +247,8 @@ namespace Vehicles.Data
                Drive = "Full",
                Price = 36000,
                Transmision = "Auto",
-               UniqueNumber = "DH-5232-IF"
+               UniqueNumber = "DH-5232-IF",
+               ForSale = false,
           },
           new Car()
           {
@@ -255,7 +261,8 @@ namespace Vehicles.Data
                Drive = "Full",
                Price = 27600,
                Transmision = "Auto",
-               UniqueNumber = "XX-7636-WX"
+               UniqueNumber = "XX-7636-WX",
+               ForSale = false,
           },
           new Car()
           {
@@ -268,7 +275,8 @@ namespace Vehicles.Data
                Drive = "Back",
                Price = 12500,
                Transmision = "Full",
-               UniqueNumber = "QY-0324-PK"
+               UniqueNumber = "QY-0324-PK",
+               ForSale = false,
           },
           new Car()
           {
@@ -281,7 +289,8 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 7800,
                Transmision = "Auto",
-               UniqueNumber = "BU-8032-UY"
+               UniqueNumber = "BU-8032-UY",
+               ForSale = false,
           },
           new Car()
           {
@@ -294,7 +303,8 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 8999,
                Transmision = "Auto",
-               UniqueNumber = "NY-3363-MQ"
+               UniqueNumber = "NY-3363-MQ",
+               ForSale = false,
           },
           new Car()
           {
@@ -307,7 +317,8 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 7650,
                Transmision = "Manual",
-               UniqueNumber = "EG-6118-FB"
+               UniqueNumber = "EG-6118-FB",
+               ForSale = false,
           },
           new Car()
           {
@@ -320,7 +331,8 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 15400,
                Transmision = "Manual",
-               UniqueNumber = "IA-8214-WC"
+               UniqueNumber = "IA-8214-WC",
+               ForSale = true,
           },
           new Car()
           {
@@ -333,7 +345,8 @@ namespace Vehicles.Data
                Drive = "Full",
                Price = 35000,
                Transmision = "Auto",
-               UniqueNumber = "UT-1521-ZO"
+               UniqueNumber = "UT-1521-ZO",
+               ForSale = false,
           },
           new Car()
           {
@@ -346,7 +359,8 @@ namespace Vehicles.Data
                Drive = "Front",
                Price = 214999,
                Transmision = "Auto",
-               UniqueNumber = "DG-8676-ZA"
+               UniqueNumber = "DG-8676-ZA",
+               ForSale = true,
           }
      };
         public class UserAndPassword
@@ -593,7 +607,7 @@ namespace Vehicles.Data
                context.Cars.AddRange(Cars);
                context.SaveChanges();
           }
-            if (!context.Penalties.Any())
+          if (!context.Penalties.Any())
             {
                 var rnd = new Random();
 
@@ -673,7 +687,7 @@ namespace Vehicles.Data
             }
           //}
             
-            //exeption here works from second start because for the first time users are not initialized due to userManager
+            //exception here works from second start because for the first time users are not initialized due to userManager
             //https://entityframework.net/knowledge-base/7819002/the-insert-statement-conflicted-with-the-foreign-key-constraint-in-entity-framework
 
           if (!context.ManyToManyCarOwners.Any())

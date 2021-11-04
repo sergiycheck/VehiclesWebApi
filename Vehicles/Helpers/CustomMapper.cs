@@ -17,8 +17,8 @@ namespace Vehicles.MyCustomMapper
     public interface ICustomMapper
     {
         public CarResponse CarToCarResponse(Car car);
-        public OwnerResponce OwnerToOwnerResponse(CustomUser carOwnerUser);
         public Car CarRequestToCar(CarRequest carRequest);
+        public OwnerResponce OwnerToOwnerResponse(CustomUser carOwnerUser);
         public CustomUser OwnerRequestToCarOwner(OwnerRequest OwnerRequest);
         public PenaltyResponse PenaltyToPenaltyResponse(Penalty penalty);
         public Penalty PenaltyRequestToPenalty(PenaltyRequest penalty,int carId);
@@ -60,6 +60,7 @@ namespace Vehicles.MyCustomMapper
                 Brand = car.Brand,
                 Color = car.Color,
                 Date = car.Date,
+                ForSale = car.ForSale,
                 Price = car.Price,
                 CarEngine = car.CarEngine,
                 Description = car.Description,
@@ -110,32 +111,38 @@ namespace Vehicles.MyCustomMapper
 
         public OwnerResponce OwnerToOwnerResponse(CustomUser owner)
         {
-            return new OwnerResponce
+            if (owner != null)
             {
-                Id = owner.Id,
-                Email = owner.Email,
-                Name = owner.FirstName,
-                UserName = owner.UserName,
-                SurName = owner.LastName,
-                CarOwnerPhone = owner.PhoneNumber,
-                Location = owner.Address,
-                BirthDate = owner.BirthDate,
+                return new OwnerResponce
+                {
+                    Id = owner.Id,
+                    Email = owner.Email,
+                    Name = owner.FirstName,
+                    UserName = owner.UserName,
+                    SurName = owner.LastName,
+                    CarOwnerPhone = owner.PhoneNumber,
+                    Location = owner.Address,
+                    BirthDate = owner.BirthDate,
 
-                CarResponces = owner.ManyToManyCustomUserToVehicle?.Select(car=>
-                    new CarResponse(){
-                        Id = car.Car!=null?car.Car.Id:0,
-                        UniqueNumber = car.Car?.UniqueNumber,
-                        Brand = car.Car?.Brand,
-                        Color = car.Car?.Color,
-                        Date = car.Car!=null?car.Car.Date:DateTime.Now,
-                        Price = car.Car != null ? car.Car.Price:0,
-                        CarEngine = car.Car != null ? car.Car.CarEngine:0,
-                        Description = car.Car?.Description,
-                        Transmision = car.Car?.Transmision,
-                        Drive = car.Car?.Drive,
-                        OwnerResponces = null
-                    }).ToList()   
-            };
+                    CarResponces = owner.ManyToManyCustomUserToVehicle?.Select(car =>
+                        new CarResponse()
+                        {
+                            Id = car.Car != null ? car.Car.Id : 0,
+                            UniqueNumber = car.Car?.UniqueNumber,
+                            Brand = car.Car?.Brand,
+                            Color = car.Car?.Color,
+                            Date = car.Car != null ? car.Car.Date : DateTime.Now,
+                            Price = car.Car != null ? car.Car.Price : 0,
+                            CarEngine = car.Car != null ? car.Car.CarEngine : 0,
+                            Description = car.Car?.Description,
+                            Transmision = car.Car?.Transmision,
+                            Drive = car.Car?.Drive,
+                            OwnerResponces = null
+                        }).ToList()
+                };
+            }
+            return null;
+
         }
         public Car CarRequestToCar(CarRequest carRequest)
         {
@@ -146,6 +153,7 @@ namespace Vehicles.MyCustomMapper
                 Brand = carRequest.Brand,
                 Color = carRequest.Color,
                 Date = carRequest.Date,
+                ForSale = carRequest.ForSale,
                 Price = carRequest.Price,
                 CarEngine = carRequest.CarEngine,
                 Description = carRequest.Description,

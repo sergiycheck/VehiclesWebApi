@@ -137,7 +137,7 @@ namespace Vehicles.Controllers
         //use postman post method or visual studio code extensions to send post method with existing carOwner json data that can be retrieved from get method for CarOwners
 
         //TODO: uncomment
-        //[Authorize]
+        [Authorize]
 
         [HttpPost(ApiRoutes.Vehicles.GetCarsByOwner)]
         public async Task<IActionResult> GetCarsByCarOwner([FromBody] OwnerRequest value)
@@ -158,6 +158,7 @@ namespace Vehicles.Controllers
         public async Task<ActionResult> PostCarItem(
             [FromForm] CarRequest carRequest)
         {
+            Console.WriteLine(carRequest.ToString());
 
             var car = _customMapper.CarRequestToCar(carRequest);
 
@@ -187,36 +188,32 @@ namespace Vehicles.Controllers
 
         private async Task<string> CreateImgFromRequest(HttpRequest request, CarRequest carRequest)
         {
-            if (request == null)
+            
+            if (request!=null)
             {
-                return string.Empty;
-            }
+                var formCollection = await request.ReadFormAsync();
+                var ImgFile = formCollection.Files.FirstOrDefault();
 
-            var formCollection = await request.ReadFormAsync();
-            var ImgFile = formCollection.Files.First();
-
-            if (ImgFile != null && ImgFile.Length > 0)
-            {
-                var createdImgPathResult = await _vehicleImageRetriever
-                        .CreateImgByBrandAndUniqueNumber(
-                        ImgFile,
-                        carRequest.Brand,
-                        carRequest.UniqueNumber,
-                        _imgDirectory);
-
-                if (createdImgPathResult != string.Empty)
+                if (ImgFile != null && ImgFile.Length > 0)
                 {
+                    var createdImgPathResult = await _vehicleImageRetriever
+                            .CreateImgByBrandAndUniqueNumber(
+                            ImgFile,
+                            carRequest.Brand,
+                            carRequest.UniqueNumber,
+                            _imgDirectory);
+
+                    if (createdImgPathResult != string.Empty)
+                    {
                     
-                    _logger.LogInformation($"{ImgFile.FileName} created successfully");
-                    return createdImgPathResult;
-                }
-                else
-                {
+                        _logger.LogInformation($"{ImgFile.FileName} created successfully");
+                        return createdImgPathResult;
+                    }
                     _logger.LogInformation($"{ImgFile.FileName} not created");
-
                 }
             }
-            return string.Empty;
+            var emptyCarImgPath = _vehicleImageRetriever.GetImageForEmptyImagePropery(carRequest.Brand, carRequest.UniqueNumber, _imgDirectory);
+            return emptyCarImgPath;
         }
 
 
@@ -295,6 +292,8 @@ namespace Vehicles.Controllers
         public async Task<IActionResult> 
             Put(int? id, [FromForm] CarRequest carRequest)
         {
+            Console.WriteLine(carRequest.ToString());
+
             if (id != carRequest.Id)
                 return BadRequest();
 
